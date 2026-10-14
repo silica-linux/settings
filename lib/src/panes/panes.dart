@@ -48,6 +48,7 @@ Widget paneBody(
     PaneId.internetAccounts => const InternetAccountsPane(),
     PaneId.keyboard => const KeyboardPane(),
     PaneId.mouse => const MousePane(),
+    PaneId.trackpad => const TrackpadPane(),
     PaneId.printers => const PrintersPane(),
   };
 }

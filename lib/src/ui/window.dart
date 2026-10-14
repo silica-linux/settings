@@ -50,10 +50,16 @@ class _SettingsWindowState extends State<SettingsWindow> {
     final header = hasHeaderCard(navigation.location);
     return SystemStateBuilder(
       builder: (context, state) {
-        final groups = paneGroups(hasBattery: state.batteryPresent);
+        final groups = paneGroups(
+          hasBattery: state.batteryPresent,
+          hasTrackpad: state.touchpad,
+        );
         // A pane that left the sidebar (Energy and Battery swap) falls back to the first.
         final shown = groups.expand((g) => g).toSet();
-        if (!shown.contains(navigation.pane)) {
+        // The Trackpad is known only once the daemon has answered: the window reopened on it
+        // waits for the first state instead of falling back.
+        final waiting = navigation.pane == PaneId.trackpad && !state.reachable;
+        if (!shown.contains(navigation.pane) && !waiting) {
           WidgetsBinding.instance.addPostFrameCallback(
             (_) => navigation.openPane(shown.first),
           );

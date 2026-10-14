@@ -483,5 +483,17 @@
   "keyboardSourcesFull": "Quattro fonti sono il massimo. Rimuovine una per aggiungerne un’altra.",
   "keyboardChooseLayout": "Scegli un layout di tastiera",
   "keyboardChooseVariant": "Scegli una variante",
-  "keyboardVariantDefault": "Standard"
+  "keyboardVariantDefault": "Standard",
+  "paneTrackpad": "Trackpad",
+  "mouseLeftButton": "Pulsante sinistro",
+  "mouseSecondaryHelp": "Quale pulsante apre i menu contestuali.",
+  "trackpadTrackingSpeed": "Velocità di tracciamento",
+  "trackpadTapToClick": "Tocca per cliccare",
+  "trackpadTapToClickHelp": "Tocca con un dito per cliccare.",
+  "trackpadSecondaryClick": "Clic secondario",
+  "trackpadTwoFingers": "Clic o tocco con due dita",
+  "trackpadBottomRight": "Clic nell’angolo in basso a destra",
+  "trackpadBottomLeft": "Clic nell’angolo in basso a sinistra",
+  "trackpadDisableWhileTyping": "Ignora il trackpad mentre scrivi",
+  "trackpadDisableWhileTypingHelp": "Evita che un palmo appoggiato sul trackpad muova il puntatore."
 }

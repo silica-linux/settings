@@ -1572,4 +1572,41 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get keyboardVariantDefault => 'Standard';
+
+  @override
+  String get paneTrackpad => 'Trackpad';
+
+  @override
+  String get mouseLeftButton => 'Pulsante sinistro';
+
+  @override
+  String get mouseSecondaryHelp => 'Quale pulsante apre i menu contestuali.';
+
+  @override
+  String get trackpadTrackingSpeed => 'Velocità di tracciamento';
+
+  @override
+  String get trackpadTapToClick => 'Tocca per cliccare';
+
+  @override
+  String get trackpadTapToClickHelp => 'Tocca con un dito per cliccare.';
+
+  @override
+  String get trackpadSecondaryClick => 'Clic secondario';
+
+  @override
+  String get trackpadTwoFingers => 'Clic o tocco con due dita';
+
+  @override
+  String get trackpadBottomRight => 'Clic nell’angolo in basso a destra';
+
+  @override
+  String get trackpadBottomLeft => 'Clic nell’angolo in basso a sinistra';
+
+  @override
+  String get trackpadDisableWhileTyping => 'Ignora il trackpad mentre scrivi';
+
+  @override
+  String get trackpadDisableWhileTypingHelp =>
+      'Evita che un palmo appoggiato sul trackpad muova il puntatore.';
 }

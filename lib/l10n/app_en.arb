@@ -688,5 +688,17 @@
   "keyboardSourcesFull": "Four sources is the most. Remove one to add another.",
   "keyboardChooseLayout": "Choose a keyboard layout",
   "keyboardChooseVariant": "Choose a variant",
-  "keyboardVariantDefault": "Standard"
+  "keyboardVariantDefault": "Standard",
+  "paneTrackpad": "Trackpad",
+  "mouseLeftButton": "Left button",
+  "mouseSecondaryHelp": "Which button opens context menus.",
+  "trackpadTrackingSpeed": "Tracking speed",
+  "trackpadTapToClick": "Tap to click",
+  "trackpadTapToClickHelp": "Tap with one finger to click.",
+  "trackpadSecondaryClick": "Secondary click",
+  "trackpadTwoFingers": "Click or tap with two fingers",
+  "trackpadBottomRight": "Click in the bottom right corner",
+  "trackpadBottomLeft": "Click in the bottom left corner",
+  "trackpadDisableWhileTyping": "Ignore the trackpad while typing",
+  "trackpadDisableWhileTypingHelp": "Stops a palm resting on the trackpad from moving the pointer."
 }

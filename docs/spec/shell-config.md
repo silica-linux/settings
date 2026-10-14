@@ -134,6 +134,23 @@ the list of input sources, at most four, an xkb layout with an optional variant 
 none saved removes the key (xkb's default). `model` and `options` belong to the same file and
 are kept untouched.
 
+### input.json
+
+```json
+{
+  "mouse": { "speed": 0.0, "naturalScroll": false, "secondaryClick": "right", "scrollSpeed": 1.0 },
+  "touchpad": { "speed": 0.0, "naturalScroll": false, "tapToClick": false,
+                "secondaryClick": "twoFinger", "disableWhileTyping": true, "scrollSpeed": 1.0 }
+}
+```
+
+One object per device; a key is written only once the person changes it (a missing key gives
+libinput's default for the device). `speed` is -1–1; `scrollSpeed` 0.1–10, shown on a
+logarithmic slider with 1 in the middle; `mouse.secondaryClick` is `right` \| `left`;
+`touchpad.secondaryClick` is `twoFinger` \| `bottomRight` \| `bottomLeft`. Settings keeps the
+other device's object and `doubleClickMs`, which no control writes yet. The Trackpad pane is in
+the sidebar only while silica-daemon's `State()` has `input.touchpad`.
+
 ## Other files (for completeness)
 
 `theme.json` (`accent`, `highlight`, `sidebarIconSize`, `scrollBars`), `lockscreen.json` and `settings.json` (`lastPane`, Settings'

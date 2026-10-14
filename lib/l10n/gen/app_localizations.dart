@@ -3001,6 +3001,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Standard'**
   String get keyboardVariantDefault;
+
+  /// No description provided for @paneTrackpad.
+  ///
+  /// In en, this message translates to:
+  /// **'Trackpad'**
+  String get paneTrackpad;
+
+  /// No description provided for @mouseLeftButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Left button'**
+  String get mouseLeftButton;
+
+  /// No description provided for @mouseSecondaryHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Which button opens context menus.'**
+  String get mouseSecondaryHelp;
+
+  /// No description provided for @trackpadTrackingSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracking speed'**
+  String get trackpadTrackingSpeed;
+
+  /// No description provided for @trackpadTapToClick.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to click'**
+  String get trackpadTapToClick;
+
+  /// No description provided for @trackpadTapToClickHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap with one finger to click.'**
+  String get trackpadTapToClickHelp;
+
+  /// No description provided for @trackpadSecondaryClick.
+  ///
+  /// In en, this message translates to:
+  /// **'Secondary click'**
+  String get trackpadSecondaryClick;
+
+  /// No description provided for @trackpadTwoFingers.
+  ///
+  /// In en, this message translates to:
+  /// **'Click or tap with two fingers'**
+  String get trackpadTwoFingers;
+
+  /// No description provided for @trackpadBottomRight.
+  ///
+  /// In en, this message translates to:
+  /// **'Click in the bottom right corner'**
+  String get trackpadBottomRight;
+
+  /// No description provided for @trackpadBottomLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Click in the bottom left corner'**
+  String get trackpadBottomLeft;
+
+  /// No description provided for @trackpadDisableWhileTyping.
+  ///
+  /// In en, this message translates to:
+  /// **'Ignore the trackpad while typing'**
+  String get trackpadDisableWhileTyping;
+
+  /// No description provided for @trackpadDisableWhileTypingHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Stops a palm resting on the trackpad from moving the pointer.'**
+  String get trackpadDisableWhileTypingHelp;
 }
 
 class _AppLocalizationsDelegate

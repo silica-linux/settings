@@ -37,6 +37,8 @@ class SystemState {
     this.audioName = '',
     this.doNotDisturb = false,
     this.dark = false,
+    this.touchpad = false,
+    this.mouse = false,
   });
 
   final bool reachable;
@@ -56,6 +58,11 @@ class SystemState {
   final String audioName;
   final bool doNotDisturb;
   final bool dark;
+
+  /// A touchpad / another pointer is connected (`input.touchpad`, `input.mouse`, reported by
+  /// Ossido): Settings shows its Trackpad pane only with a touchpad.
+  final bool touchpad;
+  final bool mouse;
 
   /// From the daemon's `State()` dictionary (flat keys).
   static SystemState fromDict(Map<Object?, Object?> d) {
@@ -85,6 +92,8 @@ class SystemState {
       audioName: text('audio.name'),
       doNotDisturb: flag('dnd'),
       dark: flag('appearance.dark'),
+      touchpad: flag('input.touchpad'),
+      mouse: flag('input.mouse'),
     );
   }
 }

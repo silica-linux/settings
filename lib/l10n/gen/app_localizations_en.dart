@@ -1569,4 +1569,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get keyboardVariantDefault => 'Standard';
+
+  @override
+  String get paneTrackpad => 'Trackpad';
+
+  @override
+  String get mouseLeftButton => 'Left button';
+
+  @override
+  String get mouseSecondaryHelp => 'Which button opens context menus.';
+
+  @override
+  String get trackpadTrackingSpeed => 'Tracking speed';
+
+  @override
+  String get trackpadTapToClick => 'Tap to click';
+
+  @override
+  String get trackpadTapToClickHelp => 'Tap with one finger to click.';
+
+  @override
+  String get trackpadSecondaryClick => 'Secondary click';
+
+  @override
+  String get trackpadTwoFingers => 'Click or tap with two fingers';
+
+  @override
+  String get trackpadBottomRight => 'Click in the bottom right corner';
+
+  @override
+  String get trackpadBottomLeft => 'Click in the bottom left corner';
+
+  @override
+  String get trackpadDisableWhileTyping => 'Ignore the trackpad while typing';
+
+  @override
+  String get trackpadDisableWhileTypingHelp =>
+      'Stops a palm resting on the trackpad from moving the pointer.';
 }

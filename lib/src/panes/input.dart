@@ -1,10 +1,13 @@
-// Keyboard (ST-KBD-01..14), Mouse (ST-INP-01) and Printers and Scanners (ST-PRT-01).
+// Keyboard (ST-KBD-01..14), Mouse and Trackpad (ST-INP-01) and Printers and Scanners (ST-PRT-01).
 // Real: the list of Silica's system shortcuts (read-only, the bindings of silica-desktop's
-// command catalog); the CUPS printers (lpstat) and the default one (lpoptions). Ossido reads
-// key repeat and the input sources from keyboard.json, which it watches (#73): the sliders
-// and the sources sheet write it. The function key, keyboard navigation, text replacements and
-// dictation (#73, #32), the pointer settings (#74) and adding printers (#56) wait for their
-// backends.
+// command catalog); the CUPS printers (lpstat) and the default one (lpoptions). Ossido watches
+// keyboard.json (key repeat, input sources, #73) and input.json (the mouse and the touchpad,
+// #74): the sliders, switches and the sources sheet write them. The Trackpad pane is in the
+// sidebar only while the compositor reports a touchpad. The function key, keyboard navigation,
+// text replacements and dictation (#73, #32), the double-click speed (#74) and adding
+// printers (#56) wait for their backends.
+
+import 'dart:math' as math;
 
 import 'package:flutter/widgets.dart';
 import 'package:silica_ui/silica_ui.dart';
@@ -512,44 +515,221 @@ class _ShortcutsSheetState extends State<_ShortcutsSheet> {
   }
 }
 
-class MousePane extends StatelessWidget {
+/// The scrolling-speed slider position (0–1) of a multiplier: logarithmic, 0.1× to 10×, with
+/// 1× in the middle.
+double scrollSliderOf(double speed) =>
+    (math.log(speed.clamp(PointerLimits.scrollMin, PointerLimits.scrollMax)) /
+            math.ln10 +
+        1) /
+    2;
+
+/// The multiplier of a slider position, to two decimals.
+double scrollSpeedOf(double position) => double.parse(
+  math.pow(10, position.clamp(0, 1) * 2 - 1).toDouble().toStringAsFixed(2),
+);
+
+/// The pointer settings both devices share: speed and natural scrolling (input.json, which
+/// Ossido watches and applies to every device at once, #74).
+List<Widget> _commonPointerRows(
+  BuildContext context,
+  PointerDevice device,
+  VoidCallback changed,
+) {
+  final l = AppLocalizations.of(context);
+  final config = ServicesScope.of(context).config;
+  return [
+    SliderRow(
+      key: ValueKey('${device.name} speed'),
+      title: device == PointerDevice.mouse
+          ? l.mousePointerSpeed
+          : l.trackpadTrackingSpeed,
+      value: config.pointerSpeed(device),
+      min: PointerLimits.speedMin,
+      max: PointerLimits.speedMax,
+      labels: [l.keyboardSlow, l.keyboardFast],
+      onChanged: (v) {
+        config.writePointerSpeed(device, v);
+        changed();
+      },
+    ),
+    SwitchRow(
+      key: ValueKey('${device.name} natural scrolling'),
+      title: l.mouseNaturalScrolling,
+      subtitle: l.mouseNaturalScrollingHelp,
+      value: config.pointerFlag(device, 'naturalScroll', fallback: false),
+      onChanged: (on) {
+        config.writePointer(device, 'naturalScroll', on);
+        changed();
+      },
+    ),
+  ];
+}
+
+Widget _scrollSpeedRow(
+  BuildContext context,
+  PointerDevice device,
+  VoidCallback changed,
+) {
+  final l = AppLocalizations.of(context);
+  final config = ServicesScope.of(context).config;
+  return SliderRow(
+    key: ValueKey('${device.name} scroll speed'),
+    title: l.mouseScrollSpeed,
+    value: scrollSliderOf(config.pointerScrollSpeed(device)),
+    labels: [l.keyboardSlow, l.keyboardFast],
+    onChanged: (v) {
+      config.writeScrollSpeed(device, scrollSpeedOf(v));
+      changed();
+    },
+  );
+}
+
+class MousePane extends StatefulWidget {
   const MousePane({super.key});
 
   @override
+  State<MousePane> createState() => _MousePaneState();
+}
+
+class _MousePaneState extends State<MousePane> {
+  @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final config = ServicesScope.of(context).config;
+    void changed() => setState(() {});
+    final secondary = MouseSecondary.values
+        .where(
+          (v) =>
+              v.name ==
+              config.pointerText(
+                PointerDevice.mouse,
+                'secondaryClick',
+                fallback: 'right',
+              ),
+        )
+        .firstOrNull;
     return PanePage(
       children: [
+        SettingsGroup(
+          children: [
+            ..._commonPointerRows(context, PointerDevice.mouse, changed),
+            PopUpRow<MouseSecondary>(
+              key: const ValueKey('mouse secondary click'),
+              title: l.mouseSecondaryClick,
+              subtitle: l.mouseSecondaryHelp,
+              items: [
+                PopUpItem(MouseSecondary.right, l.mouseRightButton),
+                PopUpItem(MouseSecondary.left, l.mouseLeftButton),
+              ],
+              value: secondary ?? MouseSecondary.right,
+              onChanged: (v) {
+                config.writePointer(
+                  PointerDevice.mouse,
+                  'secondaryClick',
+                  v.name,
+                );
+                changed();
+              },
+            ),
+            _scrollSpeedRow(context, PointerDevice.mouse, changed),
+          ],
+        ),
         SettingsGroup(
           unavailable: true,
           issue: Issues.pointer,
           children: [
             SliderRow(
-              title: l.mousePointerSpeed,
-              value: 0.5,
-              labels: [l.keyboardSlow, l.keyboardFast],
-            ),
-            SwitchRow(
-              title: l.mouseNaturalScrolling,
-              subtitle: l.mouseNaturalScrollingHelp,
-              value: true,
-            ),
-            PopUpRow<int>(
-              title: l.mouseSecondaryClick,
-              items: [PopUpItem(0, l.mouseRightButton)],
-              value: 0,
-              onChanged: (_) {},
-            ),
-            SliderRow(
               title: l.mouseDoubleClickSpeed,
               value: 0.5,
               labels: [l.keyboardSlow, l.keyboardFast],
             ),
-            SliderRow(
-              title: l.mouseScrollSpeed,
-              value: 0.5,
-              labels: [l.keyboardSlow, l.keyboardFast],
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class TrackpadPane extends StatefulWidget {
+  const TrackpadPane({super.key});
+
+  @override
+  State<TrackpadPane> createState() => _TrackpadPaneState();
+}
+
+class _TrackpadPaneState extends State<TrackpadPane> {
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final config = ServicesScope.of(context).config;
+    void changed() => setState(() {});
+    final secondary = TouchpadSecondary.values
+        .where(
+          (v) =>
+              v.name ==
+              config.pointerText(
+                PointerDevice.touchpad,
+                'secondaryClick',
+                fallback: 'twoFinger',
+              ),
+        )
+        .firstOrNull;
+    return PanePage(
+      children: [
+        SettingsGroup(
+          children: [
+            ..._commonPointerRows(context, PointerDevice.touchpad, changed),
+            SwitchRow(
+              key: const ValueKey('touchpad tap to click'),
+              title: l.trackpadTapToClick,
+              subtitle: l.trackpadTapToClickHelp,
+              value: config.pointerFlag(
+                PointerDevice.touchpad,
+                'tapToClick',
+                fallback: false,
+              ),
+              onChanged: (on) {
+                config.writePointer(PointerDevice.touchpad, 'tapToClick', on);
+                changed();
+              },
             ),
+            PopUpRow<TouchpadSecondary>(
+              key: const ValueKey('touchpad secondary click'),
+              title: l.trackpadSecondaryClick,
+              items: [
+                PopUpItem(TouchpadSecondary.twoFinger, l.trackpadTwoFingers),
+                PopUpItem(TouchpadSecondary.bottomRight, l.trackpadBottomRight),
+                PopUpItem(TouchpadSecondary.bottomLeft, l.trackpadBottomLeft),
+              ],
+              value: secondary ?? TouchpadSecondary.twoFinger,
+              onChanged: (v) {
+                config.writePointer(
+                  PointerDevice.touchpad,
+                  'secondaryClick',
+                  v.name,
+                );
+                changed();
+              },
+            ),
+            SwitchRow(
+              key: const ValueKey('touchpad disable while typing'),
+              title: l.trackpadDisableWhileTyping,
+              subtitle: l.trackpadDisableWhileTypingHelp,
+              value: config.pointerFlag(
+                PointerDevice.touchpad,
+                'disableWhileTyping',
+                fallback: true,
+              ),
+              onChanged: (on) {
+                config.writePointer(
+                  PointerDevice.touchpad,
+                  'disableWhileTyping',
+                  on,
+                );
+                changed();
+              },
+            ),
+            _scrollSpeedRow(context, PointerDevice.touchpad, changed),
           ],
         ),
       ],

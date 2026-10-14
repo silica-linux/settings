@@ -30,6 +30,7 @@ String paneTitle(AppLocalizations l, PaneId pane) => switch (pane) {
   PaneId.internetAccounts => l.paneInternetAccounts,
   PaneId.keyboard => l.paneKeyboard,
   PaneId.mouse => l.paneMouse,
+  PaneId.trackpad => l.paneTrackpad,
   PaneId.printers => l.panePrinters,
 };
 
@@ -104,6 +105,10 @@ List<SearchEntry> searchIndex(AppLocalizations l, Iterable<PaneId> panes) {
     at(l.aboutMemory, PaneId.general, SubPaneId.about),
     at(l.mousePointerSpeed, PaneId.mouse),
     at(l.mouseNaturalScrolling, PaneId.mouse),
+    at(l.mouseScrollSpeed, PaneId.mouse),
+    at(l.trackpadTrackingSpeed, PaneId.trackpad),
+    at(l.trackpadTapToClick, PaneId.trackpad),
+    at(l.mouseNaturalScrolling, PaneId.trackpad),
     at(l.energyPreventSleep, PaneId.energy),
     at(l.soundInputVolume, PaneId.sound),
     at(l.notificationsApps, PaneId.notifications),

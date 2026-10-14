@@ -3,6 +3,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:silica_settings/src/model/panes.dart';
+import 'package:silica_settings/src/panes/input.dart';
+import 'package:silica_settings/src/system/system.dart';
 import 'package:silica_settings/src/system/tools.dart';
 import 'package:silica_ui/silica_ui.dart';
 
@@ -121,6 +123,117 @@ void main() {
     expect(find.text('Logo Space'), findsOneWidget);
   });
 
+  group('Mouse and Trackpad (#74)', () {
+    Finder sliderIn(String key) => find.descendant(
+      of: find.byKey(ValueKey(key)),
+      matching: find.byType(SilicaSlider),
+    );
+    SilicaSlider slider(WidgetTester tester, String key) =>
+        tester.widget<SilicaSlider>(sliderIn(key));
+
+    testWidgets('Mouse writes the mouse object of input.json', (tester) async {
+      final h = await pumpSettings(tester, pane: PaneId.mouse, height: 900);
+      expect(slider(tester, 'mouse speed').value, 0);
+      await tester.drag(sliderIn('mouse speed'), const Offset(400, 0));
+      await tester.pump();
+      expect(h.config.read('input'), {
+        'mouse': {'speed': 1.0},
+      });
+      await tester.tap(switchIn('mouse natural scrolling'));
+      await tester.pump();
+      await choose(tester, 'mouse secondary click', 'Left button');
+      await tester.drag(sliderIn('mouse scroll speed'), const Offset(400, 0));
+      await tester.pump();
+      expect(h.config.read('input'), {
+        'mouse': {
+          'speed': 1.0,
+          'naturalScroll': true,
+          'secondaryClick': 'left',
+          'scrollSpeed': 10.0,
+        },
+      });
+      await tester.drag(sliderIn('mouse scroll speed'), const Offset(-800, 0));
+      await tester.pump();
+      final input = h.config.read('input')['mouse'] as Map;
+      expect(input['scrollSpeed'], 0.1);
+      // The double-click speed has no reader yet.
+      expect(find.textContaining('#74'), findsOneWidget);
+    });
+
+    testWidgets('scroll speed is logarithmic with 1x in the middle', (_) async {
+      expect(scrollSliderOf(1), closeTo(0.5, 1e-9));
+      expect(scrollSpeedOf(0.5), 1.0);
+      expect(scrollSpeedOf(0), 0.1);
+      expect(scrollSpeedOf(1), 10.0);
+      expect(scrollSliderOf(0.01), closeTo(0, 1e-9));
+    });
+
+    testWidgets('the Trackpad pane is in the sidebar only with a touchpad', (
+      tester,
+    ) async {
+      final system = FakeSystem(const SystemState(reachable: true));
+      await pumpSettings(tester, system: system, height: 1300);
+      expect(find.byKey(const ValueKey('pane trackpad')), findsNothing);
+      system.emit(const SystemState(reachable: true, touchpad: true));
+      await tester.pump();
+      await tester.pump();
+      expect(find.byKey(const ValueKey('pane trackpad')), findsOneWidget);
+      system.emit(const SystemState(reachable: true));
+      await tester.pump();
+      await tester.pump();
+      expect(find.byKey(const ValueKey('pane trackpad')), findsNothing);
+    });
+
+    testWidgets('a window on Trackpad falls back when there is no touchpad', (
+      tester,
+    ) async {
+      final h = await pumpSettings(
+        tester,
+        system: FakeSystem(const SystemState(reachable: true)),
+        pane: PaneId.trackpad,
+        height: 1300,
+      );
+      await tester.pump();
+      await tester.pump();
+      expect(h.navigation.pane, PaneId.wifi);
+    });
+
+    testWidgets('Trackpad writes the touchpad object of input.json', (
+      tester,
+    ) async {
+      final h = await pumpSettings(
+        tester,
+        system: FakeSystem(const SystemState(reachable: true, touchpad: true)),
+        pane: PaneId.trackpad,
+        height: 1000,
+      );
+      h.config.write('input', 'mouse', {'speed': 0.5});
+      await tester.tap(switchIn('touchpad tap to click'));
+      await tester.pump();
+      await tester.tap(switchIn('touchpad disable while typing'));
+      await tester.pump();
+      await tester.tap(switchIn('touchpad natural scrolling'));
+      await tester.pump();
+      await choose(
+        tester,
+        'touchpad secondary click',
+        'Click in the bottom right corner',
+      );
+      await tester.drag(sliderIn('touchpad speed'), const Offset(-400, 0));
+      await tester.pump();
+      expect(h.config.read('input'), {
+        'mouse': {'speed': 0.5},
+        'touchpad': {
+          'tapToClick': true,
+          'disableWhileTyping': false,
+          'naturalScroll': true,
+          'secondaryClick': 'bottomRight',
+          'speed': -1.0,
+        },
+      });
+    });
+  });
+
   testWidgets('Users & Groups lists the accounts', (tester) async {
     final tools = FakeTools()
       ..accounts = const [
@@ -168,7 +281,6 @@ void main() {
     PaneId.privacy,
     PaneId.password,
     PaneId.internetAccounts,
-    PaneId.mouse,
     PaneId.accessibility,
     PaneId.search,
   ]) {

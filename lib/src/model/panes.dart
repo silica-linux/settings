@@ -33,6 +33,7 @@ enum PaneId {
   internetAccounts('at', Color(0xFF0A84FF)),
   keyboard('keyboard', Color(0xFF8E8E93)),
   mouse('mouse', Color(0xFF8E8E93)),
+  trackpad('pointer-fill', Color(0xFF8E8E93)),
   printers('printer', Color(0xFF8E8E93));
 
   const PaneId(this.symbol, this.tint);
@@ -46,8 +47,12 @@ enum PaneId {
 }
 
 /// The sidebar blocks, top to bottom. [hasBattery] swaps Energy for Battery, as on a
-/// machine with a battery.
-List<List<PaneId>> paneGroups({required bool hasBattery}) => [
+/// machine with a battery; [hasTrackpad] adds Trackpad after Mouse, as on a machine with a
+/// touchpad (silica-daemon's `input.touchpad`).
+List<List<PaneId>> paneGroups({
+  required bool hasBattery,
+  bool hasTrackpad = false,
+}) => [
   [
     PaneId.wifi,
     PaneId.bluetooth,
@@ -68,7 +73,12 @@ List<List<PaneId>> paneGroups({required bool hasBattery}) => [
   [PaneId.notifications, PaneId.sound, PaneId.focus, PaneId.screenTime],
   [PaneId.lockScreen, PaneId.privacy, PaneId.password, PaneId.users],
   [PaneId.internetAccounts],
-  [PaneId.keyboard, PaneId.mouse, PaneId.printers],
+  [
+    PaneId.keyboard,
+    PaneId.mouse,
+    if (hasTrackpad) PaneId.trackpad,
+    PaneId.printers,
+  ],
 ];
 
 /// The sub-panes that have their own page (pushed inside a pane, with Back).
