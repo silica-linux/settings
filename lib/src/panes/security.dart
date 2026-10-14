@@ -2,7 +2,8 @@
 // and Groups (ST-USR-01), Internet Accounts (ST-ACN-01), Accessibility (ST-ACC-01/02) and
 // Search (ST-SPT-01). Real: the user accounts (passwd and group, administrators from wheel).
 // Silica has no lock screen yet (#50), and the accounts, privacy, accessibility and search
-// settings wait for their backends: each group names its issue.
+// settings wait for their backends: each group names its issue. The Lock Screen's display-off
+// time is power.json's, which Ossido reads (#68).
 
 import 'package:flutter/widgets.dart';
 import 'package:silica_ui/silica_ui.dart';
@@ -14,31 +15,40 @@ import '../style.dart';
 import '../model/issues.dart';
 import '../system/tools.dart';
 import '../ui/grouped.dart';
+import 'power.dart' show idleRow;
 
-class LockScreenPane extends StatelessWidget {
+class LockScreenPane extends StatefulWidget {
   const LockScreenPane({super.key});
 
   @override
+  State<LockScreenPane> createState() => _LockScreenPaneState();
+}
+
+class _LockScreenPaneState extends State<LockScreenPane> {
+  @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    // The reference machine's values are shown: 30 minutes, 15 minutes.
+    // The display turns off by power.json (Ossido, #68); the lock itself has no screen yet.
     return PanePage(
       children: [
         SettingsGroup(
-          unavailable: true,
-          issue: Issues.lockScreen,
+          footer: l.notAvailableIssue(Issues.lockScreen),
           children: [
-            PopUpRow<int>(
+            idleRow(
+              context,
+              key: const ValueKey('lock display off'),
               title: l.lockDisplayOff,
-              items: [PopUpItem(30, l.lockMinutes(30))],
-              value: 30,
-              onChanged: (_) {},
+              configKey: 'displayOffMinutes',
+              changed: () => setState(() {}),
             ),
-            PopUpRow<int>(
-              title: l.lockPasswordDelay,
-              items: [PopUpItem(900, l.lockMinutes(15))],
-              value: 900,
-              onChanged: (_) {},
+            // The reference machine's value is shown: 15 minutes.
+            Unavailable(
+              child: PopUpRow<int>(
+                title: l.lockPasswordDelay,
+                items: [PopUpItem(900, l.lockMinutes(15))],
+                value: 900,
+                onChanged: (_) {},
+              ),
             ),
           ],
         ),

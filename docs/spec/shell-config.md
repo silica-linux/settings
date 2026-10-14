@@ -163,6 +163,18 @@ Read by silica-daemon's sound service. `alert` is one of the `alert-*` names tha
 (`SetUiSoundsEnabled`), not by Settings directly. The controls are enabled only while the sound
 service answers; Settings plays the preview with `PlayAlert`.
 
+### power.json
+
+```json
+{ "displayOffMinutes": 10, "sleepMinutes": 30, "preventSleep": false }
+```
+
+Read by Ossido (idle time, display off, asking the daemon to suspend) and by silica-daemon
+(`preventSleep`: a logind `idle` inhibitor, read again every 30 s). Minutes are numbers above
+zero; 0 or a missing key means never. Settings offers 1, 2, 5, 10, 15, 30 minutes and 1, 2,
+3 hours, and shows any other saved value as it is. The Energy and Battery panes write all
+three; the Lock Screen pane writes `displayOffMinutes`.
+
 ## Other files (for completeness)
 
 `theme.json` (`accent`, `highlight`, `sidebarIconSize`, `scrollBars`), `lockscreen.json` and `settings.json` (`lastPane`, Settings'

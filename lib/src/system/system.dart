@@ -37,6 +37,8 @@ class SystemState {
     this.audioName = '',
     this.doNotDisturb = false,
     this.dark = false,
+    this.preventSleep = false,
+    this.inhibited = false,
     this.appearanceMode = '',
     this.touchpad = false,
     this.mouse = false,
@@ -59,6 +61,10 @@ class SystemState {
   final String audioName;
   final bool doNotDisturb;
   final bool dark;
+
+  /// power.json `preventSleep` as the daemon read it, and whether its logind inhibitor is held.
+  final bool preventSleep;
+  final bool inhibited;
 
   /// `light`, `dark` or `auto`; empty when the daemon does not say (`dark` then decides).
   final String appearanceMode;
@@ -96,6 +102,8 @@ class SystemState {
       audioName: text('audio.name'),
       doNotDisturb: flag('dnd'),
       dark: flag('appearance.dark'),
+      preventSleep: flag('power.preventSleep'),
+      inhibited: flag('power.inhibited'),
       appearanceMode: text('appearance.mode'),
       touchpad: flag('input.touchpad'),
       mouse: flag('input.mouse'),

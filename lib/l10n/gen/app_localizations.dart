@@ -3079,6 +3079,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The sound service isn’t running: these can’t be changed now.'**
   String get soundNoService;
+
+  /// No description provided for @energyDisplayOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn the display off after'**
+  String get energyDisplayOff;
+
+  /// No description provided for @energySleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Put the computer to sleep after'**
+  String get energySleep;
+
+  /// No description provided for @energyInhibited.
+  ///
+  /// In en, this message translates to:
+  /// **'The computer is being kept awake now.'**
+  String get energyInhibited;
 }
 
 class _AppLocalizationsDelegate

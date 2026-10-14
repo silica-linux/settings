@@ -694,5 +694,8 @@
         "type": "int"
       }
     }
-  }
+  },
+  "energyDisplayOff": "Turn the display off after",
+  "energySleep": "Put the computer to sleep after",
+  "energyInhibited": "The computer is being kept awake now."
 }

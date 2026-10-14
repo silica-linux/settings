@@ -1,7 +1,9 @@
 // Energy (ST-PWR-01: three switches) and Battery (machines with a battery). Real: the level and
 // the charge (UPower through silica-daemon), the time left and the battery's health (UPower), the
-// power mode and Low Power Mode (power-profiles-daemon, when the system has it). The sleep and
-// wake policies and optimized charging wait for their backends (#68).
+// power mode and Low Power Mode (power-profiles-daemon, when the system has it), and the idle
+// policy in power.json: when the display turns off, when the computer sleeps and whether it may
+// (Ossido counts the idle time; silica-daemon holds the inhibitor, #68). Waking for network
+// access, starting again after a power failure and optimized charging wait for their backends.
 
 import 'package:flutter/widgets.dart';
 import 'package:silica_ui/silica_ui.dart';
@@ -9,6 +11,7 @@ import 'package:silica_ui/silica_ui.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../model/issues.dart';
 import '../services.dart';
+import '../system/settings_files.dart';
 import '../style.dart';
 import '../system/tools.dart';
 import '../ui/errors.dart';
@@ -52,6 +55,87 @@ mixin _PowerState<T extends StatefulWidget> on State<T> {
   }
 }
 
+/// The idle times offered, in minutes; 0 is never.
+const List<int> idleChoices = [1, 2, 5, 10, 15, 30, 60, 120, 180, 0];
+
+/// A pop-up for one of power.json's idle times (`displayOffMinutes`, `sleepMinutes`).
+Widget idleRow(
+  BuildContext context, {
+  required Key key,
+  required String title,
+  required String configKey,
+  required VoidCallback changed,
+}) {
+  final l = AppLocalizations.of(context);
+  final config = ServicesScope.of(context).config;
+  final saved = config.idleMinutes(configKey).ceil();
+  String label(int minutes) => minutes == 0
+      ? l.lockNever
+      : minutes % 60 == 0 && minutes >= 60
+      ? l.lockHours(minutes ~/ 60)
+      : l.lockMinutes(minutes);
+  final choices = [
+    for (final m in idleChoices.followedBy([saved]).toSet()) m,
+  ]..sort((a, b) => (a == 0 ? 1 << 30 : a).compareTo(b == 0 ? 1 << 30 : b));
+  return PopUpRow<int>(
+    key: key,
+    title: title,
+    items: [for (final m in choices) PopUpItem(m, label(m))],
+    value: saved,
+    onChanged: (minutes) {
+      config.writeIdleMinutes(configKey, minutes);
+      changed();
+    },
+  );
+}
+
+/// When the display turns off, when the computer sleeps, and whether it may (power.json).
+class SleepGroup extends StatefulWidget {
+  const SleepGroup({super.key});
+
+  @override
+  State<SleepGroup> createState() => _SleepGroupState();
+}
+
+class _SleepGroupState extends State<SleepGroup> {
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final config = ServicesScope.of(context).config;
+    void changed() => setState(() {});
+    return SystemStateBuilder(
+      builder: (context, state) => SettingsGroup(
+        children: [
+          idleRow(
+            context,
+            key: const ValueKey('display off'),
+            title: l.energyDisplayOff,
+            configKey: 'displayOffMinutes',
+            changed: changed,
+          ),
+          idleRow(
+            context,
+            key: const ValueKey('sleep after'),
+            title: l.energySleep,
+            configKey: 'sleepMinutes',
+            changed: changed,
+          ),
+          SwitchRow(
+            key: const ValueKey('prevent sleep'),
+            title: l.energyPreventSleep,
+            subtitle: state.inhibited ? l.energyInhibited : null,
+            value: config.flag('power', 'preventSleep', fallback: false),
+            onChanged: (on) {
+              config.write('power', 'preventSleep', on);
+              changed();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class EnergyPane extends StatefulWidget {
   const EnergyPane({super.key});
 
@@ -82,11 +166,11 @@ class _EnergyPaneState extends State<EnergyPane> with _PowerState {
             ],
           ),
         if (error case final e?) ErrorLine(e),
+        const SleepGroup(),
         SettingsGroup(
           unavailable: true,
           issue: Issues.power,
           children: [
-            SwitchRow(title: l.energyPreventSleep, value: false),
             SwitchRow(title: l.energyWakeForNetwork, value: false),
             SwitchRow(title: l.energyRestartAfterPowerFailure, value: false),
           ],
@@ -173,6 +257,7 @@ class _BatteryPaneState extends State<BatteryPane> with _PowerState {
                   ),
               ],
             ),
+            const SleepGroup(),
             SettingsGroup(
               children: [
                 if (profiles.contains(PowerProfile.powerSaver))

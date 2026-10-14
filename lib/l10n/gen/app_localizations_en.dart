@@ -1609,4 +1609,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get soundNoService =>
       'The sound service isn’t running: these can’t be changed now.';
+
+  @override
+  String get energyDisplayOff => 'Turn the display off after';
+
+  @override
+  String get energySleep => 'Put the computer to sleep after';
+
+  @override
+  String get energyInhibited => 'The computer is being kept awake now.';
 }

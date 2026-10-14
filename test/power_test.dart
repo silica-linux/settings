@@ -65,5 +65,92 @@ void main() {
       expect(find.byKey(const ValueKey('power mode')), findsNothing);
       expect(find.textContaining('#68'), findsWidgets);
     });
+
+    testWidgets('Energy: display off, sleep and prevent sleep (#68)', (
+      tester,
+    ) async {
+      final h = await pumpSettings(tester, pane: PaneId.energy, height: 900);
+      await settle(tester);
+      expect(find.text('Never'), findsNWidgets(2));
+      await choose(tester, 'display off', '10 minutes');
+      await tester.pump(const Duration(seconds: 1));
+      await choose(tester, 'sleep after', '2 hours');
+      await tester.pump(const Duration(seconds: 1));
+      await tester.tap(switchIn('prevent sleep'));
+      await tester.pump();
+      expect(h.config.read('power'), {
+        'displayOffMinutes': 10,
+        'sleepMinutes': 120,
+        'preventSleep': true,
+      });
+      // Never is 0, which Ossido reads as no limit; the other keys stay.
+      await choose(tester, 'sleep after', 'Never');
+      await tester.pump(const Duration(seconds: 1));
+      expect(h.config.read('power'), {
+        'displayOffMinutes': 10,
+        'sleepMinutes': 0,
+        'preventSleep': true,
+      });
+      await tester.tap(switchIn('prevent sleep'));
+      await tester.pump();
+      expect(h.config.flag('power', 'preventSleep', fallback: true), isFalse);
+    });
+
+    testWidgets(
+      'Energy shows the saved times and when the computer is held awake',
+      (tester) async {
+        final system = FakeSystem(const SystemState(reachable: true));
+        final h = await pumpSettings(
+          tester,
+          pane: PaneId.energy,
+          system: system,
+          height: 900,
+        );
+        h.config.replace('power', {
+          'displayOffMinutes': 45,
+          'sleepMinutes': 30,
+          'preventSleep': true,
+        });
+        system.emit(
+          const SystemState(
+            reachable: true,
+            preventSleep: true,
+            inhibited: true,
+          ),
+        );
+        await tester.pump();
+        await tester.pump();
+        expect(find.text('45 minutes'), findsOneWidget);
+        expect(find.text('30 minutes'), findsOneWidget);
+        expect(
+          find.text('The computer is being kept awake now.'),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets('Battery has the same sleep settings', (tester) async {
+      final h = await pumpSettings(
+        tester,
+        tools: profiles,
+        height: 900,
+        system: FakeSystem(
+          const SystemState(reachable: true, batteryPresent: true),
+        ),
+      );
+      h.navigation.openPane(PaneId.battery);
+      await settle(tester);
+      await choose(tester, 'display off', '5 minutes');
+      expect(h.config.read('power')['displayOffMinutes'], 5);
+    });
+
+    testWidgets('Lock Screen turns the display off through power.json (#68)', (
+      tester,
+    ) async {
+      final h = await pumpSettings(tester, pane: PaneId.lockScreen);
+      await choose(tester, 'lock display off', '30 minutes');
+      expect(h.config.read('power'), {'displayOffMinutes': 30});
+      expect(h.config.read('lockscreen'), isEmpty);
+    });
   });
 }

@@ -1612,4 +1612,13 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get soundNoService =>
       'Il servizio audio non è attivo: queste opzioni non si possono cambiare ora.';
+
+  @override
+  String get energyDisplayOff => 'Spegni lo schermo dopo';
+
+  @override
+  String get energySleep => 'Metti il computer in stop dopo';
+
+  @override
+  String get energyInhibited => 'Il computer è tenuto sveglio ora.';
 }

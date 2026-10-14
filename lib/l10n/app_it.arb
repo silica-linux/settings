@@ -496,5 +496,8 @@
   "appearanceAutoNote": "Automatico passa allo scuro al tramonto e torna al chiaro all’alba, secondo il luogo del fuso orario.",
   "soundAlertPlay": "Riproduci",
   "soundEffectsPending": "La riproduzione degli effetti su un dispositivo scelto e il suono all’avvio non sono ancora disponibili (#{issue}).",
-  "soundNoService": "Il servizio audio non è attivo: queste opzioni non si possono cambiare ora."
+  "soundNoService": "Il servizio audio non è attivo: queste opzioni non si possono cambiare ora.",
+  "energyDisplayOff": "Spegni lo schermo dopo",
+  "energySleep": "Metti il computer in stop dopo",
+  "energyInhibited": "Il computer è tenuto sveglio ora."
 }
