@@ -1,8 +1,8 @@
 // Lock Screen (ST-LCK-01), Privacy and Security (ST-PRV-01), Login Password (ST-USR-01), Users
 // and Groups (ST-USR-01), Internet Accounts (ST-ACN-01), Accessibility (ST-ACC-01/02) and
-// Search (ST-SPT-01). Real: the current user (passwd) and the lock screen choices, saved in
-// lockscreen.json for the lock screen Silica does not have yet (the footer says so). The
-// rest has no backend yet.
+// Search (ST-SPT-01). Real: the user accounts (passwd and group, administrators from wheel).
+// Silica has no lock screen yet (#50), and the accounts, privacy, accessibility and search
+// settings wait for their backends: each group names its issue.
 
 import 'package:flutter/widgets.dart';
 import 'package:silica_ui/silica_ui.dart';
@@ -11,108 +11,63 @@ import '../../l10n/gen/app_localizations.dart';
 import '../model/panes.dart';
 import '../services.dart';
 import '../style.dart';
+import '../model/issues.dart';
+import '../system/tools.dart';
 import '../ui/grouped.dart';
-import '../ui/symbol.dart';
 
-class LockScreenPane extends StatefulWidget {
+class LockScreenPane extends StatelessWidget {
   const LockScreenPane({super.key});
 
   @override
-  State<LockScreenPane> createState() => _LockScreenPaneState();
-}
-
-class _LockScreenPaneState extends State<LockScreenPane> {
-  @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final config = ServicesScope.of(context).config;
-    int minutes(String key, int fallback) =>
-        config.number('lockscreen', key, fallback: fallback.toDouble()).round();
-    bool flag(String key, bool fallback) =>
-        config.flag('lockscreen', key, fallback: fallback);
-    void set(String key, Object value) =>
-        setState(() => config.write('lockscreen', key, value));
-    String duration(int m) => m == 0
-        ? l.lockNever
-        : m < 60
-        ? l.lockMinutes(m)
-        : l.lockHours(m ~/ 60);
-    String delay(int s) => s == 0
-        ? l.lockImmediately
-        : s < 60
-        ? l.lockSeconds(s)
-        : s < 3600
-        ? l.lockMinutes(s ~/ 60)
-        : l.lockHours(s ~/ 3600);
-    // The values read on the reference machine are the defaults: 30 minutes, 15 minutes.
+    // The reference machine's values are shown: 30 minutes, 15 minutes.
     return PanePage(
       children: [
         SettingsGroup(
-          footer: l.lockSavedForLater,
+          unavailable: true,
+          issue: Issues.lockScreen,
           children: [
             PopUpRow<int>(
-              key: const ValueKey('display off'),
               title: l.lockDisplayOff,
-              items: [
-                for (final m in [1, 2, 5, 10, 20, 30, 60, 180, 0])
-                  PopUpItem(m, duration(m)),
-              ],
-              value: minutes('displayOffMinutes', 30),
-              onChanged: (m) => set('displayOffMinutes', m),
+              items: [PopUpItem(30, l.lockMinutes(30))],
+              value: 30,
+              onChanged: (_) {},
             ),
             PopUpRow<int>(
-              key: const ValueKey('password delay'),
               title: l.lockPasswordDelay,
-              items: [
-                for (final s in [0, 5, 60, 300, 900, 3600, 28800])
-                  PopUpItem(s, delay(s)),
-              ],
-              value: minutes('passwordDelaySeconds', 900),
-              onChanged: (s) => set('passwordDelaySeconds', s),
+              items: [PopUpItem(900, l.lockMinutes(15))],
+              value: 900,
+              onChanged: (_) {},
             ),
           ],
         ),
         SettingsGroup(
+          unavailable: true,
+          issue: Issues.lockScreen,
           children: [
-            SwitchRow(
-              title: l.lockShowUser,
-              value: flag('showUser', true),
-              onChanged: (v) => set('showUser', v),
-            ),
-            SwitchRow(
-              title: l.lockShowHints,
-              value: flag('showHints', false),
-              onChanged: (v) => set('showHints', v),
-            ),
-            SwitchRow(
-              title: l.lockShowMessage,
-              value: flag('showMessage', false),
-              onChanged: (v) => set('showMessage', v),
-            ),
+            SwitchRow(title: l.lockShowUser, value: true),
+            SwitchRow(title: l.lockShowHints, value: false),
+            SwitchRow(title: l.lockShowMessage, value: false),
           ],
         ),
         SettingsGroup(
+          unavailable: true,
+          issue: Issues.lockScreen,
           children: [
             ValueRow(
               title: l.lockLoginWindowShows,
+              alignTop: true,
               trailing: SilicaRadioGroup<String>(
                 options: [
                   RadioOption('list', l.lockListOfUsers),
                   RadioOption('fields', l.lockNameAndPassword),
                 ],
-                value: config.text(
-                  'lockscreen',
-                  'loginWindow',
-                  fallback: 'list',
-                ),
-                onChanged: (v) => set('loginWindow', v),
+                value: 'list',
+                onChanged: (_) {},
               ),
             ),
-            SwitchRow(
-              title: l.lockShowPowerButtons,
-              value: flag('showPowerButtons', true),
-              onChanged: (v) => set('showPowerButtons', v),
-            ),
+            SwitchRow(title: l.lockShowPowerButtons, value: true),
           ],
         ),
       ],
@@ -136,6 +91,7 @@ class PrivacyPane extends StatelessWidget {
         ),
         SettingsGroup(
           unavailable: true,
+          issue: Issues.privacy,
           children: [
             for (final (title, symbol) in [
               (l.privacyLocation, 'location'),
@@ -144,7 +100,12 @@ class PrivacyPane extends StatelessWidget {
               (l.privacyScreenRecording, 'record-circle'),
               (l.privacyFiles, 'folder'),
             ])
-              NavRow(title: title, symbol: symbol, tint: PaneId.privacy.tint),
+              NavRow(
+                title: title,
+                symbol: symbol,
+                tint: PaneId.privacy.tint,
+                onTap: () {},
+              ),
           ],
         ),
       ],
@@ -162,11 +123,13 @@ class PasswordPane extends StatelessWidget {
       children: [
         SettingsGroup(
           unavailable: true,
+          issue: Issues.users,
           children: [
             ButtonRow(
               title: l.passwordLogin,
               subtitle: l.passwordSet,
               label: l.passwordChange,
+              onPressed: () {},
             ),
             SwitchRow(title: l.passwordFingerprint, value: false),
           ],
@@ -176,61 +139,112 @@ class PasswordPane extends StatelessWidget {
   }
 }
 
-class UsersPane extends StatelessWidget {
+class UsersPane extends StatefulWidget {
   const UsersPane({super.key});
+
+  @override
+  State<UsersPane> createState() => _UsersPaneState();
+}
+
+class _UsersPaneState extends State<UsersPane> {
+  List<UserAccount>? _users;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_users == null) {
+      ServicesScope.of(context).tools.users().then((u) {
+        if (mounted) setState(() => _users = u);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final info = ServicesScope.of(context).info;
     final colors = SettingsColors.of(context);
+    final users = [...?_users];
+    // Without passwd entries (a container), the session's user still shows.
+    if (users.isEmpty && info.userLogin.isNotEmpty) {
+      users.add(
+        UserAccount(
+          login: info.userLogin,
+          name: info.userName,
+          uid: 0,
+          admin: true,
+        ),
+      );
+    }
+    users.sort((a, b) {
+      if (a.login == info.userLogin) return -1;
+      if (b.login == info.userLogin) return 1;
+      return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+    });
+    Widget avatar(UserAccount u) => Container(
+      width: 32,
+      height: 32,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFFA5A5AA), Color(0xFF85858B)],
+        ),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        (u.name.isEmpty ? u.login : u.name).characters.first.toUpperCase(),
+        style: settingsText(
+          14,
+          const Color(0xFFFFFFFF),
+          weight: FontWeight.w600,
+        ),
+      ),
+    );
     return PanePage(
       children: [
         SettingsGroup(
           children: [
-            ValueRow(
-              key: const ValueKey('current user'),
-              height: 52,
-              title: info.userName.isEmpty ? l.accountLocalUser : info.userName,
-              subtitle: info.userLogin.isEmpty
-                  ? l.usersAdmin
-                  : '${info.userLogin} · ${l.usersAdmin}',
-              leading: Container(
-                width: 32,
-                height: 32,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color(0xFF8E8E93),
+            for (final u in users)
+              ValueRow(
+                key: ValueKey(
+                  u.login == info.userLogin
+                      ? 'current user'
+                      : 'user ${u.login}',
                 ),
-                alignment: Alignment.center,
-                child: SettingsSymbol(
-                  'person-fill',
-                  color: const Color(0xFFFFFFFF),
-                  size: 18,
-                ),
+                height: 52,
+                title: u.name,
+                subtitle: [
+                  u.login,
+                  u.admin ? l.usersAdmin : l.usersStandard,
+                ].join(' · '),
+                leading: avatar(u),
+                trailing: u.login == info.userLogin
+                    ? Text(
+                        l.usersYou,
+                        style: settingsText(11, colors.secondary),
+                      )
+                    : null,
               ),
-              trailing: Text(
-                l.usersYou,
-                style: settingsText(11, colors.secondary),
-              ),
-            ),
           ],
         ),
         SettingsGroup(
           unavailable: true,
+          issue: Issues.users,
           children: [
             SwitchRow(title: l.usersGuest, value: false),
             PopUpRow<int>(
               title: l.usersAutomaticLogin,
               items: [PopUpItem(0, l.lockNever)],
               value: 0,
+              onChanged: (_) {},
             ),
-          ],
-        ),
-        ButtonBar(
-          buttons: [
-            SilicaButton(label: l.usersAddGroup, onPressed: null),
-            SilicaButton(label: l.usersAddUser, onPressed: null),
+            ButtonRow(
+              title: l.usersAddUser,
+              label: l.addButton,
+              onPressed: () {},
+            ),
           ],
         ),
       ],
@@ -248,10 +262,15 @@ class InternetAccountsPane extends StatelessWidget {
       children: [
         SettingsGroup(
           unavailable: true,
-          children: [EmptyState(l.accountsNone)],
-        ),
-        ButtonBar(
-          buttons: [SilicaButton(label: l.accountsAdd, onPressed: null)],
+          issue: Issues.internetAccounts,
+          children: [
+            EmptyState(l.accountsNone),
+            ButtonRow(
+              title: l.accountsAdd,
+              label: l.addButton,
+              onPressed: () {},
+            ),
+          ],
         ),
       ],
     );
@@ -268,9 +287,10 @@ class AccessibilityPane extends StatelessWidget {
     Widget group(String heading, List<(String, String)> rows) => SettingsGroup(
       heading: heading,
       unavailable: true,
+      issue: Issues.accessibility,
       children: [
         for (final (title, symbol) in rows)
-          NavRow(title: title, symbol: symbol, tint: blue),
+          NavRow(title: title, symbol: symbol, tint: blue, onTap: () {}),
       ],
     );
     return PanePage(
@@ -319,6 +339,7 @@ class SearchPane extends StatelessWidget {
         ),
         SettingsGroup(
           unavailable: true,
+          issue: Issues.search,
           children: [
             SwitchRow(title: l.searchHelpImprove, value: false),
             SwitchRow(title: l.searchShowRelated, value: true),
@@ -327,6 +348,7 @@ class SearchPane extends StatelessWidget {
         SettingsGroup(
           heading: l.searchResultsFromApps,
           unavailable: true,
+          issue: Issues.search,
           children: [
             SwitchRow(title: l.searchApplications, value: true),
             SwitchRow(title: l.searchFolders, value: true),

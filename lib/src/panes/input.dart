@@ -1,8 +1,9 @@
 // Keyboard (ST-KBD-01..14), Mouse (ST-INP-01) and Printers and Scanners (ST-PRT-01).
-// Real: the key repeat rate and delay, saved in keyboard.json for Ossido's wl_keyboard
-// repeat_info; the list of Silica's system shortcuts (read-only, the bindings of silica-desktop's
-// command catalog); the CUPS printers (lpstat). Input sources, dictation, the pointer settings
-// and adding printers have no backend yet.
+// Real: the list of Silica's system shortcuts (read-only, the bindings of silica-desktop's
+// command catalog); the CUPS printers (lpstat) and the default one (lpoptions). Ossido reads
+// key repeat only from its environment at start: the sliders show the values in effect and
+// wait for Ossido to read keyboard.json (#73). Input sources, dictation (#73), the pointer
+// settings (#74) and adding printers (#56) wait for their backends.
 
 import 'package:flutter/widgets.dart';
 import 'package:silica_ui/silica_ui.dart';
@@ -11,6 +12,7 @@ import '../../l10n/gen/app_localizations.dart';
 import '../services.dart';
 import '../style.dart';
 import '../system/host.dart';
+import '../model/issues.dart';
 import '../ui/grouped.dart';
 
 /// The key repeat rate slider's steps, in repeats per second; 0 turns repeat off. The
@@ -44,48 +46,37 @@ class KeyboardPane extends StatefulWidget {
 }
 
 class _KeyboardPaneState extends State<KeyboardPane> {
-  double? _rate;
-  double? _delay;
+  /// The repeat in effect: `OSSIDO_KEY_REPEAT` (`delay,rate`) when the session sets it,
+  /// Ossido's defaults otherwise (375 ms, 11 per second).
+  (int, int) _effective(Map<String, String> env) {
+    final parts = (env['OSSIDO_KEY_REPEAT'] ?? '').split(',');
+    if (parts.length == 2) {
+      final delay = int.tryParse(parts[0].trim());
+      final rate = int.tryParse(parts[1].trim());
+      if (delay != null && rate != null && delay >= 0 && rate >= 0) {
+        return (delay, rate);
+      }
+    }
+    return (375, 11);
+  }
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final config = ServicesScope.of(context).config;
-    final rate =
-        _rate ??
-        nearestStep(
-          repeatRateSteps,
-          config
-              .number(
-                'keyboard',
-                'repeatRate',
-                fallback: defaultRepeatRate.toDouble(),
-              )
-              .round(),
-        ).toDouble();
-    final delay =
-        _delay ??
-        nearestStep(
-          repeatDelaySteps,
-          config
-              .number(
-                'keyboard',
-                'repeatDelay',
-                fallback: defaultRepeatDelay.toDouble(),
-              )
-              .round(),
-        ).toDouble();
+    final (delay, rate) = _effective(ServicesScope.of(context).env);
     return PanePage(
       children: [
         SettingsGroup(
-          footer: l.keyboardRepeatNote,
+          unavailable: true,
+          issue: Issues.keyboard,
+          footer: l.keyboardRepeatNow(rate, delay),
           children: [
             ValueRow(
               title: l.keyboardRepeatRate,
               height: 56,
               trailing: SilicaSlider(
                 key: const ValueKey('repeat rate'),
-                value: rate,
+                value: nearestStep(repeatRateSteps, rate).toDouble(),
                 min: 0,
                 max: repeatRateSteps.length - 1,
                 divisions: repeatRateSteps.length - 1,
@@ -93,15 +84,7 @@ class _KeyboardPaneState extends State<KeyboardPane> {
                 labels: [l.keyboardOff, l.keyboardSlow, l.keyboardFast],
                 width: 240,
                 semanticLabel: l.keyboardRepeatRate,
-                // Divisions: onChanged fires once per step, so each step is written.
-                onChanged: (v) {
-                  setState(() => _rate = v);
-                  config.write(
-                    'keyboard',
-                    'repeatRate',
-                    repeatRateSteps[v.round()],
-                  );
-                },
+                onChanged: (_) {},
               ),
             ),
             ValueRow(
@@ -109,7 +92,7 @@ class _KeyboardPaneState extends State<KeyboardPane> {
               height: 56,
               trailing: SilicaSlider(
                 key: const ValueKey('repeat delay'),
-                value: delay,
+                value: nearestStep(repeatDelaySteps, delay).toDouble(),
                 min: 0,
                 max: repeatDelaySteps.length - 1,
                 divisions: repeatDelaySteps.length - 1,
@@ -117,25 +100,14 @@ class _KeyboardPaneState extends State<KeyboardPane> {
                 labels: [l.keyboardLong, l.keyboardShort],
                 width: 240,
                 semanticLabel: l.keyboardRepeatDelay,
-                onChanged: (v) {
-                  setState(() => _delay = v);
-                  config.write(
-                    'keyboard',
-                    'repeatDelay',
-                    repeatDelaySteps[v.round()],
-                  );
-                },
+                onChanged: (_) {},
               ),
             ),
-          ],
-        ),
-        SettingsGroup(
-          unavailable: true,
-          children: [
             PopUpRow<int>(
               title: l.keyboardGlobeKey,
               items: [PopUpItem(0, l.keyboardDoNothing)],
               value: 0,
+              onChanged: (_) {},
             ),
             SwitchRow(title: l.keyboardNavigation, value: false),
           ],
@@ -145,6 +117,7 @@ class _KeyboardPaneState extends State<KeyboardPane> {
             SilicaButton(
               key: const ValueKey('shortcuts'),
               label: l.keyboardShortcutsButton,
+              size: ControlSize.small,
               onPressed: () => showShortcuts(context),
             ),
           ],
@@ -152,18 +125,25 @@ class _KeyboardPaneState extends State<KeyboardPane> {
         SettingsGroup(
           heading: l.keyboardTextInput,
           unavailable: true,
+          issue: Issues.keyboard,
           children: [
             ButtonRow(
               title: l.keyboardInputSources,
               subtitle: l.keyboardInputSourcesValue,
               label: l.edit,
+              onPressed: () {},
             ),
-            ButtonRow(title: l.keyboardTextReplacements, label: l.edit),
+            ButtonRow(
+              title: l.keyboardTextReplacements,
+              label: l.edit,
+              onPressed: () {},
+            ),
           ],
         ),
         SettingsGroup(
           heading: l.keyboardDictation,
           unavailable: true,
+          issue: Issues.keyboard,
           children: [SwitchRow(title: l.keyboardDictation, value: false)],
         ),
       ],
@@ -352,17 +332,23 @@ class MousePane extends StatelessWidget {
       children: [
         SettingsGroup(
           unavailable: true,
+          issue: Issues.pointer,
           children: [
             SliderRow(
               title: l.mousePointerSpeed,
               value: 0.5,
               labels: [l.keyboardSlow, l.keyboardFast],
             ),
-            SwitchRow(title: l.mouseNaturalScrolling, value: true),
+            SwitchRow(
+              title: l.mouseNaturalScrolling,
+              subtitle: l.mouseNaturalScrollingHelp,
+              value: true,
+            ),
             PopUpRow<int>(
               title: l.mouseSecondaryClick,
               items: [PopUpItem(0, l.mouseRightButton)],
               value: 0,
+              onChanged: (_) {},
             ),
             SliderRow(
               title: l.mouseDoubleClickSpeed,
@@ -390,11 +376,25 @@ class PrintersPane extends StatefulWidget {
 
 class _PrintersPaneState extends State<PrintersPane> {
   Future<List<Printer>>? _printers;
+  String? _error;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _printers ??= ServicesScope.of(context).host.printers();
+  }
+
+  /// Makes [name] the user's default printer (`lpoptions -d`, no administrator needed).
+  Future<void> _setDefault(String name) async {
+    final host = ServicesScope.of(context).host;
+    final out = await host.run('lpoptions', ['-d', name]);
+    if (!mounted) return;
+    setState(() {
+      _error = out == null
+          ? AppLocalizations.of(context).printersDefaultFailed
+          : null;
+      _printers = host.printers();
+    });
   }
 
   @override
@@ -407,20 +407,25 @@ class _PrintersPaneState extends State<PrintersPane> {
         return PanePage(
           children: [
             SettingsGroup(
-              unavailable: true,
               children: [
-                PopUpRow<int>(
+                PopUpRow<String>(
+                  key: const ValueKey('default printer'),
                   title: l.printersDefault,
-                  items: [PopUpItem(0, l.printersLastUsed)],
-                  value: 0,
+                  items: [for (final p in printers) PopUpItem(p.name, p.name)],
+                  value: printers.where((p) => p.isDefault).firstOrNull?.name,
+                  onChanged: printers.isEmpty ? null : _setDefault,
                 ),
-                PopUpRow<int>(
-                  title: l.printersPaperSize,
-                  items: [PopUpItem(0, 'A4')],
-                  value: 0,
+                Unavailable(
+                  child: PopUpRow<int>(
+                    title: l.printersPaperSize,
+                    items: const [PopUpItem(0, 'A4')],
+                    value: 0,
+                    onChanged: (_) {},
+                  ),
                 ),
               ],
             ),
+            if (_error case final error?) ErrorLine(error),
             SettingsGroup(
               children: [
                 if (printers.isEmpty)
@@ -434,8 +439,10 @@ class _PrintersPaneState extends State<PrintersPane> {
                     ),
               ],
             ),
-            ButtonBar(
-              buttons: [SilicaButton(label: l.printersAdd, onPressed: null)],
+            SettingsGroup(
+              unavailable: true,
+              issue: Issues.printers,
+              children: [ButtonRow(title: l.printersAdd, label: l.addButton)],
             ),
           ],
         );
