@@ -18,6 +18,9 @@ void main(List<String> args) {
   WidgetsFlutterBinding.ensureInitialized();
   // The toolbar is unified with the window: Ossido draws only the window buttons.
   SilicaWindow.setFullSizeContent(toolbarHeight).ignore();
+  // A single-window app: it quits with its window and comes back in the same place
+  // (APP-LC; Ossido remembers where the window was).
+  SilicaApp.quitWhenLastWindowCloses = true;
   // 832 wide, fixed; the height is free (ST-NAV-01).
   SilicaWindow.setSizeLimits(
     min: const Size(SettingsMetrics.windowWidth, SettingsMetrics.minHeight),
