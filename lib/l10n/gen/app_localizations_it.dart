@@ -699,9 +699,6 @@ class AppLocalizationsIt extends AppLocalizations {
   String get soundAlert => 'Suono di avviso';
 
   @override
-  String get soundAlertDefault => 'Predefinito';
-
-  @override
   String get soundAlertVolume => 'Volume degli avvisi';
 
   @override
@@ -1476,11 +1473,6 @@ class AppLocalizationsIt extends AppLocalizations {
   String get languageChooseRegion => 'Scegli i formati';
 
   @override
-  String soundEffectsNote(int issue) {
-    return 'I suoni dell\'interfaccia vengono dal servizio audio di sistema; i suoni di avviso e gli altri effetti lo aspettano (#$issue).';
-  }
-
-  @override
   String get powerMode => 'Modalità di alimentazione';
 
   @override
@@ -1608,4 +1600,16 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get appearanceAutoNote =>
       'Automatico passa allo scuro al tramonto e torna al chiaro all’alba, secondo il luogo del fuso orario.';
+
+  @override
+  String get soundAlertPlay => 'Riproduci';
+
+  @override
+  String soundEffectsPending(int issue) {
+    return 'La riproduzione degli effetti su un dispositivo scelto e il suono all’avvio non sono ancora disponibili (#$issue).';
+  }
+
+  @override
+  String get soundNoService =>
+      'Il servizio audio non è attivo: queste opzioni non si possono cambiare ora.';
 }

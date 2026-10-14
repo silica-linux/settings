@@ -3,8 +3,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:silica_settings/src/model/panes.dart';
+import 'package:silica_settings/src/panes/attention.dart';
 import 'package:silica_settings/src/system/system.dart';
 import 'package:silica_settings/src/system/tools.dart';
+import 'package:silica_ui/silica_ui.dart';
 
 import 'fakes.dart';
 import 'pane_helpers.dart';
@@ -123,13 +125,86 @@ void main() {
       expect(system.uiSounds, isFalse);
     });
 
-    testWidgets('without the sound service the switch waits (#64)', (
+    testWidgets('without the sound service the effects wait (#64)', (
       tester,
     ) async {
-      await pumpSettings(tester, pane: PaneId.sound);
+      final h = await pumpSettings(tester, pane: PaneId.sound);
       await settle(tester);
       expect(find.byKey(const ValueKey('ui sounds')), findsNothing);
-      expect(find.textContaining('#64'), findsOneWidget);
+      expect(
+        find.textContaining('sound service isn’t running'),
+        findsOneWidget,
+      );
+      expect(
+        tester
+            .widget<SilicaButton>(find.byKey(const ValueKey('play alert')))
+            .onPressed,
+        isNull,
+      );
+      expect(
+        tester.widget<SilicaSwitch>(switchIn('volume feedback')).onChanged,
+        isNull,
+      );
+      expect(
+        tester
+            .widget<SilicaSlider>(
+              find.descendant(
+                of: find.byKey(const ValueKey('alert volume')),
+                matching: find.byType(SilicaSlider),
+              ),
+            )
+            .onChanged,
+        isNull,
+      );
+      expect(h.config.read('sound'), isEmpty);
+      expect(h.system.calls, isEmpty);
+    });
+
+    testWidgets('alert sound, alert volume and volume feedback (#64)', (
+      tester,
+    ) async {
+      final system = FakeSystem()
+        ..uiSounds = true
+        ..alerts = const ['alert-crystal', 'alert-woodblock'];
+      final h = await pumpSettings(
+        tester,
+        pane: PaneId.sound,
+        system: system,
+        height: 1000,
+      );
+      await settle(tester);
+      expect(find.text('Crystal'), findsOneWidget);
+      // Choosing a sound saves it and plays it.
+      await choose(tester, 'alert sound', 'Woodblock');
+      expect(h.config.text('sound', 'alert', fallback: ''), 'alert-woodblock');
+      expect(system.calls, ['playAlert alert-woodblock']);
+      await tapKey(tester, 'play alert');
+      expect(system.calls.last, 'playAlert alert-woodblock');
+      // The volume is saved and the alert plays at it once the slider is let go.
+      system.calls.clear();
+      await tester.drag(
+        find.descendant(
+          of: find.byKey(const ValueKey('alert volume')),
+          matching: find.byType(SilicaSlider),
+        ),
+        const Offset(-400, 0),
+      );
+      await tester.pump();
+      expect(h.config.read('sound')['alertVolume'], 0);
+      expect(system.calls, ['playAlert ']);
+      await tester.tap(switchIn('volume feedback'));
+      await tester.pump();
+      expect(h.config.read('sound'), {
+        'alert': 'alert-woodblock',
+        'alertVolume': 0,
+        'volumeFeedback': true,
+      });
+    });
+
+    testWidgets('alertLabel makes a readable name', (_) async {
+      expect(alertLabel('alert-crystal'), 'Crystal');
+      expect(alertLabel('alert-soft-bell'), 'Soft bell');
+      expect(alertLabel('bell'), 'Bell');
     });
   });
 

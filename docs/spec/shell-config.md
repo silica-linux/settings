@@ -151,6 +151,18 @@ logarithmic slider with 1 in the middle; `mouse.secondaryClick` is `right` \| `l
 other device's object and `doubleClickMs`, which no control writes yet. The Trackpad pane is in
 the sidebar only while silica-daemon's `State()` has `input.touchpad`.
 
+### sound.json
+
+```json
+{ "uiSounds": true, "alert": "alert-crystal", "alertVolume": 1, "volumeFeedback": false }
+```
+
+Read by silica-daemon's sound service. `alert` is one of the `alert-*` names that
+`Sound1.AlertSounds()` lists; `alertVolume` is 0–1 relative to the output volume;
+`volumeFeedback` is a boolean (off by default). `uiSounds` is written by the daemon
+(`SetUiSoundsEnabled`), not by Settings directly. The controls are enabled only while the sound
+service answers; Settings plays the preview with `PlayAlert`.
+
 ## Other files (for completeness)
 
 `theme.json` (`accent`, `highlight`, `sidebarIconSize`, `scrollBars`), `lockscreen.json` and `settings.json` (`lastPane`, Settings'

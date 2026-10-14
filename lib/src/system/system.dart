@@ -182,6 +182,12 @@ abstract class SystemBackend {
   Future<bool?> uiSoundsEnabled();
   Future<void> setUiSoundsEnabled(bool enabled);
 
+  /// The `alert-*` sounds the sound service found, sorted; empty without the service.
+  Future<List<String>> alertSounds();
+
+  /// Plays an alert sound at the alert volume, for the preview; empty `name`: the chosen one.
+  Future<void> playAlert(String name);
+
   /// Whether the session's polkit authentication agent is registered
   /// (`dev.frascella.Silica.Authentication1.Registered`): the current value, then every
   /// change. False when the daemon does not answer.
@@ -416,6 +422,47 @@ class DaemonBackend implements SystemBackend {
       return null;
     } on MissingPluginException {
       return null;
+    }
+  }
+
+  @override
+  Future<List<String>> alertSounds() async {
+    try {
+      final reply = await _bus.call(
+        destination: systemName,
+        path: _soundPath,
+        interface: _soundInterface,
+        method: 'AlertSounds',
+      );
+      final first = reply.isEmpty ? null : reply.first;
+      return first is List
+          ? [
+              for (final name in first)
+                if (name is String) name,
+            ]
+          : const [];
+    } on PlatformException {
+      return const [];
+    } on MissingPluginException {
+      return const [];
+    }
+  }
+
+  @override
+  Future<void> playAlert(String name) async {
+    try {
+      await _bus.call(
+        destination: systemName,
+        path: _soundPath,
+        interface: _soundInterface,
+        method: 'PlayAlert',
+        signature: 's',
+        args: [name],
+      );
+    } on PlatformException {
+      // No such sound or no sound service: nothing plays.
+    } on MissingPluginException {
+      // Outside Silica.
     }
   }
 

@@ -696,9 +696,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get soundAlert => 'Alert sound';
 
   @override
-  String get soundAlertDefault => 'Default';
-
-  @override
   String get soundAlertVolume => 'Alert volume';
 
   @override
@@ -1473,11 +1470,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageChooseRegion => 'Choose the formats';
 
   @override
-  String soundEffectsNote(int issue) {
-    return 'Interface sounds come from the system sound service; alert sounds and the other effects wait for it (#$issue).';
-  }
-
-  @override
   String get powerMode => 'Power mode';
 
   @override
@@ -1605,4 +1597,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get appearanceAutoNote =>
       'Automatic turns dark at sunset and back to light at sunrise, for the time zone\'s place.';
+
+  @override
+  String get soundAlertPlay => 'Play';
+
+  @override
+  String soundEffectsPending(int issue) {
+    return 'Playing effects through a chosen device and a startup sound aren’t available yet (#$issue).';
+  }
+
+  @override
+  String get soundNoService =>
+      'The sound service isn’t running: these can’t be changed now.';
 }

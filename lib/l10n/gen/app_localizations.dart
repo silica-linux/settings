@@ -1442,12 +1442,6 @@ abstract class AppLocalizations {
   /// **'Alert sound'**
   String get soundAlert;
 
-  /// No description provided for @soundAlertDefault.
-  ///
-  /// In en, this message translates to:
-  /// **'Default'**
-  String get soundAlertDefault;
-
   /// No description provided for @soundAlertVolume.
   ///
   /// In en, this message translates to:
@@ -2846,12 +2840,6 @@ abstract class AppLocalizations {
   /// **'Choose the formats'**
   String get languageChooseRegion;
 
-  /// No description provided for @soundEffectsNote.
-  ///
-  /// In en, this message translates to:
-  /// **'Interface sounds come from the system sound service; alert sounds and the other effects wait for it (#{issue}).'**
-  String soundEffectsNote(int issue);
-
   /// No description provided for @powerMode.
   ///
   /// In en, this message translates to:
@@ -3073,6 +3061,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Automatic turns dark at sunset and back to light at sunrise, for the time zone\'s place.'**
   String get appearanceAutoNote;
+
+  /// No description provided for @soundAlertPlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get soundAlertPlay;
+
+  /// No description provided for @soundEffectsPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Playing effects through a chosen device and a startup sound aren’t available yet (#{issue}).'**
+  String soundEffectsPending(int issue);
+
+  /// No description provided for @soundNoService.
+  ///
+  /// In en, this message translates to:
+  /// **'The sound service isn’t running: these can’t be changed now.'**
+  String get soundNoService;
 }
 
 class _AppLocalizationsDelegate

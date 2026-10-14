@@ -2,8 +2,10 @@
 // Real: the apps that sent notifications (silica-daemon's history) and their banner style
 // (notifications.json, read by the shell for every notification); the output volume and mute
 // (silica-daemon), the output and input devices and the input volume (PipeWire, wpctl); Do Not
-// Disturb. System sounds (#64), the global notification options (#71), the other focus modes
-// (#72) and screen time (#49) wait for their backends.
+// Disturb. The alert sound and volume, the volume feedback and the interface sounds come
+// from the sound service (sound.json, #64); the output the effects play through and the
+// startup sound (#64), the global notification options (#71), the other focus modes (#72) and
+// screen time (#49) wait for their backends.
 
 import 'dart:async';
 
@@ -16,9 +18,11 @@ import '../model/panes.dart';
 import '../services.dart';
 import '../style.dart';
 import '../system/config.dart';
+import '../system/settings_files.dart';
 import '../system/tools.dart';
 import '../ui/errors.dart';
 import '../ui/grouped.dart';
+import '../ui/popup.dart';
 import '../ui/symbol.dart';
 
 /// How an app's notifications appear (the shell's notifications.json `style`).
@@ -300,6 +304,16 @@ String audioType(AppLocalizations l, String name) {
   return l.soundBuiltIn;
 }
 
+/// The alert silica-daemon plays when sound.json has none.
+const String defaultAlert = 'alert-crystal';
+
+/// `alert-woodblock` → `Woodblock`.
+String alertLabel(String name) {
+  final bare = name.startsWith('alert-') ? name.substring(6) : name;
+  final words = bare.replaceAll('-', ' ');
+  return words.isEmpty ? name : words[0].toUpperCase() + words.substring(1);
+}
+
 class SoundPane extends StatefulWidget {
   const SoundPane({super.key});
 
@@ -316,14 +330,19 @@ class _SoundPaneState extends State<SoundPane> {
   Timer? _poll;
   SystemTools? _tools;
   bool? _uiSounds;
+  List<String> _alerts = const [];
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _tools ??= ServicesScope.of(context).tools;
     if (_poll == null) {
-      ServicesScope.of(context).system.uiSoundsEnabled().then((on) {
+      final system = ServicesScope.of(context).system;
+      system.uiSoundsEnabled().then((on) {
         if (mounted) setState(() => _uiSounds = on);
+      });
+      system.alertSounds().then((alerts) {
+        if (mounted) setState(() => _alerts = alerts);
       });
       _load();
       // Devices come and go (headphones, a display): read them again every 3 s.
@@ -335,6 +354,54 @@ class _SoundPaneState extends State<SoundPane> {
   void dispose() {
     _poll?.cancel();
     super.dispose();
+  }
+
+  /// The alert sound: a pop-up of the service's `alert-*` sounds that plays the one chosen
+  /// (sound.json `alert`), and a button that plays it again.
+  Widget _alertRow(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final services = ServicesScope.of(context);
+    final saved = services.config.text(
+      'sound',
+      'alert',
+      fallback: defaultAlert,
+    );
+    final names = [
+      ..._alerts,
+      if (_alerts.isNotEmpty && !_alerts.contains(saved)) saved,
+    ];
+    return ValueRow(
+      key: const ValueKey('alert sound'),
+      title: l.soundAlert,
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SilicaButton(
+            key: const ValueKey('play alert'),
+            label: l.soundAlertPlay,
+            size: ControlSize.small,
+            onPressed: names.isEmpty
+                ? null
+                : () => services.system.playAlert(saved),
+          ),
+          const SizedBox(width: 10),
+          FormPopUp<String>(
+            items: [
+              for (final name in names) PopUpItem(name, alertLabel(name)),
+            ],
+            value: names.contains(saved) ? saved : null,
+            semanticLabel: l.soundAlert,
+            onChanged: names.isEmpty
+                ? null
+                : (name) {
+                    services.config.write('sound', 'alert', name);
+                    services.system.playAlert(name);
+                    setState(() {});
+                  },
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _load() async {
@@ -358,6 +425,7 @@ class _SoundPaneState extends State<SoundPane> {
     final l = AppLocalizations.of(context);
     final colors = SettingsColors.of(context);
     final system = ServicesScope.of(context).system;
+    final config = ServicesScope.of(context).config;
     final tools = _tools!;
     return SystemStateBuilder(
       builder: (context, state) {
@@ -368,16 +436,11 @@ class _SoundPaneState extends State<SoundPane> {
           children: [
             SettingsGroup(
               heading: l.soundEffects,
-              footer: l.soundEffectsNote(Issues.sound),
+              footer: _uiSounds == null
+                  ? l.soundNoService
+                  : l.soundEffectsPending(Issues.sound),
               children: [
-                Unavailable(
-                  child: PopUpRow<int>(
-                    title: l.soundAlert,
-                    items: [PopUpItem(0, l.soundAlertDefault)],
-                    value: 0,
-                    onChanged: (_) {},
-                  ),
-                ),
+                _alertRow(context),
                 Unavailable(
                   child: PopUpRow<int>(
                     title: l.soundEffectsThrough,
@@ -386,8 +449,20 @@ class _SoundPaneState extends State<SoundPane> {
                     onChanged: (_) {},
                   ),
                 ),
-                Unavailable(
-                  child: SliderRow(title: l.soundAlertVolume, value: 0.75),
+                SliderRow(
+                  key: const ValueKey('alert volume'),
+                  title: l.soundAlertVolume,
+                  value: config.alertVolume,
+                  onChanged: _uiSounds == null
+                      ? null
+                      : (v) {
+                          config.writeAlertVolume(v);
+                          setState(() {});
+                        },
+                  // The alert at its new volume, once the slider is let go.
+                  onChangeEnd: _uiSounds == null
+                      ? null
+                      : (_) => system.playAlert(''),
                 ),
                 Unavailable(
                   child: SwitchRow(title: l.soundStartup, value: true),
@@ -408,8 +483,20 @@ class _SoundPaneState extends State<SoundPane> {
                   Unavailable(
                     child: SwitchRow(title: l.soundInterface, value: true),
                   ),
-                Unavailable(
-                  child: SwitchRow(title: l.soundVolumeFeedback, value: false),
+                SwitchRow(
+                  key: const ValueKey('volume feedback'),
+                  title: l.soundVolumeFeedback,
+                  value: config.flag(
+                    'sound',
+                    'volumeFeedback',
+                    fallback: false,
+                  ),
+                  onChanged: _uiSounds == null
+                      ? null
+                      : (on) {
+                          config.write('sound', 'volumeFeedback', on);
+                          setState(() {});
+                        },
                 ),
               ],
             ),

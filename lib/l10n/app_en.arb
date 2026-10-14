@@ -224,7 +224,6 @@
   "notificationsAppsNone": "No apps have sent notifications",
   "soundEffects": "Sound effects",
   "soundAlert": "Alert sound",
-  "soundAlertDefault": "Default",
   "soundAlertVolume": "Alert volume",
   "soundStartup": "Play a sound at startup",
   "soundInterface": "Play interface sound effects",
@@ -611,14 +610,6 @@
   "languageNextLogin": "Apps use a new language and formats from the next login.",
   "languageChooseLanguage": "Choose the system language",
   "languageChooseRegion": "Choose the formats",
-  "soundEffectsNote": "Interface sounds come from the system sound service; alert sounds and the other effects wait for it (#{issue}).",
-  "@soundEffectsNote": {
-    "placeholders": {
-      "issue": {
-        "type": "int"
-      }
-    }
-  },
   "powerMode": "Power mode",
   "powerModeHelp": "Balance speed against power use and heat.",
   "powerSaver": "Low power",
@@ -693,5 +684,15 @@
   "trackpadBottomLeft": "Click in the bottom left corner",
   "trackpadDisableWhileTyping": "Ignore the trackpad while typing",
   "trackpadDisableWhileTypingHelp": "Stops a palm resting on the trackpad from moving the pointer.",
-  "appearanceAutoNote": "Automatic turns dark at sunset and back to light at sunrise, for the time zone's place."
+  "appearanceAutoNote": "Automatic turns dark at sunset and back to light at sunrise, for the time zone's place.",
+  "soundAlertPlay": "Play",
+  "soundEffectsPending": "Playing effects through a chosen device and a startup sound aren’t available yet (#{issue}).",
+  "soundNoService": "The sound service isn’t running: these can’t be changed now.",
+  "@soundEffectsPending": {
+    "placeholders": {
+      "issue": {
+        "type": "int"
+      }
+    }
+  }
 }

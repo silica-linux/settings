@@ -97,6 +97,15 @@ class FakeSystem implements SystemBackend {
     yield* _agent.stream;
   }
 
+  /// The `alert-*` sounds of the sound service.
+  List<String> alerts = const [];
+
+  @override
+  Future<List<String>> alertSounds() async => alerts;
+
+  @override
+  Future<void> playAlert(String name) async => calls.add('playAlert $name');
+
   /// Null: no sound service.
   bool? uiSounds;
 

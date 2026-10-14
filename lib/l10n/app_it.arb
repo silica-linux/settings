@@ -224,7 +224,6 @@
   "notificationsAppsNone": "Nessuna app ha inviato notifiche",
   "soundEffects": "Effetti sonori",
   "soundAlert": "Suono di avviso",
-  "soundAlertDefault": "Predefinito",
   "soundAlertVolume": "Volume degli avvisi",
   "soundStartup": "Riproduci un suono all'accensione",
   "soundInterface": "Riproduci gli effetti sonori dell'interfaccia",
@@ -458,7 +457,6 @@
   "languageNextLogin": "Le app usano la nuova lingua e i nuovi formati dal prossimo accesso.",
   "languageChooseLanguage": "Scegli la lingua del sistema",
   "languageChooseRegion": "Scegli i formati",
-  "soundEffectsNote": "I suoni dell'interfaccia vengono dal servizio audio di sistema; i suoni di avviso e gli altri effetti lo aspettano (#{issue}).",
   "powerMode": "Modalità di alimentazione",
   "powerModeHelp": "Bilancia velocità, consumo e calore.",
   "powerSaver": "Basso consumo",
@@ -495,5 +493,8 @@
   "trackpadBottomLeft": "Clic nell’angolo in basso a sinistra",
   "trackpadDisableWhileTyping": "Ignora il trackpad mentre scrivi",
   "trackpadDisableWhileTypingHelp": "Evita che un palmo appoggiato sul trackpad muova il puntatore.",
-  "appearanceAutoNote": "Automatico passa allo scuro al tramonto e torna al chiaro all’alba, secondo il luogo del fuso orario."
+  "appearanceAutoNote": "Automatico passa allo scuro al tramonto e torna al chiaro all’alba, secondo il luogo del fuso orario.",
+  "soundAlertPlay": "Riproduci",
+  "soundEffectsPending": "La riproduzione degli effetti su un dispositivo scelto e il suono all’avvio non sono ancora disponibili (#{issue}).",
+  "soundNoService": "Il servizio audio non è attivo: queste opzioni non si possono cambiare ora."
 }
