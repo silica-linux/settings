@@ -16,8 +16,11 @@ import 'security.dart';
 Widget paneBody(
   BuildContext context,
   Location at, {
-  required ValueChanged<SubPaneId> open,
+  required void Function(SubPaneId sub, [String detail]) open,
 }) {
+  if (at.sub == SubPaneId.notificationApp) {
+    return NotificationAppPane(detail: at.detail);
+  }
   if (at.sub case final sub?) return generalSubPane(sub);
   return switch (at.pane) {
     PaneId.wifi => const WifiPane(),
@@ -34,7 +37,7 @@ Widget paneBody(
     PaneId.desktopDock => const DesktopDockPane(),
     PaneId.wallpaper => const WallpaperPane(),
     PaneId.search => const SearchPane(),
-    PaneId.notifications => const NotificationsPane(),
+    PaneId.notifications => NotificationsPane(open: open),
     PaneId.sound => const SoundPane(),
     PaneId.focus => const FocusPane(),
     PaneId.screenTime => const ScreenTimePane(),
