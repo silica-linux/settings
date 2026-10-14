@@ -1,8 +1,10 @@
-// Menu Bar (ST-CCT-01), Displays (ST-DSP-01..03), Desktop and Dock (ST-DSK-01..04) and
-// Wallpaper (ST-WLP-01/02). Real today: the displays as Flutter sees them (read-only), the
-// Dock's magnification and recent-apps options (dock.json, read by the shell's Dock) and the
-// wallpaper (wallpaper.json, read by the shell's wallpaper layer). The shell reads both files
-// when it starts: the footers say so. Everything else has no backend yet.
+// Menu Bar (ST-CCT-01), Displays (ST-DSP-01..03), Desktop & Dock (ST-DSK-01..04) and
+// Wallpaper (ST-WLP-01/02). Real: the menu bar's status items (menubar.json, watched by the
+// shell), the Dock's options (dock.json, watched by the shell: magnification, recent apps,
+// auto-hide, minimize effect, indicators, position), the default web browser (xdg-settings),
+// the connected displays and their modes (read-only, /sys/class/drm) and the wallpaper
+// (wallpaper.json, read by the shell when the session starts). The rest waits for Ossido and
+// the shell: each group's footer names the issue.
 
 import 'dart:io';
 import 'dart:ui' show PlatformDispatcher;
@@ -11,111 +13,372 @@ import 'package:flutter/widgets.dart';
 import 'package:silica_ui/silica_ui.dart';
 
 import '../../l10n/gen/app_localizations.dart';
+import '../model/issues.dart';
+import '../model/panes.dart';
 import '../services.dart';
 import '../style.dart';
+import '../system/config.dart';
+import '../system/tools.dart';
+import '../ui/errors.dart';
 import '../ui/grouped.dart';
+import '../ui/popup.dart';
+import '../ui/symbol.dart';
+import 'input.dart' show showShortcuts;
 
-class MenuBarPane extends StatelessWidget {
+/// The sound item of the menu bar (menubar.json `sound`).
+enum SoundItem { always, active, never }
+
+/// A checkbox, an icon tile and a name: one menu bar control.
+class _ControlRow extends StatelessWidget {
+  const _ControlRow({
+    super.key,
+    required this.title,
+    required this.symbol,
+    required this.tint,
+    required this.checked,
+    required this.onChecked,
+    this.trailing,
+  });
+
+  final String title;
+  final String symbol;
+  final Color tint;
+  final bool checked;
+  final ValueChanged<bool>? onChecked;
+  final Widget? trailing;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    height: 44,
+    child: Padding(
+      padding: const EdgeInsets.only(left: 10, right: 10),
+      child: Row(
+        children: [
+          SilicaCheckbox(
+            value: checked,
+            size: ControlSize.small,
+            onChanged: onChecked,
+          ),
+          const SizedBox(width: 10),
+          IconTile(symbol: symbol, tint: tint, size: 20),
+          const SizedBox(width: 8),
+          Expanded(child: RowTitles(title: title)),
+          ?trailing,
+        ],
+      ),
+    ),
+  );
+}
+
+class MenuBarPane extends StatefulWidget {
   const MenuBarPane({super.key});
 
   @override
+  State<MenuBarPane> createState() => _MenuBarPaneState();
+}
+
+class _MenuBarPaneState extends State<MenuBarPane> {
+  @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    return PanePage(
-      children: [
-        SettingsGroup(
-          unavailable: true,
-          children: [
-            PopUpRow<int>(
-              title: l.menuBarAutoHide,
-              items: [PopUpItem(0, l.menuBarNever)],
-              value: 0,
-            ),
-            SwitchRow(title: l.menuBarBackground, value: true),
-            ValueRow(
-              title: l.menuBarRecentItems,
-              trailing: const SilicaStepper(value: 10, onChanged: null),
-            ),
-          ],
-        ),
-        SettingsGroup(
-          heading: l.menuBarControls,
-          unavailable: true,
-          children: [
-            for (final title in [
-              l.paneWifi,
-              l.paneBluetooth,
-              l.paneSound,
-              l.paneFocus,
-            ])
+    final config = ServicesScope.of(context).config;
+    // The shell's defaults (shell/lib/menubar/menubar_config.dart).
+    final sound =
+        SoundItem.values
+            .where(
+              (s) => s.name == config.text('menubar', 'sound', fallback: ''),
+            )
+            .firstOrNull ??
+        SoundItem.active;
+    final bluetooth = config.flag('menubar', 'bluetooth', fallback: false);
+    final battery = config.flag('menubar', 'battery', fallback: true);
+    final percent = config.flag('menubar', 'batteryPercent', fallback: false);
+    void set(String key, Object value) =>
+        setState(() => config.write('menubar', key, value));
+    return SystemStateBuilder(
+      builder: (context, state) => PanePage(
+        children: [
+          SettingsGroup(
+            unavailable: true,
+            issue: Issues.menuBar,
+            children: [
               PopUpRow<int>(
-                title: title,
-                items: [PopUpItem(0, l.menuBarShowWhenActive)],
+                title: l.menuBarAutoHide,
+                items: [PopUpItem(0, l.menuBarInFullScreen)],
                 value: 0,
+                onChanged: (_) {},
               ),
-          ],
-        ),
-      ],
+              SwitchRow(title: l.menuBarBackground, value: false),
+              PopUpRow<int>(
+                title: l.menuBarRecentItems,
+                items: const [PopUpItem(10, '10')],
+                value: 10,
+                onChanged: (_) {},
+              ),
+            ],
+          ),
+          SettingsGroup(
+            heading: l.menuBarControls,
+            description: l.menuBarControlsHelp,
+            footer: l.menuBarLive,
+            children: [
+              _ControlRow(
+                key: const ValueKey('menubar bluetooth'),
+                title: l.paneBluetooth,
+                symbol: PaneId.bluetooth.symbol,
+                tint: PaneId.bluetooth.tint,
+                checked: bluetooth,
+                onChecked: (v) => set('bluetooth', v),
+              ),
+              _ControlRow(
+                key: const ValueKey('menubar sound'),
+                title: l.paneSound,
+                symbol: PaneId.sound.symbol,
+                tint: PaneId.sound.tint,
+                checked: sound != SoundItem.never,
+                onChecked: (v) => set(
+                  'sound',
+                  v ? SoundItem.active.name : SoundItem.never.name,
+                ),
+                trailing: sound == SoundItem.never
+                    ? null
+                    : FormPopUp<SoundItem>(
+                        key: const ValueKey('menubar sound when'),
+                        items: [
+                          PopUpItem(SoundItem.always, l.menuBarAlways),
+                          PopUpItem(SoundItem.active, l.menuBarShowWhenActive),
+                        ],
+                        value: sound,
+                        semanticLabel: l.paneSound,
+                        onChanged: (v) => set('sound', v.name),
+                      ),
+              ),
+              _ControlRow(
+                key: const ValueKey('menubar battery'),
+                title: l.paneBattery,
+                symbol: PaneId.battery.symbol,
+                tint: PaneId.battery.tint,
+                checked: battery,
+                onChecked: (v) => set('battery', v),
+              ),
+              SwitchRow(
+                key: const ValueKey('menubar battery percent'),
+                title: l.menuBarBatteryPercent,
+                value: percent,
+                indent: 30,
+                onChanged: battery ? (v) => set('batteryPercent', v) : null,
+              ),
+            ],
+          ),
+          SettingsGroup(
+            unavailable: true,
+            issue: Issues.menuBar,
+            children: [
+              _ControlRow(
+                title: l.paneWifi,
+                symbol: PaneId.wifi.symbol,
+                tint: PaneId.wifi.tint,
+                checked: true,
+                onChecked: (_) {},
+              ),
+              _ControlRow(
+                title: l.paneFocus,
+                symbol: PaneId.focus.symbol,
+                tint: PaneId.focus.tint,
+                checked: true,
+                onChecked: (_) {},
+              ),
+              _ControlRow(
+                title: l.paneDisplays,
+                symbol: PaneId.displays.symbol,
+                tint: PaneId.displays.tint,
+                checked: true,
+                onChecked: (_) {},
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
 
-class DisplaysPane extends StatelessWidget {
+/// `2560x1440` → `2560 × 1440`.
+String modeLabel(String mode) => mode.replaceFirst('x', ' × ');
+
+class DisplaysPane extends StatefulWidget {
   const DisplaysPane({super.key});
+
+  @override
+  State<DisplaysPane> createState() => _DisplaysPaneState();
+}
+
+class _DisplaysPaneState extends State<DisplaysPane> {
+  List<DisplayOutput>? _outputs;
+  int _chosen = 0;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_outputs == null) {
+      ServicesScope.of(context).tools.displays().then((o) {
+        if (mounted) setState(() => _outputs = o);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final displays = PlatformDispatcher.instance.displays.toList();
+    final colors = SettingsColors.of(context);
+    final outputs = _outputs ?? const <DisplayOutput>[];
+    final flutterDisplays = PlatformDispatcher.instance.displays.toList();
+    final chosen = outputs.isEmpty
+        ? null
+        : outputs[_chosen.clamp(0, outputs.length - 1)];
+    final current = flutterDisplays.isEmpty ? null : flutterDisplays.first;
+    final currentMode = current == null
+        ? ''
+        : '${current.size.width.round()}x${current.size.height.round()}';
     return PanePage(
       children: [
-        for (final (i, d) in displays.indexed)
+        // The displays, as thumbnails with their names (ST-DSP-02).
+        SizedBox(
+          height: 112,
+          child: Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (final (i, o) in outputs.indexed)
+                  GestureDetector(
+                    key: ValueKey('display ${o.connector}'),
+                    onTap: () => setState(() => _chosen = i),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 6),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 120,
+                            height: 72,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
+                                color: i == _chosen
+                                    ? ControlAccent.of(context)
+                                    : const Color(0xFF1C1C1E),
+                                width: 3,
+                              ),
+                              gradient: const LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Color(0xFF8EC5FF),
+                                  Color(0xFFF9C6D9),
+                                  Color(0xFFFFE2B0),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            o.connector,
+                            style: settingsText(
+                              13,
+                              colors.text,
+                              weight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                if (_outputs != null && outputs.isEmpty)
+                  Text(
+                    l.displaysNone,
+                    style: settingsText(13, colors.secondary),
+                  ),
+              ],
+            ),
+          ),
+        ),
+        if (chosen != null)
           SettingsGroup(
-            heading: displays.length > 1 ? l.aboutDisplayN(i + 1) : null,
-            footer: l.displaysReadOnly,
+            unavailable: true,
+            issue: Issues.displays,
+            footer: l.displaysModesHelp,
             children: [
-              ValueRow(
-                key: ValueKey('display $i resolution'),
-                title: l.displaysResolution,
-                trailing: Text(
-                  '${d.size.width.round()} × ${d.size.height.round()}',
-                  style: settingsText(13, SettingsColors.of(context).secondary),
-                ),
+              PopUpRow<int>(
+                title: l.displaysUseAs,
+                items: [PopUpItem(0, l.displaysMain)],
+                value: 0,
+                onChanged: (_) {},
               ),
-              ValueRow(
-                title: l.displaysScale,
-                trailing: Text(
-                  '${d.devicePixelRatio.toStringAsFixed(d.devicePixelRatio == d.devicePixelRatio.roundToDouble() ? 0 : 2)}×',
-                  style: settingsText(13, SettingsColors.of(context).secondary),
+              for (final (i, mode) in chosen.modes.take(8).indexed)
+                ValueRow(
+                  key: ValueKey('mode $mode'),
+                  title: i == 0
+                      ? l.displaysDefaultMode(modeLabel(mode))
+                      : modeLabel(mode),
+                  trailing:
+                      mode == currentMode || (currentMode.isEmpty && i == 0)
+                      ? SettingsSymbol(
+                          'checkmark',
+                          color: colors.text,
+                          size: 12,
+                        )
+                      : null,
                 ),
-              ),
-              ValueRow(
-                title: l.displaysRefreshRate,
-                trailing: Text(
-                  d.refreshRate > 0 ? '${d.refreshRate.round()} Hz' : '—',
-                  style: settingsText(13, SettingsColors.of(context).secondary),
-                ),
-              ),
             ],
           ),
-        if (displays.isEmpty)
-          SettingsGroup(children: [ValueRow(title: l.aboutUnknown)]),
+        SettingsGroup(
+          footer: l.displaysNow,
+          children: [
+            ValueRow(
+              key: const ValueKey('display resolution'),
+              title: l.displaysResolution,
+              trailing: RowValue(
+                current == null ? l.aboutUnknown : modeLabel(currentMode),
+              ),
+            ),
+            ValueRow(
+              title: l.displaysScale,
+              trailing: RowValue(
+                current == null
+                    ? l.aboutUnknown
+                    : '${current.devicePixelRatio.toStringAsFixed(current.devicePixelRatio == current.devicePixelRatio.roundToDouble() ? 0 : 2)}×',
+              ),
+            ),
+            ValueRow(
+              title: l.displaysRefreshRate,
+              trailing: RowValue(
+                current != null && current.refreshRate > 0
+                    ? '${current.refreshRate.round()} Hz'
+                    : l.aboutUnknown,
+              ),
+            ),
+          ],
+        ),
         SettingsGroup(
           unavailable: true,
+          issue: Issues.displays,
           children: [
             PopUpRow<int>(
               title: l.displaysColorProfile,
               items: [PopUpItem(0, l.appearanceDefaultChoice)],
               value: 0,
+              onChanged: (_) {},
             ),
             PopUpRow<int>(
               title: l.displaysRotation,
               items: [PopUpItem(0, l.displaysStandard)],
               value: 0,
+              onChanged: (_) {},
             ),
             ButtonRow(
               title: l.displaysNightLight,
               label: l.displaysNightLightButton,
+              onPressed: () {},
             ),
           ],
         ),
@@ -123,6 +386,12 @@ class DisplaysPane extends StatelessWidget {
     );
   }
 }
+
+/// Where the Dock sits (dock.json `position`); only the bottom is drawn by the shell today.
+enum DockPosition { left, bottom, right }
+
+/// The effect that takes a window into the Dock (dock.json `minimizeEffect`).
+enum MinimizeEffect { genie, scale }
 
 class DesktopDockPane extends StatefulWidget {
   const DesktopDockPane({super.key});
@@ -132,75 +401,196 @@ class DesktopDockPane extends StatefulWidget {
 }
 
 class _DesktopDockPaneState extends State<DesktopDockPane> {
+  List<AppEntry> _browsers = const [];
+  String _browser = '';
+  String? _error;
+  bool _loaded = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_loaded) {
+      _loaded = true;
+      _loadBrowsers();
+    }
+  }
+
+  Future<void> _loadBrowsers() async {
+    final tools = ServicesScope.of(context).tools;
+    final list = await tools.browsers();
+    final current = await tools.defaultBrowser();
+    if (mounted) {
+      setState(() {
+        _browsers = list;
+        _browser = current;
+      });
+    }
+  }
+
+  T _named<T extends Enum>(
+    ConfigStore config,
+    String key,
+    List<T> values,
+    T fallback,
+  ) =>
+      values
+          .where((v) => v.name == config.text('dock', key, fallback: ''))
+          .firstOrNull ??
+      fallback;
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final config = ServicesScope.of(context).config;
-    // The shell's defaults (shell/lib/dock/dock.dart): magnification on, recents off.
-    final magnify = config.flag('dock', 'magnify', fallback: true);
-    final recents = config.flag('dock', 'recents', fallback: false);
+    final services = ServicesScope.of(context);
+    final config = services.config;
+    // The shell's defaults (shell/lib/dock/options.dart).
+    bool flag(String key, bool fallback) =>
+        config.flag('dock', key, fallback: fallback);
+    void set(String key, Object value) =>
+        setState(() => config.write('dock', key, value));
+    final position = _named(
+      config,
+      'position',
+      DockPosition.values,
+      DockPosition.bottom,
+    );
+    final effect = _named(
+      config,
+      'minimizeEffect',
+      MinimizeEffect.values,
+      MinimizeEffect.genie,
+    );
+    final browsers = [
+      ..._browsers,
+      if (_browser.isNotEmpty && !_browsers.any((b) => b.id == _browser))
+        AppEntry(id: _browser, name: _browser.replaceAll('.desktop', '')),
+    ];
     return PanePage(
       children: [
         SettingsGroup(
           heading: l.dockSection,
-          footer: l.dockRestartNote,
+          unavailable: true,
+          issue: Issues.dock,
           children: [
-            SwitchRow(
-              key: const ValueKey('dock magnify'),
-              title: l.dockMagnification,
-              value: magnify,
-              onChanged: (on) =>
-                  setState(() => config.write('dock', 'magnify', on)),
+            SliderRow(
+              title: l.dockSize,
+              value: 0.38,
+              labels: [l.dockSmall, l.dockLarge],
             ),
-            SwitchRow(
-              key: const ValueKey('dock recents'),
-              title: l.dockRecents,
-              value: recents,
-              onChanged: (on) =>
-                  setState(() => config.write('dock', 'recents', on)),
+            SliderRow(
+              title: l.dockMagnificationSize,
+              value: 0.5,
+              labels: [l.dockSmall, l.dockLarge],
             ),
           ],
         ),
         SettingsGroup(
-          unavailable: true,
+          footer: l.dockLiveNote(Issues.dock),
           children: [
-            SliderRow(title: l.dockSize, value: 0.3839),
-            PopUpRow<int>(
+            PopUpRow<DockPosition>(
+              key: const ValueKey('dock position'),
               title: l.dockPosition,
-              items: [PopUpItem(0, l.dockBottom)],
-              value: 0,
+              items: [
+                // The side Docks are not drawn yet (silica-desktop#72, #73).
+                PopUpItem(DockPosition.left, l.dockLeft, enabled: false),
+                PopUpItem(DockPosition.bottom, l.dockBottom),
+                PopUpItem(DockPosition.right, l.dockRight, enabled: false),
+              ],
+              value: position,
+              onChanged: (v) => set('position', v.name),
             ),
-            PopUpRow<int>(
+            PopUpRow<MinimizeEffect>(
+              key: const ValueKey('dock minimize effect'),
               title: l.dockMinimizeEffect,
-              items: [PopUpItem(0, l.dockGenie)],
-              value: 0,
+              items: [
+                PopUpItem(MinimizeEffect.genie, l.dockGenie),
+                PopUpItem(MinimizeEffect.scale, l.dockScale),
+              ],
+              value: effect,
+              onChanged: (v) => set('minimizeEffect', v.name),
             ),
-            PopUpRow<int>(
-              title: l.dockDoubleClick,
-              items: [PopUpItem(0, l.dockZoom)],
-              value: 0,
+            Unavailable(
+              child: PopUpRow<int>(
+                title: l.dockDoubleClick,
+                items: [PopUpItem(0, l.dockZoom)],
+                value: 0,
+                onChanged: (_) {},
+              ),
             ),
-            SwitchRow(title: l.dockMinimizeIntoIcon, value: false),
-            SwitchRow(title: l.dockAutoHide, value: false),
-            SwitchRow(title: l.dockAnimate, value: true),
-            SwitchRow(title: l.dockIndicators, value: true),
+            Unavailable(
+              child: SwitchRow(title: l.dockMinimizeIntoIcon, value: false),
+            ),
+          ],
+        ),
+        SettingsGroup(
+          children: [
+            SwitchRow(
+              key: const ValueKey('dock magnify'),
+              title: l.dockMagnification,
+              value: flag('magnify', true),
+              onChanged: (v) => set('magnify', v),
+            ),
+            SwitchRow(
+              key: const ValueKey('dock autohide'),
+              title: l.dockAutoHide,
+              value: flag('autohide', false),
+              onChanged: (v) => set('autohide', v),
+            ),
+            Unavailable(child: SwitchRow(title: l.dockAnimate, value: true)),
+            SwitchRow(
+              key: const ValueKey('dock indicators'),
+              title: l.dockIndicators,
+              value: flag('indicators', true),
+              onChanged: (v) => set('indicators', v),
+            ),
+            SwitchRow(
+              key: const ValueKey('dock recents'),
+              title: l.dockRecents,
+              value: flag('recents', false),
+              onChanged: (v) => set('recents', v),
+            ),
           ],
         ),
         SettingsGroup(
           heading: l.desktopSection,
           unavailable: true,
+          issue: Issues.desktopStage,
           children: [
             PopUpRow<int>(
               title: l.desktopClickWallpaper,
               items: [PopUpItem(0, l.desktopOnlyInStage)],
               value: 0,
+              onChanged: (_) {},
             ),
             SwitchRow(title: l.desktopStage, value: false),
           ],
         ),
         SettingsGroup(
+          children: [
+            PopUpRow<String>(
+              key: const ValueKey('default browser'),
+              title: l.desktopDefaultBrowser,
+              items: [for (final b in browsers) PopUpItem(b.id, b.name)],
+              value: _browser.isEmpty ? null : _browser,
+              onChanged: browsers.isEmpty
+                  ? null
+                  : (id) async {
+                      final error = await services.tools.setDefaultBrowser(id);
+                      if (!context.mounted) return;
+                      setState(
+                        () =>
+                            _error = error == null ? null : errorText(l, error),
+                      );
+                      await _loadBrowsers();
+                    },
+            ),
+          ],
+        ),
+        if (_error case final error?) ErrorLine(error),
+        SettingsGroup(
           heading: l.panoramaSection,
           unavailable: true,
+          issue: Issues.panorama,
           children: [
             SwitchRow(title: l.panoramaRearrange, value: true),
             SwitchRow(title: l.panoramaSwitchToApp, value: true),
@@ -210,10 +600,16 @@ class _DesktopDockPaneState extends State<DesktopDockPane> {
         ),
         ButtonBar(
           buttons: [
-            SilicaButton(label: l.dockShortcutsButton, onPressed: null),
+            SilicaButton(
+              key: const ValueKey('dock shortcuts'),
+              label: l.dockShortcutsButton,
+              size: ControlSize.small,
+              onPressed: () => showShortcuts(context),
+            ),
             SilicaButton(
               key: const ValueKey('hot corners'),
               label: l.dockHotCorners,
+              size: ControlSize.small,
               onPressed: () => showHotCorners(context),
             ),
           ],
@@ -224,7 +620,7 @@ class _DesktopDockPaneState extends State<DesktopDockPane> {
 }
 
 /// The hot corners sheet (ST-DSK-04): 711 × 193, four 269 × 24 pop-ups around a 100 × 69
-/// desktop preview, Done. Ossido has no hot corners yet: the pop-ups are shown, not active.
+/// desktop preview, Done. Ossido has no hot corners yet: the pop-ups are shown disabled.
 Future<void> showHotCorners(BuildContext context) {
   final l = AppLocalizations.of(context);
   return showWindowSheet<void>(
@@ -286,7 +682,7 @@ Future<void> showHotCorners(BuildContext context) {
                 children: [
                   Expanded(
                     child: Text(
-                      l.notAvailableYet,
+                      l.notAvailableIssue(Issues.hotCorners),
                       style: settingsText(11, colors.secondary),
                     ),
                   ),
@@ -357,6 +753,8 @@ const List<Color> wallpaperColors = [
   Color(0xFF6B3A5B),
   Color(0xFFB86F4A),
   Color(0xFF101012),
+  Color(0xFFE5E5EA),
+  Color(0xFF3A6EA5),
 ];
 
 class WallpaperPane extends StatefulWidget {
@@ -375,31 +773,41 @@ class _WallpaperPaneState extends State<WallpaperPane> {
     _pictures ??= _findPictures(ServicesScope.of(context).env);
   }
 
-  /// Images in the user's pictures folder (first level, at most 24).
+  /// Images in the user's pictures folder and the system's backgrounds (first level, at most
+  /// 40).
   static List<String> _findPictures(Map<String, String> env) {
     final dirs = xdgUserDirs(env);
     final pictures = dirs['PICTURES'] ?? '${env['HOME'] ?? ''}/Pictures';
-    try {
-      final dir = Directory(pictures);
-      if (!dir.existsSync()) return const [];
-      final files = [
-        for (final e in dir.listSync())
-          if (e is File &&
-              RegExp(
-                r'\.(png|jpe?g|webp)$',
-                caseSensitive: false,
-              ).hasMatch(e.path))
-            e.path,
-      ]..sort();
-      return files.take(24).toList();
-    } on FileSystemException {
-      return const [];
+    final files = <String>[];
+    for (final folder in [
+      pictures,
+      '${env['HOME'] ?? ''}/.local/share/backgrounds',
+    ]) {
+      try {
+        final dir = Directory(folder);
+        if (!dir.existsSync()) continue;
+        files.addAll(
+          [
+            for (final e in dir.listSync())
+              if (e is File &&
+                  RegExp(
+                    r'\.(png|jpe?g|webp)$',
+                    caseSensitive: false,
+                  ).hasMatch(e.path))
+                e.path,
+          ]..sort(),
+        );
+      } on FileSystemException {
+        continue;
+      }
     }
+    return files.take(40).toList();
   }
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final colors = SettingsColors.of(context);
     final config = ServicesScope.of(context).config;
     final current = readWallpaper(config.read('wallpaper'));
     void choose(WallpaperOption option) =>
@@ -407,37 +815,71 @@ class _WallpaperPaneState extends State<WallpaperPane> {
     final pictures = _pictures ?? const [];
     return PanePage(
       children: [
-        SettingsGroup(
-          footer: l.wallpaperRestartNote,
+        // The current wallpaper: a 160 × 100 preview, its name with the fill pop-up and the
+        // all-spaces switch beside it (ST-WLP-02).
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ValueRow(
-              title: _name(l, current),
-              height: 116,
-              leading: _Thumb(option: current, width: 160, height: 100),
-              trailing: IgnorePointer(
-                child: Opacity(
-                  opacity: 0.5,
-                  child: PopUpButton<int>(
-                    items: [PopUpItem(0, l.wallpaperFill)],
-                    value: 0,
-                    onChanged: null,
+            _Thumb(
+              key: const ValueKey('current wallpaper'),
+              option: current,
+              width: 160,
+              height: 100,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: SettingsGroup(
+                children: [
+                  ValueRow(
+                    title: _name(l, current),
+                    trailing: Unavailable(
+                      child: FormPopUp<int>(
+                        items: [PopUpItem(0, l.wallpaperFill)],
+                        value: 0,
+                        onChanged: (_) {},
+                      ),
+                    ),
                   ),
-                ),
+                  Unavailable(
+                    child: SwitchRow(title: l.wallpaperAllSpaces, value: true),
+                  ),
+                ],
               ),
             ),
           ],
         ),
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                l.wallpaperNote(Issues.wallpaper),
+                style: settingsText(11, colors.secondary, height: 1.3),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Unavailable(
+              child: SilicaButton(
+                label: l.wallpaperScreenSaver,
+                size: ControlSize.small,
+                onPressed: () {},
+              ),
+            ),
+          ],
+        ),
+        Container(height: 1, color: colors.separator),
         _Category(
           title: l.wallpaperSilica,
           options: const [DefaultWallpaper()],
           current: current,
           onChoose: choose,
+          name: (o) => _name(l, o),
         ),
         _Category(
           title: l.wallpaperColors,
           options: [for (final c in wallpaperColors) ColorWallpaper(c)],
           current: current,
           onChoose: choose,
+          name: (o) => _name(l, o),
         ),
         if (pictures.isNotEmpty)
           _Category(
@@ -445,12 +887,8 @@ class _WallpaperPaneState extends State<WallpaperPane> {
             options: [for (final p in pictures) ImageWallpaper(p)],
             current: current,
             onChoose: choose,
+            name: (o) => _name(l, o),
           ),
-        ButtonBar(
-          buttons: [
-            SilicaButton(label: l.wallpaperScreenSaver, onPressed: null),
-          ],
-        ),
       ],
     );
   }
@@ -462,18 +900,29 @@ class _WallpaperPaneState extends State<WallpaperPane> {
   };
 }
 
-class _Category extends StatelessWidget {
+/// A category: its heading with "Show all (n)", then a row of 107 × 71 thumbnails with their
+/// names (ST-WLP-02).
+class _Category extends StatefulWidget {
   const _Category({
     required this.title,
     required this.options,
     required this.current,
     required this.onChoose,
+    required this.name,
   });
 
   final String title;
   final List<WallpaperOption> options;
   final WallpaperOption current;
   final ValueChanged<WallpaperOption> onChoose;
+  final String Function(WallpaperOption) name;
+
+  @override
+  State<_Category> createState() => _CategoryState();
+}
+
+class _CategoryState extends State<_Category> {
+  bool _all = false;
 
   bool _same(WallpaperOption a, WallpaperOption b) => switch ((a, b)) {
     (DefaultWallpaper(), DefaultWallpaper()) => true,
@@ -486,51 +935,74 @@ class _Category extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final colors = SettingsColors.of(context);
     final accent = ControlAccent.of(context);
+    final shown = _all ? widget.options : widget.options.take(4).toList();
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(
-            SettingsMetrics.rowTextInset,
-            4,
-            0,
-            6,
-          ),
-          child: Text(
-            title,
-            style: settingsText(13, colors.text, weight: FontWeight.w600),
-          ),
-        ),
-        SizedBox(
-          height: 101,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.only(top: 8, bottom: 8),
+          child: Row(
             children: [
-              for (final option in options)
-                Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: GestureDetector(
-                    key: ValueKey('wallpaper ${option.json}'),
-                    onTap: () => onChoose(option),
-                    child: Container(
-                      padding: const EdgeInsets.all(3),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(9),
-                        border: Border.all(
-                          width: 3,
-                          color: _same(option, current)
-                              ? accent
-                              : const Color(0x00000000),
-                        ),
-                      ),
-                      child: _Thumb(option: option, width: 109, height: 83),
-                    ),
+              Expanded(
+                child: Text(
+                  widget.title,
+                  style: settingsText(13, colors.text, weight: FontWeight.w600),
+                ),
+              ),
+              if (widget.options.length > 4)
+                GestureDetector(
+                  key: ValueKey('show all ${widget.title}'),
+                  onTap: () => setState(() => _all = !_all),
+                  child: Text(
+                    _all
+                        ? l.wallpaperShowFewer
+                        : l.wallpaperShowAll(widget.options.length),
+                    style: settingsText(11, colors.secondary),
                   ),
                 ),
             ],
           ),
+        ),
+        Wrap(
+          spacing: 10,
+          runSpacing: 8,
+          children: [
+            for (final option in shown)
+              GestureDetector(
+                key: ValueKey('wallpaper ${option.json}'),
+                onTap: () => widget.onChoose(option),
+                child: SizedBox(
+                  width: 113,
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(3),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(9),
+                          border: Border.all(
+                            width: 3,
+                            color: _same(option, widget.current)
+                                ? accent
+                                : const Color(0x00000000),
+                          ),
+                        ),
+                        child: _Thumb(option: option, width: 101, height: 65),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        widget.name(option),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: settingsText(11, colors.text),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          ],
         ),
       ],
     );
@@ -539,6 +1011,7 @@ class _Category extends StatelessWidget {
 
 class _Thumb extends StatelessWidget {
   const _Thumb({
+    super.key,
     required this.option,
     required this.width,
     required this.height,
@@ -549,31 +1022,44 @@ class _Thumb extends StatelessWidget {
   final double height;
 
   @override
-  Widget build(BuildContext context) => ClipRRect(
-    borderRadius: BorderRadius.circular(6),
-    child: SizedBox(
-      width: width,
-      height: height,
-      child: switch (option) {
-        // The default is drawn by the shell (twilight over dunes); a gradient stands for it.
-        DefaultWallpaper() => const DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Color(0xFF1F2A55), Color(0xFFD8A08A), Color(0xFF4A2B44)],
+  Widget build(BuildContext context) {
+    final dark = SettingsColors.of(context).dark;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(6),
+      child: SizedBox(
+        width: width,
+        height: height,
+        child: switch (option) {
+          // The shell draws the Silica wallpaper: a diagonal gradient (silica-brand).
+          DefaultWallpaper() => DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: dark
+                    ? const [
+                        Color(0xFF0B1030),
+                        Color(0xFF2A1446),
+                        Color(0xFF0A2A2E),
+                      ]
+                    : const [
+                        Color(0xFF8EC5FF),
+                        Color(0xFFF9C6D9),
+                        Color(0xFFFFE2B0),
+                      ],
+              ),
             ),
           ),
-        ),
-        ColorWallpaper(:final color) => ColoredBox(color: color),
-        ImageWallpaper(:final path) => Image.file(
-          File(path),
-          fit: BoxFit.cover,
-          cacheWidth: (width * 2).round(),
-          errorBuilder: (context, error, stack) =>
-              const ColoredBox(color: Color(0xFF7A7B80)),
-        ),
-      },
-    ),
-  );
+          ColorWallpaper(:final color) => ColoredBox(color: color),
+          ImageWallpaper(:final path) => Image.file(
+            File(path),
+            fit: BoxFit.cover,
+            cacheWidth: (width * 2).round(),
+            errorBuilder: (context, error, stack) =>
+                const ColoredBox(color: Color(0xFF7A7B80)),
+          ),
+        },
+      ),
+    );
+  }
 }
