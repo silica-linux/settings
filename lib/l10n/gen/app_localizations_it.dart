@@ -517,10 +517,6 @@ class AppLocalizationsIt extends AppLocalizations {
   String get displaysRefreshRate => 'Frequenza di aggiornamento';
 
   @override
-  String get displaysReadOnly =>
-      'Silica non sa ancora cambiare la modalità dello schermo da Impostazioni.';
-
-  @override
   String get displaysColorProfile => 'Profilo colore';
 
   @override
@@ -1308,8 +1304,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get displaysNone => 'Nessuno schermo collegato trovato';
 
   @override
-  String get displaysModesHelp =>
-      'Le modalità offerte da questo schermo. Silica non può ancora cambiarle da Impostazioni.';
+  String get displaysModesHelp => 'Le modalità che questo schermo offre.';
 
   @override
   String get displaysUseAs => 'Usa come';
@@ -1689,4 +1684,107 @@ class AppLocalizationsIt extends AppLocalizations {
     );
     return '$_temp0, $_temp1';
   }
+
+  @override
+  String get displaysOnlyActive =>
+      'Per ora si può cambiare solo lo schermo in uso.';
+
+  @override
+  String displaysChangeFailed(String reason) {
+    return 'Lo schermo non è stato modificato: $reason';
+  }
+
+  @override
+  String get displaysKeepTitle =>
+      'Mantenere queste impostazioni dello schermo?';
+
+  @override
+  String displaysKeepBody(int seconds) {
+    String _temp0 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: '$seconds secondi',
+      one: '1 secondo',
+    );
+    return 'Lo schermo torna come prima tra $_temp0.';
+  }
+
+  @override
+  String get displaysKeep => 'Mantieni';
+
+  @override
+  String get displaysRevert => 'Ripristina';
+
+  @override
+  String displaysHz(String rate) {
+    return '$rate Hz';
+  }
+
+  @override
+  String displaysScaleValue(String scale) {
+    return '$scale×';
+  }
+
+  @override
+  String get displaysRotate90 => '90°';
+
+  @override
+  String get displaysRotate180 => '180°';
+
+  @override
+  String get displaysRotate270 => '270°';
+
+  @override
+  String get displaysNightSchedule => 'Programmazione';
+
+  @override
+  String get displaysNightAllDay => 'Tutto il giorno';
+
+  @override
+  String get displaysNightSunset => 'Dal tramonto all’alba';
+
+  @override
+  String get displaysNightCustom => 'Personalizzata';
+
+  @override
+  String get displaysNightFrom => 'Dalle';
+
+  @override
+  String get displaysNightTo => 'Alle';
+
+  @override
+  String get displaysNightTemperature => 'Temperatura colore';
+
+  @override
+  String get displaysNightLess => 'Meno caldo';
+
+  @override
+  String get displaysNightMore => 'Più caldo';
+
+  @override
+  String get displaysNightActive => 'Gli schermi sono caldi ora.';
+
+  @override
+  String get displaysNightOff => 'No';
+
+  @override
+  String get displaysNightOnAllDay => 'Sì';
+
+  @override
+  String displaysNightOnCustom(String from, String to) {
+    return 'Dalle $from alle $to';
+  }
+
+  @override
+  String get displaysNightBadTime =>
+      'Usa il formato a 24 ore, per esempio 21:30.';
+
+  @override
+  String displaysNightFailed(String reason) {
+    return 'La luce notturna non è stata modificata: $reason';
+  }
+
+  @override
+  String get displaysNoCompositor =>
+      'Il compositor non ha comunicato i suoi schermi, quindi non si possono cambiare da qui. Questo è ciò che elenca la macchina.';
 }

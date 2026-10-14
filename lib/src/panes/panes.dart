@@ -6,6 +6,7 @@ import '../model/panes.dart';
 import 'appearance.dart';
 import 'attention.dart';
 import 'desktop.dart';
+import 'displays.dart';
 import 'focus.dart';
 import 'general.dart';
 import 'input.dart';

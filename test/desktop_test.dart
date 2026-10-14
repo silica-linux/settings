@@ -85,20 +85,24 @@ void main() {
     expect(h.config.flag('menubar', 'batteryPercent', fallback: false), isTrue);
   });
 
-  testWidgets('Displays: the modes the display offers, read-only (#63)', (
-    tester,
-  ) async {
-    final tools = FakeTools()
-      ..outputs = const [
-        DisplayOutput(connector: 'HDMI-A-1', modes: ['2560x1440', '1920x1080']),
-      ];
-    await pumpSettings(tester, pane: PaneId.displays, tools: tools);
-    await settle(tester);
-    expect(find.text('HDMI-A-1'), findsOneWidget);
-    expect(find.text('2560 × 1440 (native)'), findsOneWidget);
-    expect(find.text('1920 × 1080'), findsOneWidget);
-    expect(find.textContaining('#63'), findsWidgets);
-  });
+  testWidgets(
+    'Displays: without the compositor the machine\'s modes, read-only',
+    (tester) async {
+      final tools = FakeTools()
+        ..outputs = const [
+          DisplayOutput(
+            connector: 'HDMI-A-1',
+            modes: ['2560x1440', '1920x1080'],
+          ),
+        ];
+      await pumpSettings(tester, pane: PaneId.displays, tools: tools);
+      await settle(tester);
+      expect(find.text('HDMI-A-1'), findsOneWidget);
+      expect(find.text('2560 × 1440 (native)'), findsOneWidget);
+      expect(find.text('1920 × 1080'), findsOneWidget);
+      expect(find.textContaining('compositor didn’t report'), findsOneWidget);
+    },
+  );
 
   testWidgets('Wallpaper: a colour replaces the choice in wallpaper.json', (
     tester,

@@ -1094,12 +1094,6 @@ abstract class AppLocalizations {
   /// **'Refresh rate'**
   String get displaysRefreshRate;
 
-  /// No description provided for @displaysReadOnly.
-  ///
-  /// In en, this message translates to:
-  /// **'Silica can\'t change the display mode from Settings yet.'**
-  String get displaysReadOnly;
-
   /// No description provided for @displaysColorProfile.
   ///
   /// In en, this message translates to:
@@ -2549,7 +2543,7 @@ abstract class AppLocalizations {
   /// No description provided for @displaysModesHelp.
   ///
   /// In en, this message translates to:
-  /// **'The modes this display offers. Silica can\'t switch them from Settings yet.'**
+  /// **'The modes this display offers.'**
   String get displaysModesHelp;
 
   /// No description provided for @displaysUseAs.
@@ -3181,6 +3175,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{apps, plural, =0{No apps} =1{1 app} other{{apps} apps}}, {people, plural, =0{no people} =1{1 person} other{{people} people}}'**
   String focusSummary(int apps, int people);
+
+  /// No description provided for @displaysOnlyActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Only the display in use can be changed for now.'**
+  String get displaysOnlyActive;
+
+  /// No description provided for @displaysChangeFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The display wasn’t changed: {reason}'**
+  String displaysChangeFailed(String reason);
+
+  /// No description provided for @displaysKeepTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep these display settings?'**
+  String get displaysKeepTitle;
+
+  /// No description provided for @displaysKeepBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The display goes back to how it was in {seconds, plural, =1{1 second} other{{seconds} seconds}}.'**
+  String displaysKeepBody(int seconds);
+
+  /// No description provided for @displaysKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep'**
+  String get displaysKeep;
+
+  /// No description provided for @displaysRevert.
+  ///
+  /// In en, this message translates to:
+  /// **'Revert'**
+  String get displaysRevert;
+
+  /// No description provided for @displaysHz.
+  ///
+  /// In en, this message translates to:
+  /// **'{rate} Hz'**
+  String displaysHz(String rate);
+
+  /// No description provided for @displaysScaleValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{scale}×'**
+  String displaysScaleValue(String scale);
+
+  /// No description provided for @displaysRotate90.
+  ///
+  /// In en, this message translates to:
+  /// **'90°'**
+  String get displaysRotate90;
+
+  /// No description provided for @displaysRotate180.
+  ///
+  /// In en, this message translates to:
+  /// **'180°'**
+  String get displaysRotate180;
+
+  /// No description provided for @displaysRotate270.
+  ///
+  /// In en, this message translates to:
+  /// **'270°'**
+  String get displaysRotate270;
+
+  /// No description provided for @displaysNightSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule'**
+  String get displaysNightSchedule;
+
+  /// No description provided for @displaysNightAllDay.
+  ///
+  /// In en, this message translates to:
+  /// **'All day'**
+  String get displaysNightAllDay;
+
+  /// No description provided for @displaysNightSunset.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunset to sunrise'**
+  String get displaysNightSunset;
+
+  /// No description provided for @displaysNightCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get displaysNightCustom;
+
+  /// No description provided for @displaysNightFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get displaysNightFrom;
+
+  /// No description provided for @displaysNightTo.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get displaysNightTo;
+
+  /// No description provided for @displaysNightTemperature.
+  ///
+  /// In en, this message translates to:
+  /// **'Colour temperature'**
+  String get displaysNightTemperature;
+
+  /// No description provided for @displaysNightLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Less warm'**
+  String get displaysNightLess;
+
+  /// No description provided for @displaysNightMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More warm'**
+  String get displaysNightMore;
+
+  /// No description provided for @displaysNightActive.
+  ///
+  /// In en, this message translates to:
+  /// **'The displays are warm now.'**
+  String get displaysNightActive;
+
+  /// No description provided for @displaysNightOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get displaysNightOff;
+
+  /// No description provided for @displaysNightOnAllDay.
+  ///
+  /// In en, this message translates to:
+  /// **'On'**
+  String get displaysNightOnAllDay;
+
+  /// No description provided for @displaysNightOnCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'{from} to {to}'**
+  String displaysNightOnCustom(String from, String to);
+
+  /// No description provided for @displaysNightBadTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the 24-hour form, such as 21:30.'**
+  String get displaysNightBadTime;
+
+  /// No description provided for @displaysNightFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Night light wasn’t changed: {reason}'**
+  String displaysNightFailed(String reason);
+
+  /// No description provided for @displaysNoCompositor.
+  ///
+  /// In en, this message translates to:
+  /// **'The compositor didn’t report its displays, so they can’t be changed from here. This is what the machine lists.'**
+  String get displaysNoCompositor;
 }
 
 class _AppLocalizationsDelegate

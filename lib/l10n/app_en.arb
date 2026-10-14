@@ -166,7 +166,6 @@
   "displaysResolution": "Resolution",
   "displaysScale": "Scale",
   "displaysRefreshRate": "Refresh rate",
-  "displaysReadOnly": "Silica can't change the display mode from Settings yet.",
   "displaysColorProfile": "Colour profile",
   "displaysRotation": "Rotation",
   "displaysStandard": "Standard",
@@ -512,7 +511,7 @@
   "menuBarAlways": "Always show",
   "menuBarBatteryPercent": "Show the percentage",
   "displaysNone": "No connected display found",
-  "displaysModesHelp": "The modes this display offers. Silica can't switch them from Settings yet.",
+  "displaysModesHelp": "The modes this display offers.",
   "displaysUseAs": "Use as",
   "displaysMain": "Main display",
   "displaysDefaultMode": "{mode} (native)",
@@ -740,6 +739,78 @@
       },
       "people": {
         "type": "int"
+      }
+    }
+  },
+  "displaysOnlyActive": "Only the display in use can be changed for now.",
+  "displaysChangeFailed": "The display wasn’t changed: {reason}",
+  "displaysKeepTitle": "Keep these display settings?",
+  "displaysKeepBody": "The display goes back to how it was in {seconds, plural, =1{1 second} other{{seconds} seconds}}.",
+  "displaysKeep": "Keep",
+  "displaysRevert": "Revert",
+  "displaysHz": "{rate} Hz",
+  "displaysScaleValue": "{scale}×",
+  "displaysRotate90": "90°",
+  "displaysRotate180": "180°",
+  "displaysRotate270": "270°",
+  "displaysNightSchedule": "Schedule",
+  "displaysNightAllDay": "All day",
+  "displaysNightSunset": "Sunset to sunrise",
+  "displaysNightCustom": "Custom",
+  "displaysNightFrom": "From",
+  "displaysNightTo": "To",
+  "displaysNightTemperature": "Colour temperature",
+  "displaysNightLess": "Less warm",
+  "displaysNightMore": "More warm",
+  "displaysNightActive": "The displays are warm now.",
+  "displaysNightOff": "Off",
+  "displaysNightOnAllDay": "On",
+  "displaysNightOnCustom": "{from} to {to}",
+  "displaysNightBadTime": "Use the 24-hour form, such as 21:30.",
+  "displaysNightFailed": "Night light wasn’t changed: {reason}",
+  "displaysNoCompositor": "The compositor didn’t report its displays, so they can’t be changed from here. This is what the machine lists.",
+  "@displaysChangeFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "@displaysKeepBody": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "@displaysHz": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "@displaysScaleValue": {
+    "placeholders": {
+      "scale": {
+        "type": "String"
+      }
+    }
+  },
+  "@displaysNightOnCustom": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "@displaysNightFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
       }
     }
   }

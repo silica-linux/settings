@@ -5,11 +5,13 @@
 // a fake.
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import 'dbus.dart';
+import 'displays.dart';
 
 const String systemName = 'dev.frascella.Silica';
 const String systemPath = '/dev/frascella/Silica/System1';
@@ -37,6 +39,8 @@ class SystemState {
     this.audioName = '',
     this.doNotDisturb = false,
     this.dark = false,
+    this.displays = '',
+    this.night = const NightLight(),
     this.focus = '',
     this.focusName = '',
     this.focusSymbol = '',
@@ -66,6 +70,12 @@ class SystemState {
   final String audioName;
   final bool doNotDisturb;
   final bool dark;
+
+  /// The displays, as the JSON of Ossido's `output.list` (`displays`); changes with every
+  /// display plugged in and every new mode, scale or rotation. Read with
+  /// [OutputInfo.parseList].
+  final String displays;
+  final NightLight night;
 
   /// The active Focus: its id (`dnd`, or a mode of focus.json), empty when off; the mode's
   /// name and symbol, and the apps and people whose notifications still come through.
@@ -124,6 +134,31 @@ class SystemState {
       audioName: text('audio.name'),
       doNotDisturb: flag('dnd'),
       dark: flag('appearance.dark'),
+      displays: text('displays'),
+      night: NightLight(
+        enabled: flag('nightlight.enabled'),
+        temperature: number('nightlight.temperature') > 0
+            ? number('nightlight.temperature').round().clamp(
+                NightLight.minTemperature,
+                NightLight.maxTemperature,
+              )
+            : NightLight.defaultTemperature,
+        schedule:
+            const {
+              'off',
+              'sunset',
+              'custom',
+            }.contains(text('nightlight.schedule'))
+            ? text('nightlight.schedule')
+            : 'off',
+        from: NightLight.validTime(text('nightlight.from'))
+            ? text('nightlight.from')
+            : '21:00',
+        to: NightLight.validTime(text('nightlight.to'))
+            ? text('nightlight.to')
+            : '07:00',
+        active: flag('nightlight.active'),
+      ),
       focus: text('focus'),
       focusName: text('focus.name'),
       focusSymbol: text('focus.symbol'),
@@ -214,6 +249,28 @@ abstract class SystemBackend {
 
   /// Turns a Focus on: `dnd`, the id of a mode of focus.json, or empty for none.
   Future<void> setFocus(String id);
+
+  /// The displays (`System1.Outputs`); empty when the compositor does not answer.
+  Future<List<OutputInfo>> displayList();
+
+  /// Changes a display (`ConfigureOutput`): applied at once and kept by the compositor. Null
+  /// when it took the change, otherwise why not.
+  Future<String?> configureOutput(
+    String connector, {
+    OutputMode? mode,
+    double? scale,
+    String? transform,
+  });
+
+  /// Any of the night light's settings (`SetNightLight`); the others stay. Null when the
+  /// daemon took them, otherwise why not.
+  Future<String?> setNightLight({
+    bool? enabled,
+    int? temperature,
+    String? schedule,
+    String? from,
+    String? to,
+  });
 
   /// "Play interface sound effects" (`dev.frascella.Silica.Sound1`); null when the daemon
   /// has no sound service.
@@ -406,6 +463,82 @@ class DaemonBackend implements SystemBackend {
 
   @override
   Future<void> setFocus(String id) => _set('SetFocus', 's', id);
+
+  @override
+  Future<List<OutputInfo>> displayList() async {
+    try {
+      final reply = await _call('Outputs');
+      final first = reply.isEmpty ? null : reply.first;
+      return first is String ? OutputInfo.parseList(first) : const [];
+    } on PlatformException {
+      return const [];
+    } on MissingPluginException {
+      return const [];
+    }
+  }
+
+  @override
+  Future<String?> configureOutput(
+    String connector, {
+    OutputMode? mode,
+    double? scale,
+    String? transform,
+  }) async {
+    try {
+      await _call(
+        'ConfigureOutput',
+        signature: 's',
+        args: [
+          jsonEncode({
+            'connector': connector,
+            if (mode != null)
+              'mode': {
+                'width': mode.width,
+                'height': mode.height,
+                if (mode.refresh > 0) 'refresh': mode.refresh,
+              },
+            'scale': ?scale,
+            'transform': ?transform,
+          }),
+        ],
+      );
+      return null;
+    } on PlatformException catch (e) {
+      return e.message ?? e.code;
+    } on MissingPluginException {
+      return 'no silica-daemon';
+    }
+  }
+
+  @override
+  Future<String?> setNightLight({
+    bool? enabled,
+    int? temperature,
+    String? schedule,
+    String? from,
+    String? to,
+  }) async {
+    try {
+      await _call(
+        'SetNightLight',
+        signature: 'a{sv}',
+        args: [
+          {
+            'enabled': ?enabled,
+            'temperature': ?temperature,
+            'schedule': ?schedule,
+            'from': ?from,
+            'to': ?to,
+          },
+        ],
+      );
+      return null;
+    } on PlatformException catch (e) {
+      return e.message ?? e.code;
+    } on MissingPluginException {
+      return 'no silica-daemon';
+    }
+  }
 
   static const String _authPath = '/dev/frascella/Silica/Authentication1';
   static const String _authInterface = 'dev.frascella.Silica.Authentication1';

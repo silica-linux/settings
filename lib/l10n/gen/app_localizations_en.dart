@@ -516,10 +516,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get displaysRefreshRate => 'Refresh rate';
 
   @override
-  String get displaysReadOnly =>
-      'Silica can\'t change the display mode from Settings yet.';
-
-  @override
   String get displaysColorProfile => 'Colour profile';
 
   @override
@@ -1305,8 +1301,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get displaysNone => 'No connected display found';
 
   @override
-  String get displaysModesHelp =>
-      'The modes this display offers. Silica can\'t switch them from Settings yet.';
+  String get displaysModesHelp => 'The modes this display offers.';
 
   @override
   String get displaysUseAs => 'Use as';
@@ -1686,4 +1681,105 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0, $_temp1';
   }
+
+  @override
+  String get displaysOnlyActive =>
+      'Only the display in use can be changed for now.';
+
+  @override
+  String displaysChangeFailed(String reason) {
+    return 'The display wasn’t changed: $reason';
+  }
+
+  @override
+  String get displaysKeepTitle => 'Keep these display settings?';
+
+  @override
+  String displaysKeepBody(int seconds) {
+    String _temp0 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: '$seconds seconds',
+      one: '1 second',
+    );
+    return 'The display goes back to how it was in $_temp0.';
+  }
+
+  @override
+  String get displaysKeep => 'Keep';
+
+  @override
+  String get displaysRevert => 'Revert';
+
+  @override
+  String displaysHz(String rate) {
+    return '$rate Hz';
+  }
+
+  @override
+  String displaysScaleValue(String scale) {
+    return '$scale×';
+  }
+
+  @override
+  String get displaysRotate90 => '90°';
+
+  @override
+  String get displaysRotate180 => '180°';
+
+  @override
+  String get displaysRotate270 => '270°';
+
+  @override
+  String get displaysNightSchedule => 'Schedule';
+
+  @override
+  String get displaysNightAllDay => 'All day';
+
+  @override
+  String get displaysNightSunset => 'Sunset to sunrise';
+
+  @override
+  String get displaysNightCustom => 'Custom';
+
+  @override
+  String get displaysNightFrom => 'From';
+
+  @override
+  String get displaysNightTo => 'To';
+
+  @override
+  String get displaysNightTemperature => 'Colour temperature';
+
+  @override
+  String get displaysNightLess => 'Less warm';
+
+  @override
+  String get displaysNightMore => 'More warm';
+
+  @override
+  String get displaysNightActive => 'The displays are warm now.';
+
+  @override
+  String get displaysNightOff => 'Off';
+
+  @override
+  String get displaysNightOnAllDay => 'On';
+
+  @override
+  String displaysNightOnCustom(String from, String to) {
+    return '$from to $to';
+  }
+
+  @override
+  String get displaysNightBadTime => 'Use the 24-hour form, such as 21:30.';
+
+  @override
+  String displaysNightFailed(String reason) {
+    return 'Night light wasn’t changed: $reason';
+  }
+
+  @override
+  String get displaysNoCompositor =>
+      'The compositor didn’t report its displays, so they can’t be changed from here. This is what the machine lists.';
 }

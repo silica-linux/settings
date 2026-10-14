@@ -26,16 +26,18 @@ own). App id `dev.frascella.Settings`, icon `settings` from silica-icons.
 
 ## What works
 
-Appearance (light and dark, accent colour, sidebar icon size, scroll bars), Wi-Fi (on/off,
+Appearance (light, dark and automatic, accent colour, sidebar icon size, scroll bars), Wi-Fi (on/off,
 scanning, joining with a password or a hidden network, details, auto-join, forgetting),
 Bluetooth (on/off, scanning, pairing, connecting, forgetting), Network (services, addresses),
 VPN (connecting), Battery and Energy (level, time left, health, power mode, low power mode),
 Desktop & Dock (every Dock option the shell reads, default web browser), Menu Bar (status
-items), Displays (connected displays and their modes, read-only), Wallpaper, Sound (output
-and input devices and volumes, interface sounds), Notifications (per-app banners), Focus
-(Do Not Disturb), General › About, Storage (empty the trash), Sharing (computer name), Date
-& Time, Language & Region, Users & Groups (accounts), Keyboard (shortcuts) and Printers
-(default printer). Every control that waits for a backend is disabled and its group names
+items), Displays (resolution, refresh rate, scale, rotation with a keep-or-revert sheet,
+night light), Wallpaper, Sound (output and input devices
+and volumes, alert sound and volume, interface sounds), Notifications (per-app banners),
+Focus (Do Not Disturb and Focus modes), General › About, Storage (empty the trash), Sharing
+(computer name), Date & Time, Language & Region, Users & Groups (accounts), Keyboard (key
+repeat, input sources, shortcuts), Mouse and Trackpad, Energy and Battery (display off, sleep)
+and Printers (default printer). Every control that waits for a backend is disabled and its group names
 the issue that tracks it. The state of each pane is in
 [`docs/spec/panes.md`](docs/spec/panes.md).
 

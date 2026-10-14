@@ -1,6 +1,7 @@
 // A fake silica-daemon and a window set up like the real one (832 × 727), for the widget tests.
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/widgets.dart';
@@ -10,6 +11,7 @@ import 'package:silica_settings/src/model/navigation.dart';
 import 'package:silica_settings/src/model/panes.dart';
 import 'package:silica_settings/src/services.dart';
 import 'package:silica_settings/src/system/config.dart';
+import 'package:silica_settings/src/system/displays.dart';
 import 'package:silica_settings/src/system/host.dart';
 import 'package:silica_settings/src/system/system.dart';
 import 'package:silica_settings/src/system/tools.dart';
@@ -84,6 +86,98 @@ class FakeSystem implements SystemBackend {
 
   @override
   Future<void> setFocus(String id) async => calls.add('setFocus $id');
+
+  /// The compositor's displays; empty: it does not answer.
+  List<OutputInfo> displays = const [];
+
+  /// Why the compositor refuses the next change (null: it takes it).
+  String? displayError;
+
+  /// The state with [displays] in it, as the daemon would emit after a change.
+  SystemState get withDisplays => SystemState(
+    reachable: true,
+    displays: jsonEncode([for (final d in displays) d.toJson()]),
+    night: night,
+  );
+
+  NightLight night = const NightLight();
+
+  @override
+  Future<List<OutputInfo>> displayList() async => displays;
+
+  @override
+  Future<String?> configureOutput(
+    String connector, {
+    OutputMode? mode,
+    double? scale,
+    String? transform,
+  }) async {
+    calls.add(
+      'configureOutput $connector'
+      '${mode == null ? '' : ' ${mode.size}${mode.refresh > 0 ? '@${mode.refresh}' : ''}'}'
+      '${scale == null ? '' : ' scale $scale'}'
+      '${transform == null ? '' : ' $transform'}',
+    );
+    if (displayError != null) return displayError;
+    displays = [
+      for (final d in displays)
+        if (d.connector != connector)
+          d
+        else
+          OutputInfo(
+            connector: d.connector,
+            identity: d.identity,
+            make: d.make,
+            model: d.model,
+            modes: d.modes,
+            current: mode == null
+                ? d.current
+                : d.modes
+                          .where(
+                            (m) =>
+                                m.width == mode.width &&
+                                m.height == mode.height &&
+                                (mode.refresh == 0 ||
+                                    (m.refresh - mode.refresh).abs() < 0.01),
+                          )
+                          .firstOrNull ??
+                      mode,
+            scale: scale ?? d.scale,
+            transform: transform ?? d.transform,
+            enabled: d.enabled,
+            primary: d.primary,
+          ),
+    ];
+    emit(withDisplays);
+    return null;
+  }
+
+  @override
+  Future<String?> setNightLight({
+    bool? enabled,
+    int? temperature,
+    String? schedule,
+    String? from,
+    String? to,
+  }) async {
+    calls.add(
+      'setNightLight${enabled == null ? '' : ' enabled $enabled'}'
+      '${temperature == null ? '' : ' temperature $temperature'}'
+      '${schedule == null ? '' : ' schedule $schedule'}'
+      '${from == null ? '' : ' from $from'}${to == null ? '' : ' to $to'}',
+    );
+    if (displayError != null) return displayError;
+    night = NightLight(
+      enabled: enabled ?? night.enabled,
+      temperature: temperature ?? night.temperature,
+      schedule: schedule ?? night.schedule,
+      from: from ?? night.from,
+      to: to ?? night.to,
+      active: night.active,
+    );
+    emit(withDisplays);
+    return null;
+  }
 
   /// Whether the polkit agent is registered (`Authentication1.Registered`).
   bool agentRegistered = true;
