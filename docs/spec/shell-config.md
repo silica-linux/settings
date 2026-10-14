@@ -1,0 +1,124 @@
+# Configuration files Settings writes for the shell
+
+Settings and the shell talk through small JSON objects in `$XDG_CONFIG_HOME/silica`
+(usually `~/.config/silica`). This page is the contract: the shell reads exactly these keys,
+Settings writes exactly these keys. Code: `lib/src/system/config.dart` (the store) and
+`lib/src/system/shell_config.dart` (the keys not wired yet). Tests: `test/shell_config_test.dart`.
+
+## Rules for both sides
+
+- Every file is one JSON object. Settings changes **one key at a time and keeps the others**,
+  so a reader must ignore keys it does not know.
+- A missing file, a missing key, a value of the wrong type or outside its set means **the
+  default**. A reader never fails on a bad value.
+- A file is written to `<name>.json.tmp` in the same folder and then renamed over
+  `<name>.json`, so a reader never sees half a file. A watcher must watch the **folder** and
+  filter on the file name (the rename replaces the inode); changes are bursty, so debounce.
+- Types: `bool` is JSON `true` / `false`; sizes are JSON **integers** (points); enumerations
+  are lower-camel-case strings.
+- Status: **written** means Settings writes it today, with a working control; **not wired**
+  means the schema is fixed and implemented (`ShellConfigWrites`), but the control stays
+  disabled and nothing is written until the shell reads the key (AGENTS.md, never fake).
+  When the shell implements a key, the Settings change is to enable the control and call the
+  writer.
+
+## dock.json
+
+| Key | Type / values | Default | Status |
+| --- | --- | --- | --- |
+| `position` | `"left"` \| `"bottom"` \| `"right"` | `"bottom"` | written (only `bottom` can be chosen) |
+| `minimizeEffect` | `"genie"` \| `"scale"` | `"genie"` | written |
+| `magnify` | bool | `true` | written |
+| `autohide` | bool | `false` | written |
+| `indicators` | bool | `true` | written |
+| `recents` | bool | `false` | written |
+| `tileSize` | integer, 16..128 (pt of the icon at rest) | `48` | not wired |
+| `magnifiedSize` | integer, `tileSize`..`floor(tileSize * 132 / 63)` (pt of the icon under the pointer) | `52` | not wired |
+| `launchAnimation` | `"bounce"` \| `"none"` | `"bounce"` | not wired |
+| `minimizeToApp` | bool (windows minimize into their app's icon) | `false` | not wired |
+
+Settings writes `tileSize` first and clamps `magnifiedSize` to the tile it just wrote; a
+reader must still clamp (`magnifiedSize` below `tileSize` means no magnification). The sliders
+map linearly onto the integer range. `magnify: false` ignores `magnifiedSize`.
+
+## menubar.json
+
+| Key | Type / values | Default | Status |
+| --- | --- | --- | --- |
+| `sound` | `"always"` \| `"active"` \| `"never"` | `"active"` | written |
+| `bluetooth` | bool | `false` | written |
+| `battery` | bool | `true` | written |
+| `batteryPercent` | bool (only meaningful with `battery`) | `false` | written |
+| `autohide` | `"never"` \| `"fullscreen"` \| `"always"` | `"fullscreen"` | not wired |
+| `background` | bool (the bar's translucent background) | `true` | not wired |
+| `recentItems` | integer, one of 0, 5, 10, 15, 20, 30, 50 (recent apps / documents / servers) | `10` | not wired |
+| `clock` | object, below | see below | not wired |
+
+`clock` is written as a whole object (all keys but `hour24` always present):
+
+| Key | Type / values | Default |
+| --- | --- | --- |
+| `hour24` | bool; **absent** means follow the system language | absent |
+| `seconds` | bool | `false` |
+| `weekday` | bool | `true` |
+| `date` | `"auto"` (when there is room) \| `"always"` \| `"never"` | `"auto"` |
+
+A value of `recentItems` off the list is read as `10`. A `clock` that is not an object, or a
+key of it with the wrong type, takes that key's default.
+
+## notifications.json
+
+```json
+{
+  "previews": "always",
+  "grouping": "automatic",
+  "apps": {
+    "<desktop entry id or app name>": {
+      "style": "banners",
+      "badges": true,
+      "sound": true,
+      "previews": "always",
+      "grouping": "automatic"
+    }
+  }
+}
+```
+
+| Key | Type / values | Default | Status |
+| --- | --- | --- | --- |
+| `apps.<id>.style` | `"banners"` \| `"alerts"` \| `"none"` | `"banners"` | written (the shell reads it) |
+| `apps.<id>.badges` | bool | `true` | not wired |
+| `apps.<id>.sound` | bool | `true` | not wired |
+| `apps.<id>.previews` | `"always"` \| `"unlocked"` \| `"never"` | the global `previews` | not wired |
+| `apps.<id>.grouping` | `"automatic"` \| `"byApp"` \| `"off"` | the global `grouping` | not wired |
+| `previews` (global) | `"always"` \| `"unlocked"` \| `"never"` | `"always"` | not wired |
+| `grouping` (global) | `"automatic"` \| `"byApp"` \| `"off"` | `"automatic"` | not wired |
+
+The per-app keys are optional: Settings removes a per-app key (instead of writing a "default"
+value) when the app should follow the global one. `<id>` is the notification's group (desktop
+entry) or its app name, as the shell matches today. `style: "none"` is "notifications off for
+this app". Do Not Disturb is not in this file: it goes through the daemon.
+
+## wallpaper.json
+
+Exactly one of:
+
+```json
+{ "color": "#7a7b80" }
+{ "image": "/absolute/path/to/picture.png" }
+```
+
+plus the optional `fit` (not wired): `"fill"` \| `"fit"` \| `"stretch"` \| `"center"` \|
+`"tile"`, default `"fill"`. Choosing a new color or picture **replaces** the object (never
+both `color` and `image`) and keeps `fit`. The color is `#rrggbb`. Settings writes it on the
+spot; the shell **should watch the file** (folder watch, as above) and apply it without a new
+login. Today Settings says the change applies at the next login, because the shell reads the
+file only when the session starts; that note goes away when the watch lands. A missing or
+unreadable image falls back to the default color.
+
+## Other files (for completeness)
+
+`theme.json` (`accent`, `highlight`, `sidebarIconSize`, `scrollBars`), `keyboard.json`
+(`repeatRate`, `repeatDelay`), `lockscreen.json` and `settings.json` (`lastPane`, Settings'
+own: the pane the window reopens on) are described in their panes' specs; the shell does not
+need `settings.json`.

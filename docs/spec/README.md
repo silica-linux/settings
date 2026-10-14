@@ -45,4 +45,5 @@ pane, so those panes are absent.
 | [accessibility.md](accessibility.md) | Accessibility display options and the shortcuts panel (ST-ACC) |
 | [lock-screen.md](lock-screen.md) | Lock screen pane (ST-LCK) |
 | [focus.md](focus.md) | Focus pane (ST-FOC) |
+| [shell-config.md](shell-config.md) | The JSON files the shell reads from Settings: keys, values, defaults |
 | [diagrams/window-layout.svg](diagrams/window-layout.svg) | Window, sidebar and grouped list geometry |

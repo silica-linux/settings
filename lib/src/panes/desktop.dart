@@ -810,8 +810,13 @@ class _WallpaperPaneState extends State<WallpaperPane> {
     final colors = SettingsColors.of(context);
     final config = ServicesScope.of(context).config;
     final current = readWallpaper(config.read('wallpaper'));
-    void choose(WallpaperOption option) =>
-        setState(() => config.replace('wallpaper', option.json));
+    void choose(WallpaperOption option) => setState(
+      () => config.replace('wallpaper', {
+        // The fit is a separate choice; a new picture keeps it.
+        'fit': ?config.read('wallpaper')['fit'],
+        ...option.json,
+      }),
+    );
     final pictures = _pictures ?? const [];
     return PanePage(
       children: [
