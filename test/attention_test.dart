@@ -63,6 +63,31 @@ void main() {
       expect(h.system.calls, contains('setMuted true'));
     });
 
+    testWidgets(
+      'without the daemon\'s audio the default output goes through wpctl',
+      (tester) async {
+        final h = await pumpSettings(
+          tester,
+          pane: PaneId.sound,
+          tools: audioTools(),
+        );
+        await settle(tester);
+        await tester.drag(
+          find.byKey(const ValueKey('output volume')),
+          const Offset(40, 0),
+        );
+        await settle(tester);
+        expect(
+          h.tools.calls.where((c) => c.startsWith('audioVolume 50')),
+          isNotEmpty,
+        );
+        expect(h.system.calls, isEmpty);
+        await tapKey(tester, 'mute');
+        await settle(tester);
+        expect(h.tools.calls, contains('audioMuted 50 true'));
+      },
+    );
+
     testWidgets('the input tab: devices and their volume', (tester) async {
       final h = await pumpSettings(
         tester,

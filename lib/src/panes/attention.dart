@@ -311,6 +311,7 @@ class _SoundPaneState extends State<SoundPane> {
   bool _input = false;
   AudioDevices _devices = const AudioDevices();
   double? _inputVolume;
+  double? _outputVolume;
   String? _error;
   Timer? _poll;
   SystemTools? _tools;
@@ -362,6 +363,7 @@ class _SoundPaneState extends State<SoundPane> {
       builder: (context, state) {
         final list = _input ? _devices.inputs : _devices.outputs;
         final input = _devices.defaultInput;
+        final output = _devices.outputs.where((d) => d.isDefault).firstOrNull;
         return PanePage(
           children: [
             SettingsGroup(
@@ -451,23 +453,48 @@ class _SoundPaneState extends State<SoundPane> {
             ),
             if (_error case final error?) ErrorLine(error),
             if (!_input)
+              // The daemon's audio when it has it; otherwise PipeWire's default output
+              // directly.
               GroupBox(
-                child: _VolumeRow(
-                  title: l.soundOutputVolume,
-                  sliderKey: const ValueKey('output volume'),
-                  value: state.volume,
-                  enabled: state.audioAvailable,
-                  onChanged: (v) => system.setVolume(v),
-                  mute: SilicaCheckbox(
-                    key: const ValueKey('mute'),
-                    value: state.muted,
-                    label: l.soundMute,
-                    size: ControlSize.small,
-                    onChanged: state.audioAvailable
-                        ? (v) => system.setMuted(v)
-                        : null,
-                  ),
-                ),
+                child: state.audioAvailable || output == null
+                    ? _VolumeRow(
+                        title: l.soundOutputVolume,
+                        sliderKey: const ValueKey('output volume'),
+                        value: state.volume,
+                        enabled: state.audioAvailable,
+                        onChanged: (v) => system.setVolume(v),
+                        mute: SilicaCheckbox(
+                          key: const ValueKey('mute'),
+                          value: state.muted,
+                          label: l.soundMute,
+                          size: ControlSize.small,
+                          onChanged: state.audioAvailable
+                              ? (v) => system.setMuted(v)
+                              : null,
+                        ),
+                      )
+                    : _VolumeRow(
+                        title: l.soundOutputVolume,
+                        sliderKey: const ValueKey('output volume'),
+                        value: _outputVolume ?? output.volume,
+                        enabled: true,
+                        onChanged: (v) {
+                          setState(() => _outputVolume = v);
+                          tools.setAudioVolume(output.id, v);
+                        },
+                        onChangeEnd: (_) {
+                          setState(() => _outputVolume = null);
+                          _load();
+                        },
+                        mute: SilicaCheckbox(
+                          key: const ValueKey('mute'),
+                          value: output.muted,
+                          label: l.soundMute,
+                          size: ControlSize.small,
+                          onChanged: (v) =>
+                              _run(tools.setAudioMuted(output.id, v)),
+                        ),
+                      ),
               )
             else
               GroupBox(
@@ -495,7 +522,7 @@ class _SoundPaneState extends State<SoundPane> {
                   ),
                 ),
               ),
-            if (!state.audioAvailable && !_input)
+            if (!state.audioAvailable && output == null && !_input)
               Padding(
                 padding: const EdgeInsets.only(left: 10),
                 child: Text(
