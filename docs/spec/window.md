@@ -64,4 +64,7 @@ text instead.
 
 ## Transitions (ST-NAV-05)
 
-Pane and sub-pane transitions were not recorded: *unmeasured*.
+There is no transition: the sidebar selection moves about 100–150 ms after the click and the
+content and the toolbar title are swapped together in one frame, 150–575 ms after it depending
+on the pane (the time the pane takes to load, not an animation). A sub-pane is pushed and popped
+the same way, without a slide.
