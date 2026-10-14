@@ -3,7 +3,9 @@
 // the disk). Storage measures the home folders and empties the trash. Sharing renames the
 // computer (hostnamectl). Date & Time sets the time zone and automatic time (timedatectl).
 // Language & Region sets the system language and formats (localectl). Changing them asks
-// polkit; without an authentication agent (#69) the system refuses and the pane says so.
+// polkit: the controls are enabled only while silica-daemon's authentication agent is
+// registered (`Authentication1.Registered`, #69), which shows the system password dialog;
+// without it they are disabled and the pane says why.
 // Software update, file and screen sharing, login items, backups and reset wait for their
 // backends (#77). The reference's warranty, device management and password autofill rows
 // belong to its own services and are left out.
@@ -479,8 +481,11 @@ class _SharingPaneState extends State<SharingPane> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => AuthenticationBuilder(builder: _build);
+
+  Widget _build(BuildContext context, bool? registered) {
     final l = AppLocalizations.of(context);
+    final allowed = registered == true;
     return PanePage(
       children: [
         SettingsGroup(
@@ -506,7 +511,10 @@ class _SharingPaneState extends State<SharingPane> {
           ],
         ),
         SettingsGroup(
-          footer: l.sharingNameHelp(HostSystemTools.hostnameFor(_saved)),
+          footer: [
+            l.sharingNameHelp(HostSystemTools.hostnameFor(_saved)),
+            if (registered == false) l.errorAuthentication(Issues.polkitAgent),
+          ].join(' '),
           children: [
             ValueRow(
               title: l.sharingComputerName,
@@ -515,6 +523,7 @@ class _SharingPaneState extends State<SharingPane> {
                 child: SilicaTextField(
                   key: const ValueKey('computer name'),
                   controller: _name,
+                  enabled: allowed,
                   semanticLabel: l.sharingComputerName,
                   onSubmitted: (_) => _save(),
                   onChanged: (_) => setState(() {}),
@@ -532,7 +541,8 @@ class _SharingPaneState extends State<SharingPane> {
               label: l.sharingRename,
               size: ControlSize.small,
               onPressed:
-                  _busy ||
+                  !allowed ||
+                      _busy ||
                       _name.text.trim().isEmpty ||
                       _name.text.trim() == _saved
                   ? null
@@ -736,8 +746,14 @@ class _DateTimePaneState extends State<DateTimePane> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => AuthenticationBuilder(builder: _build);
+
+  Widget _build(BuildContext context, bool? registered) {
     final l = AppLocalizations.of(context);
+    final allowed = registered == true;
+    final needsAgent = registered == false
+        ? l.errorAuthentication(Issues.polkitAgent)
+        : null;
     final clock = _clock ?? const ClockState();
     final zone = clock.timezone.isNotEmpty
         ? clock.timezone
@@ -749,6 +765,7 @@ class _DateTimePaneState extends State<DateTimePane> {
     return PanePage(
       children: [
         SettingsGroup(
+          footer: needsAgent,
           children: [
             SwitchRow(
               key: const ValueKey('automatic time'),
@@ -757,7 +774,7 @@ class _DateTimePaneState extends State<DateTimePane> {
                   ? l.dateTimeSynchronized
                   : null,
               value: clock.ntp,
-              onChanged: _clock == null || !clock.canNtp
+              onChanged: !allowed || _clock == null || !clock.canNtp
                   ? null
                   : (v) => _run(_tools.setNtp(v)),
             ),
@@ -775,6 +792,7 @@ class _DateTimePaneState extends State<DateTimePane> {
           footer: l.notAvailableIssue(Issues.clock),
         ),
         SettingsGroup(
+          footer: needsAgent,
           children: [
             ValueRow(
               key: const ValueKey('time zone'),
@@ -788,20 +806,22 @@ class _DateTimePaneState extends State<DateTimePane> {
                     key: const ValueKey('change time zone'),
                     label: l.changeButton,
                     size: ControlSize.small,
-                    onPressed: () async {
-                      final zones = await _tools.timezones();
-                      if (!context.mounted || zones.isEmpty) return;
-                      final chosen = await showChoiceSheet(
-                        context,
-                        title: l.dateTimeChooseZone,
-                        values: zones,
-                        current: zone,
-                        label: (z) => z.replaceAll('_', ' '),
-                      );
-                      if (chosen != null && chosen != zone) {
-                        await _run(_tools.setTimezone(chosen));
-                      }
-                    },
+                    onPressed: !allowed
+                        ? null
+                        : () async {
+                            final zones = await _tools.timezones();
+                            if (!context.mounted || zones.isEmpty) return;
+                            final chosen = await showChoiceSheet(
+                              context,
+                              title: l.dateTimeChooseZone,
+                              values: zones,
+                              current: zone,
+                              label: (z) => z.replaceAll('_', ' '),
+                            );
+                            if (chosen != null && chosen != zone) {
+                              await _run(_tools.setTimezone(chosen));
+                            }
+                          },
                   ),
                 ],
               ),
@@ -872,8 +892,11 @@ class _LanguagePaneState extends State<LanguagePane> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => AuthenticationBuilder(builder: _build);
+
+  Widget _build(BuildContext context, bool? registered) {
     final l = AppLocalizations.of(context);
+    final allowed = registered == true;
     final info = HostInfoScope.of(context);
     final locale = _locale ?? const LocaleState();
     final language = locale.language.isNotEmpty
@@ -884,7 +907,10 @@ class _LanguagePaneState extends State<LanguagePane> {
       children: [
         SettingsGroup(
           heading: l.languagePreferred,
-          footer: l.languageNextLogin,
+          footer: [
+            l.languageNextLogin,
+            if (registered == false) l.errorAuthentication(Issues.polkitAgent),
+          ].join(' '),
           children: [
             ValueRow(
               key: const ValueKey('system language'),
@@ -900,7 +926,7 @@ class _LanguagePaneState extends State<LanguagePane> {
                     key: const ValueKey('change language'),
                     label: l.changeButton,
                     size: ControlSize.small,
-                    onPressed: () => _choose(formats: false),
+                    onPressed: allowed ? () => _choose(formats: false) : null,
                   ),
                 ],
               ),
@@ -920,7 +946,7 @@ class _LanguagePaneState extends State<LanguagePane> {
                     key: const ValueKey('change region'),
                     label: l.changeButton,
                     size: ControlSize.small,
-                    onPressed: () => _choose(formats: true),
+                    onPressed: allowed ? () => _choose(formats: true) : null,
                   ),
                 ],
               ),

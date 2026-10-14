@@ -43,9 +43,9 @@ Settings drives the system through silica-daemon (D-Bus), the configuration file
 watches in `$XDG_CONFIG_HOME/silica`, and the system's own tools: NetworkManager (`nmcli`),
 PipeWire (`wpctl`), systemd (`timedatectl`, `hostnamectl`, `localectl`), BlueZ and
 power-profiles-daemon over the system bus, `xdg-settings` and CUPS (`lpoptions`). Changes
-polkit reserves to administrators need an authentication agent Silica does not have yet
-([#69](https://github.com/silica-linux/settings/issues/69)): Settings says so when the system
-refuses.
+polkit reserves to administrators go through silica-daemon's authentication agent, which
+shows the system password dialog; the controls are enabled only while the agent is
+registered (`Authentication1.Registered`), otherwise Settings says why.
 
 ## Building
 

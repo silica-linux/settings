@@ -207,3 +207,39 @@ class _SystemStateBuilderState extends State<SystemStateBuilder> {
   @override
   Widget build(BuildContext context) => widget.builder(context, _state);
 }
+
+/// Rebuilds with whether the session's polkit authentication agent is registered
+/// (silica-daemon, `Authentication1.Registered`): `null` until the daemon answers. Changes
+/// that polkit protects (time zone, computer name, language) are enabled only when it is
+/// `true`.
+class AuthenticationBuilder extends StatefulWidget {
+  const AuthenticationBuilder({super.key, required this.builder});
+
+  final Widget Function(BuildContext context, bool? registered) builder;
+
+  @override
+  State<AuthenticationBuilder> createState() => _AuthenticationBuilderState();
+}
+
+class _AuthenticationBuilderState extends State<AuthenticationBuilder> {
+  bool? _registered;
+  StreamSubscription<bool>? _subscription;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _subscription ??= ServicesScope.of(context).system.authenticationRegistered
+        .listen((registered) {
+          if (mounted) setState(() => _registered = registered);
+        });
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.builder(context, _registered);
+}

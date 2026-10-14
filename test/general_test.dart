@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:silica_settings/src/model/panes.dart';
 import 'package:silica_settings/src/system/tools.dart';
+import 'package:silica_ui/silica_ui.dart';
 
 import 'fakes.dart';
 import 'pane_helpers.dart';
@@ -147,6 +148,86 @@ void main() {
       await tapKey(tester, 'choice done');
       await settle(tester);
       expect(h.tools.calls, contains('locale it_IT.UTF-8 en_US.UTF-8'));
+    });
+
+    group('without the polkit agent (#69)', () {
+      bool enabled(WidgetTester tester, String key) =>
+          tester.widget<SilicaButton>(find.byKey(ValueKey(key))).onPressed !=
+          null;
+
+      testWidgets('time zone and automatic time wait for the agent', (
+        tester,
+      ) async {
+        final system = FakeSystem()..agentRegistered = false;
+        final tools = FakeTools()
+          ..clockState = const ClockState(ntp: true, canNtp: true);
+        final h = await pumpSettings(
+          tester,
+          pane: PaneId.general,
+          system: system,
+          tools: tools,
+        );
+        h.navigation.openSub(SubPaneId.dateTime);
+        await settle(tester);
+        expect(enabled(tester, 'change time zone'), isFalse);
+        expect(
+          tester.widget<SilicaSwitch>(switchIn('automatic time')).onChanged,
+          isNull,
+        );
+        expect(find.textContaining('#69'), findsWidgets);
+        system.emitAgent(true);
+        await settle(tester);
+        expect(enabled(tester, 'change time zone'), isTrue);
+        expect(
+          tester.widget<SilicaSwitch>(switchIn('automatic time')).onChanged,
+          isNotNull,
+        );
+        expect(find.textContaining('#69'), findsNothing);
+      });
+
+      testWidgets('the computer name waits for the agent', (tester) async {
+        final system = FakeSystem()..agentRegistered = false;
+        final h = await pumpSettings(
+          tester,
+          pane: PaneId.general,
+          system: system,
+        );
+        h.navigation.openSub(SubPaneId.sharing);
+        await settle(tester);
+        expect(enabled(tester, 'rename computer'), isFalse);
+        expect(find.textContaining('#69'), findsOneWidget);
+        system.emitAgent(true);
+        await settle(tester);
+        await tester.enterText(
+          find.descendant(
+            of: find.byKey(const ValueKey('computer name')),
+            matching: find.byType(EditableText),
+          ),
+          'Studio',
+        );
+        await tester.pump();
+        expect(enabled(tester, 'rename computer'), isTrue);
+        await tapKey(tester, 'rename computer');
+        await settle(tester);
+        expect(h.tools.calls, contains('computerName Studio'));
+      });
+
+      testWidgets('the language waits for the agent', (tester) async {
+        final system = FakeSystem()..agentRegistered = false;
+        final h = await pumpSettings(
+          tester,
+          pane: PaneId.general,
+          system: system,
+        );
+        h.navigation.openSub(SubPaneId.languageRegion);
+        await settle(tester);
+        expect(enabled(tester, 'change language'), isFalse);
+        expect(enabled(tester, 'change region'), isFalse);
+        system.emitAgent(true);
+        await settle(tester);
+        expect(enabled(tester, 'change language'), isTrue);
+        expect(enabled(tester, 'change region'), isTrue);
+      });
     });
   });
 }

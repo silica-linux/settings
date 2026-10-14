@@ -81,6 +81,21 @@ class FakeSystem implements SystemBackend {
   Future<void> setDoNotDisturb(bool enabled) async =>
       calls.add('setDoNotDisturb $enabled');
 
+  /// Whether the polkit agent is registered (`Authentication1.Registered`).
+  bool agentRegistered = true;
+  final StreamController<bool> _agent = StreamController<bool>.broadcast();
+
+  void emitAgent(bool registered) {
+    agentRegistered = registered;
+    _agent.add(registered);
+  }
+
+  @override
+  Stream<bool> get authenticationRegistered async* {
+    yield agentRegistered;
+    yield* _agent.stream;
+  }
+
   /// Null: no sound service.
   bool? uiSounds;
 

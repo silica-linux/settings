@@ -165,6 +165,11 @@ abstract class SystemBackend {
   /// has no sound service.
   Future<bool?> uiSoundsEnabled();
   Future<void> setUiSoundsEnabled(bool enabled);
+
+  /// Whether the session's polkit authentication agent is registered
+  /// (`dev.frascella.Silica.Authentication1.Registered`): the current value, then every
+  /// change. False when the daemon does not answer.
+  Stream<bool> get authenticationRegistered;
 }
 
 /// silica-daemon over D-Bus. Errors (no daemon, a missing source) become an unreachable state
@@ -337,6 +342,44 @@ class DaemonBackend implements SystemBackend {
   @override
   Future<void> setDoNotDisturb(bool enabled) =>
       _set('SetDoNotDisturb', 'b', enabled);
+
+  static const String _authPath = '/dev/frascella/Silica/Authentication1';
+  static const String _authInterface = 'dev.frascella.Silica.Authentication1';
+
+  Future<bool> _registered() async {
+    try {
+      final value = await _bus.getProperty(
+        destination: systemName,
+        path: _authPath,
+        interface: _authInterface,
+        name: 'Registered',
+      );
+      return value == true;
+    } on PlatformException {
+      return false;
+    } on MissingPluginException {
+      return false;
+    }
+  }
+
+  @override
+  Stream<bool> get authenticationRegistered async* {
+    yield await _registered();
+    try {
+      await for (final _ in _bus.signals(
+        sender: systemName,
+        path: _authPath,
+        interface: 'org.freedesktop.DBus.Properties',
+        member: 'PropertiesChanged',
+      )) {
+        yield await _registered();
+      }
+    } on PlatformException {
+      // No signals: the value read at the start stays.
+    } on MissingPluginException {
+      // Outside Silica.
+    }
+  }
 
   static const String _soundPath = '/dev/frascella/Silica/Sound1';
   static const String _soundInterface = 'dev.frascella.Silica.Sound1';
