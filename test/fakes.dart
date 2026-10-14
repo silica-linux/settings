@@ -82,6 +82,9 @@ class FakeSystem implements SystemBackend {
   Future<void> setDoNotDisturb(bool enabled) async =>
       calls.add('setDoNotDisturb $enabled');
 
+  @override
+  Future<void> setFocus(String id) async => calls.add('setFocus $id');
+
   /// Whether the polkit agent is registered (`Authentication1.Registered`).
   bool agentRegistered = true;
   final StreamController<bool> _agent = StreamController<bool>.broadcast();

@@ -732,21 +732,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get focusDoNotDisturb => 'Do Not Disturb';
 
   @override
-  String get focusWork => 'Work';
-
-  @override
-  String get focusReduceInterruptions => 'Fewer interruptions';
-
-  @override
-  String get focusSleep => 'Sleep';
-
-  @override
-  String get focusStudy => 'Study';
-
-  @override
-  String get focusShareAcrossDevices => 'Share across devices';
-
-  @override
   String get focusStatus => 'Focus status';
 
   @override
@@ -1618,4 +1603,87 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get energyInhibited => 'The computer is being kept awake now.';
+
+  @override
+  String get focusModesHeading => 'Focus modes';
+
+  @override
+  String get focusAdd => 'Add Focus…';
+
+  @override
+  String get focusNoModes =>
+      'No Focus modes yet. Add one to choose which apps and people can still reach you.';
+
+  @override
+  String focusModesNote(int issue) {
+    return 'Every Focus silences banners and sounds like Do Not Disturb. Letting the allowed apps through needs the shell (#$issue).';
+  }
+
+  @override
+  String focusTurnOn(String name) {
+    return 'Turn on $name';
+  }
+
+  @override
+  String get focusEditTitle => 'Edit Focus';
+
+  @override
+  String get focusNewTitle => 'New Focus';
+
+  @override
+  String get focusName => 'Name';
+
+  @override
+  String get focusSymbol => 'Symbol';
+
+  @override
+  String get focusAllowedApps => 'Allowed apps';
+
+  @override
+  String get focusAllowedAppsHelp =>
+      'Notifications from these apps still come through.';
+
+  @override
+  String get focusNoApps => 'No app has sent a notification yet.';
+
+  @override
+  String get focusAllowedPeople => 'Allowed people';
+
+  @override
+  String get focusAllowedPeopleHelp =>
+      'Messages from these people still come through.';
+
+  @override
+  String get focusPersonPlaceholder => 'Add a name';
+
+  @override
+  String focusRemovePerson(String name) {
+    return 'Remove $name';
+  }
+
+  @override
+  String get focusDelete => 'Delete Focus';
+
+  @override
+  String get focusTooMany =>
+      '32 Focus modes is the most. Delete one to add another.';
+
+  @override
+  String focusSummary(int apps, int people) {
+    String _temp0 = intl.Intl.pluralLogic(
+      apps,
+      locale: localeName,
+      other: '$apps apps',
+      one: '1 app',
+      zero: 'No apps',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      people,
+      locale: localeName,
+      other: '$people people',
+      one: '1 person',
+      zero: 'no people',
+    );
+    return '$_temp0, $_temp1';
+  }
 }

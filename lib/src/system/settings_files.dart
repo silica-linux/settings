@@ -141,25 +141,29 @@ extension SettingsFiles on ConfigStore {
     return v is String ? v : fallback;
   }
 
-  bool writePointerSpeed(PointerDevice device, double speed) => writePointer(
-    device,
-    'speed',
-    double.parse(
-      speed
-          .clamp(PointerLimits.speedMin, PointerLimits.speedMax)
-          .toStringAsFixed(2),
-    ),
-  );
+  bool writePointerSpeed(PointerDevice device, double speed) => !speed.isFinite
+      ? false
+      : writePointer(
+          device,
+          'speed',
+          double.parse(
+            speed
+                .clamp(PointerLimits.speedMin, PointerLimits.speedMax)
+                .toStringAsFixed(2),
+          ),
+        );
 
-  bool writeScrollSpeed(PointerDevice device, double speed) => writePointer(
-    device,
-    'scrollSpeed',
-    double.parse(
-      speed
-          .clamp(PointerLimits.scrollMin, PointerLimits.scrollMax)
-          .toStringAsFixed(2),
-    ),
-  );
+  bool writeScrollSpeed(PointerDevice device, double speed) => !speed.isFinite
+      ? false
+      : writePointer(
+          device,
+          'scrollSpeed',
+          double.parse(
+            speed
+                .clamp(PointerLimits.scrollMin, PointerLimits.scrollMax)
+                .toStringAsFixed(2),
+          ),
+        );
 
   // sound.json ------------------------------------------------------------------------
 
@@ -168,11 +172,13 @@ extension SettingsFiles on ConfigStore {
     return v is num && v.isFinite ? v.toDouble().clamp(0, 1) : 1;
   }
 
-  bool writeAlertVolume(double volume) => write(
-    'sound',
-    'alertVolume',
-    double.parse(volume.clamp(0, 1).toStringAsFixed(2)),
-  );
+  bool writeAlertVolume(double volume) => !volume.isFinite
+      ? false
+      : write(
+          'sound',
+          'alertVolume',
+          double.parse(volume.clamp(0, 1).toStringAsFixed(2)),
+        );
 
   // power.json ------------------------------------------------------------------------
 
@@ -184,4 +190,101 @@ extension SettingsFiles on ConfigStore {
 
   bool writeIdleMinutes(String key, int minutes) =>
       write('power', key, minutes <= 0 ? 0 : minutes);
+}
+
+// focus.json -------------------------------------------------------------------------------
+
+/// A Focus mode of focus.json: a name and a symbol, the apps whose notifications still come
+/// through (notifications.json app keys) and the people whose messages do.
+class FocusMode {
+  const FocusMode({
+    required this.id,
+    required this.name,
+    this.symbol = 'moon',
+    this.allowedApps = const [],
+    this.allowedPeople = const [],
+  });
+
+  /// The most modes focus.json holds, and the id Do Not Disturb keeps for itself.
+  static const int maxModes = 32;
+  static const String reservedId = 'dnd';
+
+  final String id;
+  final String name;
+  final String symbol;
+  final List<String> allowedApps;
+  final List<String> allowedPeople;
+
+  FocusMode copyWith({
+    String? name,
+    String? symbol,
+    List<String>? allowedApps,
+    List<String>? allowedPeople,
+  }) => FocusMode(
+    id: id,
+    name: name ?? this.name,
+    symbol: symbol ?? this.symbol,
+    allowedApps: allowedApps ?? this.allowedApps,
+    allowedPeople: allowedPeople ?? this.allowedPeople,
+  );
+
+  Map<String, Object?> toJson() => {
+    'id': id,
+    'name': name,
+    'symbol': symbol,
+    'allowedApps': allowedApps,
+    'allowedPeople': allowedPeople,
+  };
+
+  static FocusMode? fromJson(Object? json) {
+    if (json is! Map) return null;
+    final id = json['id'];
+    final name = json['name'];
+    if (id is! String || id.isEmpty || id == reservedId) return null;
+    List<String> strings(Object? v) => v is List
+        ? [
+            for (final e in v)
+              if (e is String && e.isNotEmpty) e,
+          ]
+        : const [];
+    return FocusMode(
+      id: id,
+      name: name is String && name.isNotEmpty ? name : id,
+      symbol: json['symbol'] is String ? json['symbol'] as String : 'moon',
+      allowedApps: strings(json['allowedApps']),
+      allowedPeople: strings(json['allowedPeople']),
+    );
+  }
+
+  /// An id for a mode named [name] that no mode in [taken] has: `work`, `work-2`…
+  static String idFor(String name, Iterable<String> taken) {
+    final slug = name
+        .toLowerCase()
+        .replaceAll(RegExp(r'[^a-z0-9]+'), '-')
+        .replaceAll(RegExp(r'^-+|-+$'), '');
+    final base = slug.isEmpty || slug == reservedId ? 'focus' : slug;
+    final used = taken.toSet();
+    if (!used.contains(base)) return base;
+    for (var n = 2; ; n++) {
+      if (!used.contains('$base-$n')) return '$base-$n';
+    }
+  }
+}
+
+extension FocusFile on ConfigStore {
+  /// The modes saved, in order; a malformed entry is skipped.
+  List<FocusMode> get focusModes {
+    final v = read('focus')['modes'];
+    if (v is! List) return const [];
+    final seen = <String>{};
+    return [
+      for (final e in v)
+        if (FocusMode.fromJson(e) case final mode? when seen.add(mode.id)) mode,
+    ].take(FocusMode.maxModes).toList();
+  }
+
+  /// Saves the modes (at most 32) and keeps `active`, which the daemon writes.
+  bool writeFocusModes(List<FocusMode> modes) => write('focus', 'modes', [
+    for (final m in modes.take(FocusMode.maxModes)) m.toJson(),
+  ]);
 }

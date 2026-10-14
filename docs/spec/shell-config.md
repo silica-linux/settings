@@ -175,6 +175,23 @@ zero; 0 or a missing key means never. Settings offers 1, 2, 5, 10, 15, 30 minute
 3 hours, and shows any other saved value as it is. The Energy and Battery panes write all
 three; the Lock Screen pane writes `displayOffMinutes`.
 
+### focus.json
+
+```json
+{
+  "active": "work",
+  "modes": [
+    { "id": "work", "name": "Work", "symbol": "person",
+      "allowedApps": ["firefox"], "allowedPeople": ["Ada"] }
+  ]
+}
+```
+
+At most 32 modes; `id` is unique and never `dnd` (Do Not Disturb keeps it); Settings makes it
+from the name (`work`, `work-2`…). `allowedApps` holds the keys of notifications.json `apps`.
+Settings writes `modes` only; silica-daemon writes `active` (`System1.SetFocus`) and reports
+the active mode in its state. Letting the allowed apps through is the shell's to do.
+
 ## Other files (for completeness)
 
 `theme.json` (`accent`, `highlight`, `sidebarIconSize`, `scrollBars`), `lockscreen.json` and `settings.json` (`lastPane`, Settings'

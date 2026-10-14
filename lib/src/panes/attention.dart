@@ -1,11 +1,11 @@
-// Notifications (ST-NTF-01), Sound (ST-SND-01), Focus (ST-FOC-01) and Screen Time (ST-SCT-01).
+// Notifications (ST-NTF-01), Sound (ST-SND-01) and Screen Time (ST-SCT-01); Focus is in focus.dart.
 // Real: the apps that sent notifications (silica-daemon's history) and their banner style
 // (notifications.json, read by the shell for every notification); the output volume and mute
 // (silica-daemon), the output and input devices and the input volume (PipeWire, wpctl); Do Not
 // Disturb. The alert sound and volume, the volume feedback and the interface sounds come
 // from the sound service (sound.json, #64); the output the effects play through and the
-// startup sound (#64), the global notification options (#71), the other focus modes (#72) and
-// screen time (#49) wait for their backends.
+// startup sound (#64), the global notification options (#71) and screen time (#49) wait for
+// their backends.
 
 import 'dart:async';
 
@@ -782,67 +782,6 @@ class _DeviceTable extends StatelessWidget {
                 ),
               ),
             ),
-        ],
-      ),
-    );
-  }
-}
-
-class FocusPane extends StatelessWidget {
-  const FocusPane({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context);
-    final system = ServicesScope.of(context).system;
-    return SystemStateBuilder(
-      builder: (context, state) => PanePage(
-        children: [
-          SettingsGroup(
-            footer: state.reachable
-                ? l.focusDoNotDisturbHelp
-                : l.appearanceNoDaemon,
-            children: [
-              ValueRow(
-                title: l.focusDoNotDisturb,
-                subtitle: state.doNotDisturb ? l.on : null,
-                height: 52,
-                leading: const IconTile(
-                  symbol: 'moon',
-                  tint: Color(0xFF5E5CE6),
-                  size: 28,
-                ),
-                trailing: SilicaSwitch(
-                  key: const ValueKey('dnd switch'),
-                  value: state.doNotDisturb,
-                  size: ControlSize.mini,
-                  semanticLabel: l.focusDoNotDisturb,
-                  onChanged: state.reachable
-                      ? (on) => system.setDoNotDisturb(on)
-                      : null,
-                ),
-              ),
-            ],
-          ),
-          SettingsGroup(
-            unavailable: true,
-            issue: Issues.focus,
-            children: [
-              for (final (title, symbol, tint) in [
-                (l.focusWork, 'person', const Color(0xFF30B0C7)),
-                (
-                  l.focusReduceInterruptions,
-                  'bell-slash',
-                  const Color(0xFF5E5CE6),
-                ),
-                (l.focusSleep, 'moon-stars', const Color(0xFF34C759)),
-                (l.focusStudy, 'lightbulb', const Color(0xFFFF9500)),
-              ])
-                NavRow(title: title, symbol: symbol, tint: tint, onTap: () {}),
-              SwitchRow(title: l.focusShareAcrossDevices, value: false),
-              NavRow(title: l.focusStatus, value: l.on, onTap: () {}),
-            ],
-          ),
         ],
       ),
     );

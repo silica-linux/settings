@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:silica_settings/src/model/panes.dart';
 import 'package:silica_settings/src/panes/attention.dart';
+import 'package:silica_settings/src/system/settings_files.dart';
 import 'package:silica_settings/src/system/system.dart';
 import 'package:silica_settings/src/system/tools.dart';
 import 'package:silica_ui/silica_ui.dart';
@@ -247,5 +248,216 @@ void main() {
     await tester.tap(switchIn('dnd switch'));
     await tester.pump();
     expect(h.system.calls, ['setDoNotDisturb true']);
+  });
+
+  group('Focus modes (#72)', () {
+    const reachable = SystemState(reachable: true);
+    FakeTools appTools() => FakeTools()
+      ..apps = const [
+        NotifyingApp(key: 'org.gnome.Nautilus', name: 'Files'),
+        NotifyingApp(key: 'firefox', name: 'Firefox'),
+      ];
+    Finder field(String key) => find.descendant(
+      of: find.byKey(ValueKey(key)),
+      matching: find.byType(EditableText),
+    );
+    Future<void> done(WidgetTester tester) async {
+      await tapKey(tester, 'focus done');
+      await tester.pump(const Duration(seconds: 1));
+      await settle(tester);
+    }
+
+    testWidgets('add a mode with a name, a symbol, apps and people', (
+      tester,
+    ) async {
+      final h = await pumpSettings(
+        tester,
+        pane: PaneId.focus,
+        tools: appTools(),
+        height: 1000,
+      );
+      await settle(tester);
+      expect(find.textContaining('No Focus modes yet'), findsOneWidget);
+      await tapKey(tester, 'add focus');
+      await settle(tester);
+      // Done waits for a name.
+      expect(
+        tester
+            .widget<SilicaButton>(find.byKey(const ValueKey('focus done')))
+            .onPressed,
+        isNull,
+      );
+      await tester.enterText(field('focus name'), 'Deep work');
+      await tester.pump();
+      await tapKey(tester, 'focus symbol lightbulb');
+      await tester.tap(
+        find.descendant(
+          of: find.byKey(const ValueKey('focus app firefox')),
+          matching: find.byType(SilicaCheckbox),
+        ),
+      );
+      await tester.pump();
+      await tester.enterText(field('focus person'), 'Ada');
+      await tapKey(tester, 'add person');
+      // A name left in the field when Done is pressed counts too.
+      await tester.enterText(field('focus person'), 'Grace');
+      await tester.pump();
+      await done(tester);
+      expect(h.config.read('focus'), {
+        'modes': [
+          {
+            'id': 'deep-work',
+            'name': 'Deep work',
+            'symbol': 'lightbulb',
+            'allowedApps': ['firefox'],
+            'allowedPeople': ['Ada', 'Grace'],
+          },
+        ],
+      });
+      expect(find.text('Deep work'), findsOneWidget);
+      expect(find.text('1 app, 2 people'), findsOneWidget);
+      expect(h.system.calls, isEmpty);
+    });
+
+    testWidgets('the switch turns a mode on and off through SetFocus', (
+      tester,
+    ) async {
+      final system = FakeSystem(reachable);
+      final h = await pumpSettings(
+        tester,
+        pane: PaneId.focus,
+        system: system,
+        height: 1000,
+      );
+      h.config.writeFocusModes(const [FocusMode(id: 'work', name: 'Work')]);
+      system.emit(reachable);
+      await tester.pump();
+      await tester.pump();
+      await tester.tap(switchIn('focus mode work'));
+      await tester.pump();
+      expect(system.calls, ['setFocus work']);
+      system.emit(const SystemState(reachable: true, focus: 'work'));
+      await tester.pump();
+      await tester.pump();
+      expect(find.text('On'), findsWidgets);
+      await tester.tap(switchIn('focus mode work'));
+      await tester.pump();
+      expect(system.calls.last, 'setFocus ');
+    });
+
+    testWidgets('edit the active mode: saved, and the daemon is told again', (
+      tester,
+    ) async {
+      final system = FakeSystem(
+        const SystemState(reachable: true, focus: 'work'),
+      );
+      final h = await pumpSettings(
+        tester,
+        pane: PaneId.focus,
+        system: system,
+        tools: appTools(),
+        height: 1000,
+      );
+      h.config.replace('focus', {
+        'active': 'work',
+        'modes': [
+          {
+            'id': 'work',
+            'name': 'Work',
+            'symbol': 'person',
+            'allowedApps': ['firefox'],
+            'allowedPeople': ['Ada'],
+          },
+        ],
+      });
+      system.emit(const SystemState(reachable: true, focus: 'work'));
+      await tester.pump();
+      await tester.pump();
+      await tapRowButton(tester, 'focus mode work');
+      await settle(tester);
+      await tester.enterText(field('focus name'), 'Office');
+      await tester.pump();
+      await tapKey(tester, 'remove person Ada');
+      await tester.tap(
+        find.descendant(
+          of: find.byKey(const ValueKey('focus app firefox')),
+          matching: find.byType(SilicaCheckbox),
+        ),
+      );
+      await tester.pump();
+      await done(tester);
+      expect(h.config.read('focus'), {
+        'active': 'work',
+        'modes': [
+          {
+            'id': 'work',
+            'name': 'Office',
+            'symbol': 'person',
+            'allowedApps': <String>[],
+            'allowedPeople': <String>[],
+          },
+        ],
+      });
+      expect(system.calls, ['setFocus work']);
+    });
+
+    testWidgets('delete the active mode: Focus goes off first', (tester) async {
+      final system = FakeSystem(
+        const SystemState(reachable: true, focus: 'work'),
+      );
+      final h = await pumpSettings(
+        tester,
+        pane: PaneId.focus,
+        system: system,
+        height: 1000,
+      );
+      h.config.writeFocusModes(const [
+        FocusMode(id: 'work', name: 'Work'),
+        FocusMode(id: 'sleep', name: 'Sleep'),
+      ]);
+      system.emit(const SystemState(reachable: true, focus: 'work'));
+      await tester.pump();
+      await tester.pump();
+      await tapRowButton(tester, 'focus mode work');
+      await settle(tester);
+      await tapKey(tester, 'delete focus');
+      await tester.pump(const Duration(seconds: 1));
+      await settle(tester);
+      expect(system.calls, ['setFocus ']);
+      final modes = h.config.read('focus')['modes'] as List;
+      expect([for (final m in modes) (m as Map)['id']], ['sleep']);
+      expect(find.text('Work'), findsNothing);
+    });
+
+    testWidgets('cancel leaves the modes alone; Do Not Disturb stays', (
+      tester,
+    ) async {
+      final h = await pumpSettings(
+        tester,
+        pane: PaneId.focus,
+        system: FakeSystem(reachable),
+        height: 1000,
+      );
+      await tapKey(tester, 'add focus');
+      await settle(tester);
+      await tester.enterText(field('focus name'), 'Nope');
+      await tester.pump();
+      await tester.tap(find.text('Cancel'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.pump(const Duration(seconds: 1));
+      await settle(tester);
+      expect(h.config.read('focus'), isEmpty);
+      await tester.tap(switchIn('dnd switch'));
+      await tester.pump();
+      expect(h.system.calls, ['setDoNotDisturb true']);
+    });
+
+    testWidgets('the note names what the shell still has to do', (
+      tester,
+    ) async {
+      await pumpSettings(tester, pane: PaneId.focus, height: 1000);
+      expect(find.textContaining('needs the shell (#72)'), findsOneWidget);
+    });
   });
 }

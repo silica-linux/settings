@@ -736,21 +736,6 @@ class AppLocalizationsIt extends AppLocalizations {
   String get focusDoNotDisturb => 'Non disturbare';
 
   @override
-  String get focusWork => 'Lavoro';
-
-  @override
-  String get focusReduceInterruptions => 'Meno interruzioni';
-
-  @override
-  String get focusSleep => 'Riposo';
-
-  @override
-  String get focusStudy => 'Studio';
-
-  @override
-  String get focusShareAcrossDevices => 'Condividi tra i dispositivi';
-
-  @override
   String get focusStatus => 'Stato di concentrazione';
 
   @override
@@ -1621,4 +1606,87 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get energyInhibited => 'Il computer è tenuto sveglio ora.';
+
+  @override
+  String get focusModesHeading => 'Modalità Focus';
+
+  @override
+  String get focusAdd => 'Aggiungi Focus…';
+
+  @override
+  String get focusNoModes =>
+      'Ancora nessuna modalità Focus. Aggiungine una per scegliere quali app e persone possono ancora raggiungerti.';
+
+  @override
+  String focusModesNote(int issue) {
+    return 'Ogni Focus silenzia banner e suoni come Non disturbare. Lasciar passare le app consentite richiede la shell (#$issue).';
+  }
+
+  @override
+  String focusTurnOn(String name) {
+    return 'Attiva $name';
+  }
+
+  @override
+  String get focusEditTitle => 'Modifica Focus';
+
+  @override
+  String get focusNewTitle => 'Nuovo Focus';
+
+  @override
+  String get focusName => 'Nome';
+
+  @override
+  String get focusSymbol => 'Simbolo';
+
+  @override
+  String get focusAllowedApps => 'App consentite';
+
+  @override
+  String get focusAllowedAppsHelp =>
+      'Le notifiche di queste app arrivano comunque.';
+
+  @override
+  String get focusNoApps => 'Nessuna app ha ancora inviato notifiche.';
+
+  @override
+  String get focusAllowedPeople => 'Persone consentite';
+
+  @override
+  String get focusAllowedPeopleHelp =>
+      'I messaggi di queste persone arrivano comunque.';
+
+  @override
+  String get focusPersonPlaceholder => 'Aggiungi un nome';
+
+  @override
+  String focusRemovePerson(String name) {
+    return 'Rimuovi $name';
+  }
+
+  @override
+  String get focusDelete => 'Elimina Focus';
+
+  @override
+  String get focusTooMany =>
+      '32 modalità Focus sono il massimo. Eliminane una per aggiungerne un’altra.';
+
+  @override
+  String focusSummary(int apps, int people) {
+    String _temp0 = intl.Intl.pluralLogic(
+      apps,
+      locale: localeName,
+      other: '$apps app',
+      one: '1 app',
+      zero: 'Nessuna app',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      people,
+      locale: localeName,
+      other: '$people persone',
+      one: '1 persona',
+      zero: 'nessuna persona',
+    );
+    return '$_temp0, $_temp1';
+  }
 }

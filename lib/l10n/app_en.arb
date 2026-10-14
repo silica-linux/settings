@@ -236,11 +236,6 @@
   "soundInput": "Input",
   "soundInputLevel": "Input volume",
   "focusDoNotDisturb": "Do Not Disturb",
-  "focusWork": "Work",
-  "focusReduceInterruptions": "Fewer interruptions",
-  "focusSleep": "Sleep",
-  "focusStudy": "Study",
-  "focusShareAcrossDevices": "Share across devices",
   "focusStatus": "Focus status",
   "screenTimeActivity": "Activity",
   "screenTimeAppUsage": "App and website activity",
@@ -697,5 +692,55 @@
   },
   "energyDisplayOff": "Turn the display off after",
   "energySleep": "Put the computer to sleep after",
-  "energyInhibited": "The computer is being kept awake now."
+  "energyInhibited": "The computer is being kept awake now.",
+  "focusModesHeading": "Focus modes",
+  "focusAdd": "Add Focus…",
+  "focusNoModes": "No Focus modes yet. Add one to choose which apps and people can still reach you.",
+  "focusModesNote": "Every Focus silences banners and sounds like Do Not Disturb. Letting the allowed apps through needs the shell (#{issue}).",
+  "focusTurnOn": "Turn on {name}",
+  "focusEditTitle": "Edit Focus",
+  "focusNewTitle": "New Focus",
+  "focusName": "Name",
+  "focusSymbol": "Symbol",
+  "focusAllowedApps": "Allowed apps",
+  "focusAllowedAppsHelp": "Notifications from these apps still come through.",
+  "focusNoApps": "No app has sent a notification yet.",
+  "focusAllowedPeople": "Allowed people",
+  "focusAllowedPeopleHelp": "Messages from these people still come through.",
+  "focusPersonPlaceholder": "Add a name",
+  "focusRemovePerson": "Remove {name}",
+  "focusDelete": "Delete Focus",
+  "focusTooMany": "32 Focus modes is the most. Delete one to add another.",
+  "focusSummary": "{apps, plural, =0{No apps} =1{1 app} other{{apps} apps}}, {people, plural, =0{no people} =1{1 person} other{{people} people}}",
+  "@focusModesNote": {
+    "placeholders": {
+      "issue": {
+        "type": "int"
+      }
+    }
+  },
+  "@focusTurnOn": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@focusRemovePerson": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@focusSummary": {
+    "placeholders": {
+      "apps": {
+        "type": "int"
+      },
+      "people": {
+        "type": "int"
+      }
+    }
+  }
 }

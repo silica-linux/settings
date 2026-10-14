@@ -37,6 +37,11 @@ class SystemState {
     this.audioName = '',
     this.doNotDisturb = false,
     this.dark = false,
+    this.focus = '',
+    this.focusName = '',
+    this.focusSymbol = '',
+    this.focusApps = const [],
+    this.focusPeople = const [],
     this.preventSleep = false,
     this.inhibited = false,
     this.appearanceMode = '',
@@ -62,6 +67,14 @@ class SystemState {
   final bool doNotDisturb;
   final bool dark;
 
+  /// The active Focus: its id (`dnd`, or a mode of focus.json), empty when off; the mode's
+  /// name and symbol, and the apps and people whose notifications still come through.
+  final String focus;
+  final String focusName;
+  final String focusSymbol;
+  final List<String> focusApps;
+  final List<String> focusPeople;
+
   /// power.json `preventSleep` as the daemon read it, and whether its logind inhibitor is held.
   final bool preventSleep;
   final bool inhibited;
@@ -83,6 +96,15 @@ class SystemState {
     }
 
     String text(String key) => d[key] is String ? d[key] as String : '';
+    List<String> strings(String key) {
+      final value = d[key];
+      return value is List
+          ? [
+              for (final e in value)
+                if (e is String) e,
+            ]
+          : const [];
+    }
 
     return SystemState(
       reachable: true,
@@ -102,6 +124,11 @@ class SystemState {
       audioName: text('audio.name'),
       doNotDisturb: flag('dnd'),
       dark: flag('appearance.dark'),
+      focus: text('focus'),
+      focusName: text('focus.name'),
+      focusSymbol: text('focus.symbol'),
+      focusApps: strings('focus.allowedApps'),
+      focusPeople: strings('focus.allowedPeople'),
       preventSleep: flag('power.preventSleep'),
       inhibited: flag('power.inhibited'),
       appearanceMode: text('appearance.mode'),
@@ -184,6 +211,9 @@ abstract class SystemBackend {
   Future<List<AudioOutput>> audioOutputs();
   Future<void> setAudioOutput(int id);
   Future<void> setDoNotDisturb(bool enabled);
+
+  /// Turns a Focus on: `dnd`, the id of a mode of focus.json, or empty for none.
+  Future<void> setFocus(String id);
 
   /// "Play interface sound effects" (`dev.frascella.Silica.Sound1`); null when the daemon
   /// has no sound service.
@@ -373,6 +403,9 @@ class DaemonBackend implements SystemBackend {
   @override
   Future<void> setDoNotDisturb(bool enabled) =>
       _set('SetDoNotDisturb', 'b', enabled);
+
+  @override
+  Future<void> setFocus(String id) => _set('SetFocus', 's', id);
 
   static const String _authPath = '/dev/frascella/Silica/Authentication1';
   static const String _authInterface = 'dev.frascella.Silica.Authentication1';

@@ -1514,36 +1514,6 @@ abstract class AppLocalizations {
   /// **'Do Not Disturb'**
   String get focusDoNotDisturb;
 
-  /// No description provided for @focusWork.
-  ///
-  /// In en, this message translates to:
-  /// **'Work'**
-  String get focusWork;
-
-  /// No description provided for @focusReduceInterruptions.
-  ///
-  /// In en, this message translates to:
-  /// **'Fewer interruptions'**
-  String get focusReduceInterruptions;
-
-  /// No description provided for @focusSleep.
-  ///
-  /// In en, this message translates to:
-  /// **'Sleep'**
-  String get focusSleep;
-
-  /// No description provided for @focusStudy.
-  ///
-  /// In en, this message translates to:
-  /// **'Study'**
-  String get focusStudy;
-
-  /// No description provided for @focusShareAcrossDevices.
-  ///
-  /// In en, this message translates to:
-  /// **'Share across devices'**
-  String get focusShareAcrossDevices;
-
   /// No description provided for @focusStatus.
   ///
   /// In en, this message translates to:
@@ -3097,6 +3067,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The computer is being kept awake now.'**
   String get energyInhibited;
+
+  /// No description provided for @focusModesHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus modes'**
+  String get focusModesHeading;
+
+  /// No description provided for @focusAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Focus…'**
+  String get focusAdd;
+
+  /// No description provided for @focusNoModes.
+  ///
+  /// In en, this message translates to:
+  /// **'No Focus modes yet. Add one to choose which apps and people can still reach you.'**
+  String get focusNoModes;
+
+  /// No description provided for @focusModesNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Every Focus silences banners and sounds like Do Not Disturb. Letting the allowed apps through needs the shell (#{issue}).'**
+  String focusModesNote(int issue);
+
+  /// No description provided for @focusTurnOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on {name}'**
+  String focusTurnOn(String name);
+
+  /// No description provided for @focusEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Focus'**
+  String get focusEditTitle;
+
+  /// No description provided for @focusNewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New Focus'**
+  String get focusNewTitle;
+
+  /// No description provided for @focusName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get focusName;
+
+  /// No description provided for @focusSymbol.
+  ///
+  /// In en, this message translates to:
+  /// **'Symbol'**
+  String get focusSymbol;
+
+  /// No description provided for @focusAllowedApps.
+  ///
+  /// In en, this message translates to:
+  /// **'Allowed apps'**
+  String get focusAllowedApps;
+
+  /// No description provided for @focusAllowedAppsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications from these apps still come through.'**
+  String get focusAllowedAppsHelp;
+
+  /// No description provided for @focusNoApps.
+  ///
+  /// In en, this message translates to:
+  /// **'No app has sent a notification yet.'**
+  String get focusNoApps;
+
+  /// No description provided for @focusAllowedPeople.
+  ///
+  /// In en, this message translates to:
+  /// **'Allowed people'**
+  String get focusAllowedPeople;
+
+  /// No description provided for @focusAllowedPeopleHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages from these people still come through.'**
+  String get focusAllowedPeopleHelp;
+
+  /// No description provided for @focusPersonPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a name'**
+  String get focusPersonPlaceholder;
+
+  /// No description provided for @focusRemovePerson.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name}'**
+  String focusRemovePerson(String name);
+
+  /// No description provided for @focusDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Focus'**
+  String get focusDelete;
+
+  /// No description provided for @focusTooMany.
+  ///
+  /// In en, this message translates to:
+  /// **'32 Focus modes is the most. Delete one to add another.'**
+  String get focusTooMany;
+
+  /// No description provided for @focusSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{apps, plural, =0{No apps} =1{1 app} other{{apps} apps}}, {people, plural, =0{no people} =1{1 person} other{{people} people}}'**
+  String focusSummary(int apps, int people);
 }
 
 class _AppLocalizationsDelegate
