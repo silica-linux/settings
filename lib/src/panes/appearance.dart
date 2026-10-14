@@ -1,10 +1,10 @@
 // Appearance (ST-APP-01..04): light / dark / automatic previews, the theme (nine accent
 // swatches 36 pt apart, highlight colour, icon style, folder colour) and the window options.
-// Light and dark go through silica-daemon (SetDark: Ossido, the shell, the apps and the portal
-// follow). The accent, the sidebar icon size and the scroll bars are saved in theme.json and
-// applied by this window at once; other apps follow once silica_ui reads the file (#59).
-// Automatic mode, the highlight colour, icon styles, glass and window tint wait for their
-// backends (#58, #60).
+// Light, dark and automatic go through silica-daemon (SetAppearanceMode: automatic follows the
+// sun, the daemon turns dark on at sunset; Ossido, the shell, the apps and the portal follow).
+// The accent, the sidebar icon size and the scroll bars are saved in theme.json and applied by
+// this window at once; other apps follow once silica_ui reads the file (#59).
+// The highlight colour, icon styles, glass and window tint wait for their backends (#60).
 
 import 'package:flutter/widgets.dart';
 import 'package:silica_ui/silica_ui.dart';
@@ -26,159 +26,165 @@ class AppearancePane extends StatelessWidget {
     final l = AppLocalizations.of(context);
     final services = ServicesScope.of(context);
     return SystemStateBuilder(
-      builder: (context, state) => ListenableBuilder(
-        listenable: services.look,
-        builder: (context, _) => PanePage(
-          children: [
-            SettingsGroup(
-              footer: state.reachable
-                  ? l.appearanceAutoMissing(Issues.automaticAppearance)
-                  : l.appearanceNoDaemon,
-              children: [
-                ValueRow(
-                  title: l.appearanceMode,
-                  alignTop: true,
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      for (final mode in AppearanceMode.values) ...[
-                        if (mode != AppearanceMode.light)
-                          const SizedBox(width: 10),
-                        _ModePreview(
-                          key: ValueKey('mode ${mode.name}'),
-                          mode: mode,
-                          label: switch (mode) {
-                            AppearanceMode.light => l.appearanceLight,
-                            AppearanceMode.dark => l.appearanceDark,
-                            AppearanceMode.automatic => l.appearanceAuto,
-                          },
-                          selected: switch (mode) {
-                            AppearanceMode.light => !state.dark,
-                            AppearanceMode.dark => state.dark,
-                            AppearanceMode.automatic => false,
-                          },
-                          // Automatic needs a schedule in the daemon (#58).
-                          onTap:
-                              !state.reachable ||
-                                  mode == AppearanceMode.automatic
-                              ? null
-                              : () => services.system.setDark(
-                                  mode == AppearanceMode.dark,
-                                ),
-                        ),
+      builder: (context, state) {
+        // A daemon without a mode (older) tells light from dark only.
+        final chosen = switch (state.appearanceMode) {
+          'auto' => AppearanceMode.automatic,
+          'dark' => AppearanceMode.dark,
+          'light' => AppearanceMode.light,
+          _ => state.dark ? AppearanceMode.dark : AppearanceMode.light,
+        };
+        return ListenableBuilder(
+          listenable: services.look,
+          builder: (context, _) => PanePage(
+            children: [
+              SettingsGroup(
+                footer: state.reachable
+                    ? l.appearanceAutoNote
+                    : l.appearanceNoDaemon,
+                children: [
+                  ValueRow(
+                    title: l.appearanceMode,
+                    alignTop: true,
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for (final mode in AppearanceMode.values) ...[
+                          if (mode != AppearanceMode.light)
+                            const SizedBox(width: 10),
+                          _ModePreview(
+                            key: ValueKey('mode ${mode.name}'),
+                            mode: mode,
+                            label: switch (mode) {
+                              AppearanceMode.light => l.appearanceLight,
+                              AppearanceMode.dark => l.appearanceDark,
+                              AppearanceMode.automatic => l.appearanceAuto,
+                            },
+                            selected: mode == chosen,
+                            onTap: state.reachable
+                                ? () => services.system.setAppearanceMode(
+                                    switch (mode) {
+                                      AppearanceMode.light => 'light',
+                                      AppearanceMode.dark => 'dark',
+                                      AppearanceMode.automatic => 'auto',
+                                    },
+                                  )
+                                : null,
+                          ),
+                        ],
                       ],
+                    ),
+                  ),
+                ],
+              ),
+              SettingsGroup(
+                heading: l.appearanceTheme,
+                footer: l.appearanceOtherApps(Issues.systemLook),
+                children: [
+                  ValueRow(
+                    title: l.appearanceAccent,
+                    alignTop: true,
+                    trailing: _AccentPicker(
+                      value: services.accent.value,
+                      onChanged: services.setAccent,
+                    ),
+                  ),
+                ],
+              ),
+              SettingsGroup(
+                unavailable: true,
+                issue: Issues.appearanceExtras,
+                children: [
+                  PopUpRow<HighlightColor>(
+                    title: l.appearanceHighlight,
+                    items: [
+                      PopUpItem(
+                        HighlightColor.automatic,
+                        l.appearanceAutomaticChoice,
+                      ),
                     ],
+                    value: HighlightColor.automatic,
+                    onChanged: (_) {},
+                    leading: const _Swatch(gradient: true),
                   ),
-                ),
-              ],
-            ),
-            SettingsGroup(
-              heading: l.appearanceTheme,
-              footer: l.appearanceOtherApps(Issues.systemLook),
-              children: [
-                ValueRow(
-                  title: l.appearanceAccent,
-                  alignTop: true,
-                  trailing: _AccentPicker(
-                    value: services.accent.value,
-                    onChanged: services.setAccent,
+                  PopUpRow<int>(
+                    title: l.appearanceIconStyle,
+                    items: [PopUpItem(0, l.appearanceDefaultChoice)],
+                    value: 0,
+                    onChanged: (_) {},
                   ),
-                ),
-              ],
-            ),
-            SettingsGroup(
-              unavailable: true,
-              issue: Issues.appearanceExtras,
-              children: [
-                PopUpRow<HighlightColor>(
-                  title: l.appearanceHighlight,
-                  items: [
-                    PopUpItem(
-                      HighlightColor.automatic,
-                      l.appearanceAutomaticChoice,
-                    ),
-                  ],
-                  value: HighlightColor.automatic,
-                  onChanged: (_) {},
-                  leading: const _Swatch(gradient: true),
-                ),
-                PopUpRow<int>(
-                  title: l.appearanceIconStyle,
-                  items: [PopUpItem(0, l.appearanceDefaultChoice)],
-                  value: 0,
-                  onChanged: (_) {},
-                ),
-                PopUpRow<int>(
-                  title: l.appearanceFolderColor,
-                  items: [PopUpItem(0, l.appearanceAutomaticChoice)],
-                  value: 0,
-                  onChanged: (_) {},
-                  leading: _Swatch(color: Accent.blue.plain(dark: false)),
-                ),
-                SliderRow(title: l.appearanceGlass, value: 0.5),
-              ],
-            ),
-            SettingsGroup(
-              heading: l.appearanceWindows,
-              children: [
-                PopUpRow<SidebarIconSize>(
-                  key: const ValueKey('sidebar icon size'),
-                  title: l.appearanceSidebarIconSize,
-                  items: [
-                    PopUpItem(SidebarIconSize.small, l.appearanceSmall),
-                    PopUpItem(SidebarIconSize.medium, l.appearanceMedium),
-                    PopUpItem(SidebarIconSize.large, l.appearanceLarge),
-                  ],
-                  value: services.sidebarIconSize.value,
-                  onChanged: services.setSidebarIconSize,
-                ),
-              ],
-            ),
-            SettingsGroup(
-              footer: l.appearanceOtherApps(Issues.systemLook),
-              children: [
-                _RadioRow<ScrollBarsMode>(
-                  key: const ValueKey('scroll bars'),
-                  title: l.appearanceScrollBars,
-                  options: [
-                    RadioOption(
-                      ScrollBarsMode.automatic,
-                      l.appearanceScrollAuto,
-                    ),
-                    RadioOption(
-                      ScrollBarsMode.whenScrolling,
-                      l.appearanceScrollWhenScrolling,
-                    ),
-                    RadioOption(
-                      ScrollBarsMode.always,
-                      l.appearanceScrollAlways,
-                    ),
-                  ],
-                  value: services.scrollBars.value,
-                  onChanged: services.setScrollBars,
-                ),
-              ],
-            ),
-            SettingsGroup(
-              unavailable: true,
-              issue: Issues.appearanceExtras,
-              children: [
-                SwitchRow(title: l.appearanceTint, value: false),
-                _RadioRow<int>(
-                  title: l.appearanceScrollClick,
-                  options: [
-                    RadioOption(0, l.appearanceScrollNextPage),
-                    RadioOption(1, l.appearanceScrollSpot),
-                  ],
-                  value: 0,
-                  onChanged: (_) {},
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+                  PopUpRow<int>(
+                    title: l.appearanceFolderColor,
+                    items: [PopUpItem(0, l.appearanceAutomaticChoice)],
+                    value: 0,
+                    onChanged: (_) {},
+                    leading: _Swatch(color: Accent.blue.plain(dark: false)),
+                  ),
+                  SliderRow(title: l.appearanceGlass, value: 0.5),
+                ],
+              ),
+              SettingsGroup(
+                heading: l.appearanceWindows,
+                children: [
+                  PopUpRow<SidebarIconSize>(
+                    key: const ValueKey('sidebar icon size'),
+                    title: l.appearanceSidebarIconSize,
+                    items: [
+                      PopUpItem(SidebarIconSize.small, l.appearanceSmall),
+                      PopUpItem(SidebarIconSize.medium, l.appearanceMedium),
+                      PopUpItem(SidebarIconSize.large, l.appearanceLarge),
+                    ],
+                    value: services.sidebarIconSize.value,
+                    onChanged: services.setSidebarIconSize,
+                  ),
+                ],
+              ),
+              SettingsGroup(
+                footer: l.appearanceOtherApps(Issues.systemLook),
+                children: [
+                  _RadioRow<ScrollBarsMode>(
+                    key: const ValueKey('scroll bars'),
+                    title: l.appearanceScrollBars,
+                    options: [
+                      RadioOption(
+                        ScrollBarsMode.automatic,
+                        l.appearanceScrollAuto,
+                      ),
+                      RadioOption(
+                        ScrollBarsMode.whenScrolling,
+                        l.appearanceScrollWhenScrolling,
+                      ),
+                      RadioOption(
+                        ScrollBarsMode.always,
+                        l.appearanceScrollAlways,
+                      ),
+                    ],
+                    value: services.scrollBars.value,
+                    onChanged: services.setScrollBars,
+                  ),
+                ],
+              ),
+              SettingsGroup(
+                unavailable: true,
+                issue: Issues.appearanceExtras,
+                children: [
+                  SwitchRow(title: l.appearanceTint, value: false),
+                  _RadioRow<int>(
+                    title: l.appearanceScrollClick,
+                    options: [
+                      RadioOption(0, l.appearanceScrollNextPage),
+                      RadioOption(1, l.appearanceScrollSpot),
+                    ],
+                    value: 0,
+                    onChanged: (_) {},
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

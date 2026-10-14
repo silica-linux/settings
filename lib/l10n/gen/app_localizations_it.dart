@@ -1076,11 +1076,6 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String appearanceAutoMissing(int issue) {
-    return 'Automatico alterna chiaro e scuro quando il servizio di sistema potrà seguire un orario (#$issue).';
-  }
-
-  @override
   String appearanceOtherApps(int issue) {
     return 'Impostazioni lo usa subito; le altre app lo seguiranno quando lo leggeranno (#$issue).';
   }
@@ -1609,4 +1604,8 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get trackpadDisableWhileTypingHelp =>
       'Evita che un palmo appoggiato sul trackpad muova il puntatore.';
+
+  @override
+  String get appearanceAutoNote =>
+      'Automatico passa allo scuro al tramonto e torna al chiaro all’alba, secondo il luogo del fuso orario.';
 }

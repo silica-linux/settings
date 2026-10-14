@@ -1073,11 +1073,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String appearanceAutoMissing(int issue) {
-    return 'Automatic switches between light and dark once the system service can follow a schedule (#$issue).';
-  }
-
-  @override
   String appearanceOtherApps(int issue) {
     return 'Settings uses this at once; the other apps follow once they read it (#$issue).';
   }
@@ -1606,4 +1601,8 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get trackpadDisableWhileTypingHelp =>
       'Stops a palm resting on the trackpad from moving the pointer.';
+
+  @override
+  String get appearanceAutoNote =>
+      'Automatic turns dark at sunset and back to light at sunrise, for the time zone\'s place.';
 }

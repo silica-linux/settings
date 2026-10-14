@@ -394,14 +394,6 @@
       }
     }
   },
-  "appearanceAutoMissing": "Automatic switches between light and dark once the system service can follow a schedule (#{issue}).",
-  "@appearanceAutoMissing": {
-    "placeholders": {
-      "issue": {
-        "type": "int"
-      }
-    }
-  },
   "appearanceOtherApps": "Settings uses this at once; the other apps follow once they read it (#{issue}).",
   "@appearanceOtherApps": {
     "placeholders": {
@@ -700,5 +692,6 @@
   "trackpadBottomRight": "Click in the bottom right corner",
   "trackpadBottomLeft": "Click in the bottom left corner",
   "trackpadDisableWhileTyping": "Ignore the trackpad while typing",
-  "trackpadDisableWhileTypingHelp": "Stops a palm resting on the trackpad from moving the pointer."
+  "trackpadDisableWhileTypingHelp": "Stops a palm resting on the trackpad from moving the pointer.",
+  "appearanceAutoNote": "Automatic turns dark at sunset and back to light at sunrise, for the time zone's place."
 }

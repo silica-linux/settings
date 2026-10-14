@@ -40,7 +40,8 @@ class FakeSystem implements SystemBackend {
   Future<SystemState> state() async => current;
 
   @override
-  Future<void> setDark(bool dark) async => calls.add('setDark $dark');
+  Future<void> setAppearanceMode(String mode) async =>
+      calls.add('setAppearanceMode $mode');
 
   @override
   Future<void> setWifiEnabled(bool enabled) async =>

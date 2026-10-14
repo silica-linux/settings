@@ -37,6 +37,7 @@ class SystemState {
     this.audioName = '',
     this.doNotDisturb = false,
     this.dark = false,
+    this.appearanceMode = '',
     this.touchpad = false,
     this.mouse = false,
   });
@@ -58,6 +59,9 @@ class SystemState {
   final String audioName;
   final bool doNotDisturb;
   final bool dark;
+
+  /// `light`, `dark` or `auto`; empty when the daemon does not say (`dark` then decides).
+  final String appearanceMode;
 
   /// A touchpad / another pointer is connected (`input.touchpad`, `input.mouse`, reported by
   /// Ossido): Settings shows its Trackpad pane only with a touchpad.
@@ -92,6 +96,7 @@ class SystemState {
       audioName: text('audio.name'),
       doNotDisturb: flag('dnd'),
       dark: flag('appearance.dark'),
+      appearanceMode: text('appearance.mode'),
       touchpad: flag('input.touchpad'),
       mouse: flag('input.mouse'),
     );
@@ -155,7 +160,9 @@ abstract class SystemBackend {
 
   Future<SystemState> state();
 
-  Future<void> setDark(bool dark);
+  /// `light`, `dark` or `auto` (dark from sunset to sunrise), kept by the daemon in
+  /// appearance.json.
+  Future<void> setAppearanceMode(String mode);
   Future<void> setWifiEnabled(bool enabled);
   Future<List<WifiNetwork>> wifiNetworks();
 
@@ -274,7 +281,8 @@ class DaemonBackend implements SystemBackend {
   }
 
   @override
-  Future<void> setDark(bool dark) => _set('SetDark', 'b', dark);
+  Future<void> setAppearanceMode(String mode) =>
+      _set('SetAppearanceMode', 's', mode);
 
   @override
   Future<void> setWifiEnabled(bool enabled) =>

@@ -2,7 +2,6 @@
 // groups cite them in their footer, so nothing is disabled without saying why.
 
 abstract final class Issues {
-  static const int automaticAppearance = 58;
   static const int systemLook = 59;
   static const int appearanceExtras = 60;
   static const int dock = 61;

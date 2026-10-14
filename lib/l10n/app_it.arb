@@ -339,7 +339,6 @@
   "lockHours": "{count, plural, =1{1 ora} other{{count} ore}}",
   "lockSeconds": "{count} secondi",
   "notAvailableIssue": "Non ancora disponibile in Silica (silica-linux/settings#{issue}).",
-  "appearanceAutoMissing": "Automatico alterna chiaro e scuro quando il servizio di sistema potrà seguire un orario (#{issue}).",
   "appearanceOtherApps": "Impostazioni lo usa subito; le altre app lo seguiranno quando lo leggeranno (#{issue}).",
   "appearanceSmall": "Piccole",
   "appearanceLarge": "Grandi",
@@ -495,5 +494,6 @@
   "trackpadBottomRight": "Clic nell’angolo in basso a destra",
   "trackpadBottomLeft": "Clic nell’angolo in basso a sinistra",
   "trackpadDisableWhileTyping": "Ignora il trackpad mentre scrivi",
-  "trackpadDisableWhileTypingHelp": "Evita che un palmo appoggiato sul trackpad muova il puntatore."
+  "trackpadDisableWhileTypingHelp": "Evita che un palmo appoggiato sul trackpad muova il puntatore.",
+  "appearanceAutoNote": "Automatico passa allo scuro al tramonto e torna al chiaro all’alba, secondo il luogo del fuso orario."
 }

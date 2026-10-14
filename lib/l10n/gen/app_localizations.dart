@@ -2132,12 +2132,6 @@ abstract class AppLocalizations {
   /// **'Not available yet in Silica (silica-linux/settings#{issue}).'**
   String notAvailableIssue(int issue);
 
-  /// No description provided for @appearanceAutoMissing.
-  ///
-  /// In en, this message translates to:
-  /// **'Automatic switches between light and dark once the system service can follow a schedule (#{issue}).'**
-  String appearanceAutoMissing(int issue);
-
   /// No description provided for @appearanceOtherApps.
   ///
   /// In en, this message translates to:
@@ -3073,6 +3067,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Stops a palm resting on the trackpad from moving the pointer.'**
   String get trackpadDisableWhileTypingHelp;
+
+  /// No description provided for @appearanceAutoNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic turns dark at sunset and back to light at sunrise, for the time zone\'s place.'**
+  String get appearanceAutoNote;
 }
 
 class _AppLocalizationsDelegate
