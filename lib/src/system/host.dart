@@ -79,6 +79,26 @@ class HostInfo {
   final String userName;
   final String timezone;
   final String language;
+
+  /// The same information with the graphics adapters filled in (read when About opens).
+  HostInfo withGraphics(List<String> graphics) => HostInfo(
+    osName: osName,
+    osVersion: osVersion,
+    osPrettyName: osPrettyName,
+    hostname: hostname,
+    vendor: vendor,
+    model: model,
+    cpu: cpu,
+    cpuCount: cpuCount,
+    memoryBytes: memoryBytes,
+    kernel: kernel,
+    userLogin: userLogin,
+    userName: userName,
+    timezone: timezone,
+    language: language,
+    graphics: graphics,
+    firmware: firmware,
+  );
 }
 
 /// Reads [HostInfo] from a root folder (`/` normally, a fixture in tests).
@@ -115,7 +135,10 @@ class HostReader {
       ? value.substring(1, value.length - 1)
       : value;
 
-  HostInfo read() {
+  /// The information of the machine. The graphics adapters take the most (pci.ids is more
+  /// than a megabyte), so the window starts without them ([HostInfo.withGraphics],
+  /// [graphics]).
+  HostInfo read({bool withGraphics = true}) {
     final os = parseKeyValues(
       _read('/etc/os-release') ?? _read('/usr/lib/os-release') ?? '',
     );
@@ -154,13 +177,13 @@ class HostReader {
       userName: name.isEmpty ? login : name,
       timezone: _timezone(),
       language: env['LANG'] ?? '',
-      graphics: _graphics(),
+      graphics: withGraphics ? graphics() : const [],
       firmware: (_read('/sys/class/dmi/id/bios_version') ?? '').trim(),
     );
   }
 
   /// The PCI ids of every DRM card, named through pci.ids when it is installed.
-  List<String> _graphics() {
+  List<String> graphics() {
     final names = <String>[];
     try {
       final drm = Directory('$root/sys/class/drm');
@@ -193,20 +216,27 @@ class HostReader {
         v.toLowerCase().replaceFirst('0x', '').padLeft(4, '0');
     final v = hex(vendor), d = hex(device);
     String? vendorName, deviceName;
-    var inVendor = false;
-    for (final line in ids.split('\n')) {
-      if (line.isEmpty || line.startsWith('#')) continue;
-      if (!line.startsWith('\t')) {
-        if (inVendor) break;
-        if (line.startsWith('$v ')) {
+    // Straight to the vendor's line: no need to split the whole file.
+    final start = ids.startsWith('$v ') ? 0 : ids.indexOf('\n$v ') + 1;
+    if (start > 0 || ids.startsWith('$v ')) {
+      var at = start;
+      var first = true;
+      while (at < ids.length) {
+        var end = ids.indexOf('\n', at);
+        if (end < 0) end = ids.length;
+        final line = ids.substring(at, end);
+        at = end + 1;
+        if (line.isEmpty || line.startsWith('#')) continue;
+        if (first) {
           vendorName = line.substring(4).trim();
-          inVendor = true;
+          first = false;
+          continue;
         }
-        continue;
-      }
-      if (inVendor && !line.startsWith('\t\t') && line.startsWith('\t$d ')) {
-        deviceName = line.substring(6).trim();
-        break;
+        if (!line.startsWith('\t')) break;
+        if (!line.startsWith('\t\t') && line.startsWith('\t$d ')) {
+          deviceName = line.substring(6).trim();
+          break;
+        }
       }
     }
     if (vendorName == null) return '$v:$d';

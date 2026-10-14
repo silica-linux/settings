@@ -9,12 +9,15 @@ import 'src/app.dart';
 import 'src/model/navigation.dart';
 import 'src/model/panes.dart';
 import 'src/services.dart';
+import 'src/session.dart';
+import 'src/startup.dart';
 import 'src/style.dart';
 import 'src/system/config.dart';
 import 'src/system/host.dart';
 import 'src/system/system.dart';
 
 void main(List<String> args) {
+  startupBegin();
   WidgetsFlutterBinding.ensureInitialized();
   // The toolbar is unified with the window: Ossido draws only the window buttons.
   SilicaWindow.setFullSizeContent(toolbarHeight).ignore();
@@ -27,24 +30,17 @@ void main(List<String> args) {
     max: const Size(SettingsMetrics.windowWidth, 100000),
   ).ignore();
   final env = Platform.environment;
-  runApp(
-    SettingsApp(
-      services: Services(
-        system: DaemonBackend(),
-        config: ConfigStore.forUser(env),
-        host: HostReader(env: env),
-        env: env,
-      ),
-      navigation: Navigation(initial: Location(_initialPane(args))),
-    ),
+  final config = ConfigStore.forUser(env);
+  // Nothing else is read before the first frame: the machine information comes after it and
+  // every pane loads its own data when it opens.
+  final navigation = Navigation(initial: Location(initialPane(args, config)));
+  rememberPane(navigation, config);
+  final services = Services(
+    system: DaemonBackend(),
+    config: config,
+    host: HostReader(env: env),
+    env: env,
   );
-}
-
-/// The first argument names a pane (`--dart-arg wifi` on the embedder); Appearance otherwise.
-PaneId _initialPane(List<String> args) {
-  final name = args.isEmpty ? '' : args.first;
-  return PaneId.values.firstWhere(
-    (p) => p.name.toLowerCase() == name.toLowerCase(),
-    orElse: () => PaneId.appearance,
-  );
+  startupMark('runApp');
+  runApp(SettingsApp(services: services, navigation: navigation));
 }

@@ -123,14 +123,25 @@ Widget generalSubPane(SubPaneId sub) => switch (sub) {
 
 /// General › About (ST-GEN-02): the computer's picture and model, the specification group,
 /// the system, the displays and the disk.
-class AboutPane extends StatelessWidget {
+class AboutPane extends StatefulWidget {
   const AboutPane({super.key});
+
+  @override
+  State<AboutPane> createState() => _AboutPaneState();
+}
+
+class _AboutPaneState extends State<AboutPane> {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // The graphics adapters (pci.ids) are named only when About is open, once.
+    ServicesScope.of(context).loadGraphics();
+  }
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final services = ServicesScope.of(context);
-    final info = services.info;
+    final info = HostInfoScope.of(context);
     final colors = SettingsColors.of(context);
     final model = [
       info.vendor,
@@ -730,7 +741,7 @@ class _DateTimePaneState extends State<DateTimePane> {
     final clock = _clock ?? const ClockState();
     final zone = clock.timezone.isNotEmpty
         ? clock.timezone
-        : ServicesScope.of(context).info.timezone;
+        : HostInfoScope.of(context).timezone;
     String two(int n) => n.toString().padLeft(2, '0');
     final now =
         '${_now.year}-${two(_now.month)}-${two(_now.day)}, '
@@ -863,7 +874,7 @@ class _LanguagePaneState extends State<LanguagePane> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final info = ServicesScope.of(context).info;
+    final info = HostInfoScope.of(context);
     final locale = _locale ?? const LocaleState();
     final language = locale.language.isNotEmpty
         ? locale.language
@@ -928,7 +939,7 @@ class _SoftwareUpdatePane extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final info = ServicesScope.of(context).info;
+    final info = HostInfoScope.of(context);
     return PanePage(
       children: [
         SettingsGroup(

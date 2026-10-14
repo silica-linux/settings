@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 
 import 'accent.dart';
+import 'startup.dart';
 import 'system/config.dart';
 import 'system/host.dart';
 import 'system/system.dart';
@@ -42,8 +43,7 @@ class Services {
     required this.host,
     required this.env,
     SystemTools? tools,
-  }) : info = host.read(),
-       tools = tools ?? HostSystemTools(env: env),
+  }) : tools = tools ?? HostSystemTools(env: env),
        accent = ValueNotifier(
          Accent.parse(config.text('theme', 'accent', fallback: '')),
        ),
@@ -74,9 +74,32 @@ class Services {
   final HostReader host;
   final Map<String, String> env;
 
-  /// Read once at the start: the OS, the hardware and the user do not change while the
-  /// window is open.
-  final HostInfo info;
+  /// The machine: the OS, the hardware and the user do not change while the window is open.
+  /// Empty at first; [loadHostInfo] fills it after the first frame, the graphics adapters
+  /// (pci.ids) only when About asks ([loadGraphics]). Read through [HostInfoScope].
+  final ValueNotifier<HostInfo> hostInfo = ValueNotifier(const HostInfo());
+
+  bool _infoLoading = false;
+  bool _graphicsLoading = false;
+
+  /// Reads the machine information once, a moment after the first frame.
+  Future<void> loadHostInfo() async {
+    if (_infoLoading) return;
+    _infoLoading = true;
+    await Future<void>.value();
+    final graphics = hostInfo.value.graphics;
+    hostInfo.value = host.read(withGraphics: false).withGraphics(graphics);
+    startupMark('host info read');
+  }
+
+  /// Names the graphics adapters (About); read once.
+  Future<void> loadGraphics() async {
+    if (_graphicsLoading) return;
+    _graphicsLoading = true;
+    await Future<void>.value();
+    hostInfo.value = hostInfo.value.withGraphics(host.graphics());
+    startupMark('graphics read');
+  }
 
   /// The system services Settings drives directly (NetworkManager, PipeWire, systemd's
   /// hostnamed, timedated and localed, BlueZ, power profiles, the default apps).
@@ -136,6 +159,21 @@ class ServicesScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(ServicesScope old) => old.services != services;
+}
+
+/// The machine information, rebuilding its readers when it arrives.
+class HostInfoScope extends InheritedNotifier<ValueNotifier<HostInfo>> {
+  const HostInfoScope({
+    super.key,
+    required ValueNotifier<HostInfo> info,
+    required super.child,
+  }) : super(notifier: info);
+
+  static HostInfo of(BuildContext context) {
+    final scope = context.dependOnInheritedWidgetOfExactType<HostInfoScope>();
+    assert(scope != null, 'no HostInfoScope above this widget');
+    return scope!.notifier!.value;
+  }
 }
 
 /// Rebuilds with every system state (Wi-Fi, Bluetooth, audio…), from the backend's stream.

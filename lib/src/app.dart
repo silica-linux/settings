@@ -11,6 +11,7 @@ import 'package:silica_ui/silica_ui.dart';
 import '../l10n/gen/app_localizations.dart';
 import 'model/navigation.dart';
 import 'services.dart';
+import 'startup.dart';
 import 'ui/window.dart';
 
 /// The system languages resolved against ours, English when none matches.
@@ -43,6 +44,12 @@ class _SettingsAppState extends State<SettingsApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    startupMark('app state created');
+    // The window first; the machine information once it is on screen.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      startupMark('first frame');
+      widget.services.loadHostInfo();
+    });
   }
 
   @override
@@ -68,19 +75,22 @@ class _SettingsAppState extends State<SettingsApp> with WidgetsBindingObserver {
       textDirection: TextDirection.ltr,
       child: ServicesScope(
         services: widget.services,
-        child: WindowActiveScope.follow(
-          child: _Scopes(
-            services: widget.services,
-            child: Overlay(
-              initialEntries: [
-                OverlayEntry(
-                  builder: (context) => ListenableBuilder(
-                    listenable: widget.navigation,
-                    builder: (context, _) =>
-                        SettingsWindow(navigation: widget.navigation),
+        child: HostInfoScope(
+          info: widget.services.hostInfo,
+          child: WindowActiveScope.follow(
+            child: _Scopes(
+              services: widget.services,
+              child: Overlay(
+                initialEntries: [
+                  OverlayEntry(
+                    builder: (context) => ListenableBuilder(
+                      listenable: widget.navigation,
+                      builder: (context, _) =>
+                          SettingsWindow(navigation: widget.navigation),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

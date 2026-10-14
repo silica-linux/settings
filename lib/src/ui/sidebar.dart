@@ -155,7 +155,7 @@ class _AccountCell extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = SettingsColors.of(context);
     final l = AppLocalizations.of(context);
-    final info = ServicesScope.of(context).info;
+    final info = HostInfoScope.of(context);
     final name = info.userName.isEmpty ? l.accountLocalUser : info.userName;
     final initials = name
         .split(RegExp(r'\s+'))

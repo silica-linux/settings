@@ -162,7 +162,7 @@ class _UsersPaneState extends State<UsersPane> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final info = ServicesScope.of(context).info;
+    final info = HostInfoScope.of(context);
     final colors = SettingsColors.of(context);
     final users = [...?_users];
     // Without passwd entries (a container), the session's user still shows.

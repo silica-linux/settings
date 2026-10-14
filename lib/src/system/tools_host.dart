@@ -385,6 +385,17 @@ class HostSystemTools implements SystemTools {
 
   @override
   Future<List<String>> timezones() async {
+    final cached = _timezones;
+    if (cached != null) return cached;
+    final list = await _listTimezones();
+    // A failed read is not kept: the next ask tries again.
+    if (list.isNotEmpty) _timezones = list;
+    return list;
+  }
+
+  List<String>? _timezones;
+
+  Future<List<String>> _listTimezones() async {
     final out = await _out('timedatectl', ['list-timezones']);
     return out == null
         ? const []
@@ -468,6 +479,17 @@ class HostSystemTools implements SystemTools {
 
   @override
   Future<List<String>> locales() async {
+    final cached = _locales;
+    if (cached != null) return cached;
+    final list = await _listLocales();
+    // A failed read is not kept: the next ask tries again.
+    if (list.isNotEmpty) _locales = list;
+    return list;
+  }
+
+  List<String>? _locales;
+
+  Future<List<String>> _listLocales() async {
     final out = await _out('localectl', ['list-locales']);
     return out == null
         ? const []
@@ -779,6 +801,16 @@ class HostSystemTools implements SystemTools {
 
   @override
   Future<List<AppEntry>> browsers() async {
+    final cached = _browsers;
+    if (cached != null) return cached;
+    final list = _listBrowsers();
+    if (list.isNotEmpty) _browsers = list;
+    return list;
+  }
+
+  List<AppEntry>? _browsers;
+
+  List<AppEntry> _listBrowsers() {
     final found = <String, AppEntry>{};
     for (final dir in _applicationDirs) {
       try {
