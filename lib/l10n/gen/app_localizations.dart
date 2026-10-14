@@ -1,0 +1,2168 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart' as intl;
+
+import 'app_localizations_en.dart';
+import 'app_localizations_it.dart';
+
+// ignore_for_file: type=lint
+
+/// Callers can lookup localized strings with an instance of AppLocalizations
+/// returned by `AppLocalizations.of(context)`.
+///
+/// Applications need to include `AppLocalizations.delegate()` in their app's
+/// `localizationDelegates` list, and the locales they support in the app's
+/// `supportedLocales` list. For example:
+///
+/// ```dart
+/// import 'gen/app_localizations.dart';
+///
+/// return MaterialApp(
+///   localizationsDelegates: AppLocalizations.localizationsDelegates,
+///   supportedLocales: AppLocalizations.supportedLocales,
+///   home: MyApplicationHome(),
+/// );
+/// ```
+///
+/// ## Update pubspec.yaml
+///
+/// Please make sure to update your pubspec.yaml to include the following
+/// packages:
+///
+/// ```yaml
+/// dependencies:
+///   # Internationalization support.
+///   flutter_localizations:
+///     sdk: flutter
+///   intl: any # Use the pinned version from flutter_localizations
+///
+///   # Rest of dependencies
+/// ```
+///
+/// ## iOS Applications
+///
+/// iOS applications define key application metadata, including supported
+/// locales, in an Info.plist file that is built into the application bundle.
+/// To configure the locales supported by your app, you’ll need to edit this
+/// file.
+///
+/// First, open your project’s ios/Runner.xcworkspace Xcode workspace file.
+/// Then, in the Project Navigator, open the Info.plist file under the Runner
+/// project’s Runner folder.
+///
+/// Next, select the Information Property List item, select Add Item from the
+/// Editor menu, then select Localizations from the pop-up menu.
+///
+/// Select and expand the newly-created Localizations item then, for each
+/// locale your application supports, add a new item and select the locale
+/// you wish to add from the pop-up menu in the Value field. This list should
+/// be consistent with the languages listed in the AppLocalizations.supportedLocales
+/// property.
+abstract class AppLocalizations {
+  AppLocalizations(String locale)
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+
+  final String localeName;
+
+  static AppLocalizations of(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
+  }
+
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
+
+  /// A list of this localizations delegate along with the default localizations
+  /// delegates.
+  ///
+  /// Returns a list of localizations delegates containing this delegate along with
+  /// GlobalMaterialLocalizations.delegate, GlobalCupertinoLocalizations.delegate,
+  /// and GlobalWidgetsLocalizations.delegate.
+  ///
+  /// Additional delegates can be added by appending to this list in
+  /// MaterialApp. This list does not have to be used at all if a custom list
+  /// of delegates is preferred or required.
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
+
+  /// A list of this localizations delegate's supported locales.
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('en'),
+    Locale('it'),
+  ];
+
+  /// No description provided for @appTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get appTitle;
+
+  /// No description provided for @notAvailableYet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available yet in Silica.'**
+  String get notAvailableYet;
+
+  /// No description provided for @done.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get done;
+
+  /// No description provided for @edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit…'**
+  String get edit;
+
+  /// No description provided for @empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty'**
+  String get empty;
+
+  /// No description provided for @on.
+  ///
+  /// In en, this message translates to:
+  /// **'On'**
+  String get on;
+
+  /// No description provided for @searchPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get searchPlaceholder;
+
+  /// No description provided for @searchClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get searchClear;
+
+  /// No description provided for @searchNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No results'**
+  String get searchNoResults;
+
+  /// No description provided for @accountLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'Local account'**
+  String get accountLocal;
+
+  /// No description provided for @accountLocalUser.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get accountLocalUser;
+
+  /// No description provided for @paneWifi.
+  ///
+  /// In en, this message translates to:
+  /// **'Wi-Fi'**
+  String get paneWifi;
+
+  /// No description provided for @paneBluetooth.
+  ///
+  /// In en, this message translates to:
+  /// **'Bluetooth'**
+  String get paneBluetooth;
+
+  /// No description provided for @paneNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Network'**
+  String get paneNetwork;
+
+  /// No description provided for @paneVpn.
+  ///
+  /// In en, this message translates to:
+  /// **'VPN'**
+  String get paneVpn;
+
+  /// No description provided for @paneEnergy.
+  ///
+  /// In en, this message translates to:
+  /// **'Energy'**
+  String get paneEnergy;
+
+  /// No description provided for @paneBattery.
+  ///
+  /// In en, this message translates to:
+  /// **'Battery'**
+  String get paneBattery;
+
+  /// No description provided for @paneGeneral.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get paneGeneral;
+
+  /// No description provided for @paneAccessibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Accessibility'**
+  String get paneAccessibility;
+
+  /// No description provided for @paneAppearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get paneAppearance;
+
+  /// No description provided for @paneMenuBar.
+  ///
+  /// In en, this message translates to:
+  /// **'Menu Bar'**
+  String get paneMenuBar;
+
+  /// No description provided for @paneDisplays.
+  ///
+  /// In en, this message translates to:
+  /// **'Displays'**
+  String get paneDisplays;
+
+  /// No description provided for @paneDesktopDock.
+  ///
+  /// In en, this message translates to:
+  /// **'Desktop & Dock'**
+  String get paneDesktopDock;
+
+  /// No description provided for @paneWallpaper.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallpaper'**
+  String get paneWallpaper;
+
+  /// No description provided for @paneSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get paneSearch;
+
+  /// No description provided for @paneNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get paneNotifications;
+
+  /// No description provided for @paneSound.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound'**
+  String get paneSound;
+
+  /// No description provided for @paneFocus.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus'**
+  String get paneFocus;
+
+  /// No description provided for @paneScreenTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen Time'**
+  String get paneScreenTime;
+
+  /// No description provided for @paneLockScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock Screen'**
+  String get paneLockScreen;
+
+  /// No description provided for @panePrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy & Security'**
+  String get panePrivacy;
+
+  /// No description provided for @panePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Login Password'**
+  String get panePassword;
+
+  /// No description provided for @paneUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Users & Groups'**
+  String get paneUsers;
+
+  /// No description provided for @paneInternetAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Internet Accounts'**
+  String get paneInternetAccounts;
+
+  /// No description provided for @paneKeyboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Keyboard'**
+  String get paneKeyboard;
+
+  /// No description provided for @paneMouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Mouse'**
+  String get paneMouse;
+
+  /// No description provided for @panePrinters.
+  ///
+  /// In en, this message translates to:
+  /// **'Printers & Scanners'**
+  String get panePrinters;
+
+  /// No description provided for @subAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get subAbout;
+
+  /// No description provided for @subSoftwareUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Software Update'**
+  String get subSoftwareUpdate;
+
+  /// No description provided for @subStorage.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage'**
+  String get subStorage;
+
+  /// No description provided for @subSharing.
+  ///
+  /// In en, this message translates to:
+  /// **'Sharing'**
+  String get subSharing;
+
+  /// No description provided for @subDateTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Date & Time'**
+  String get subDateTime;
+
+  /// No description provided for @subStartupDisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Startup Disk'**
+  String get subStartupDisk;
+
+  /// No description provided for @subLoginItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Login Items'**
+  String get subLoginItems;
+
+  /// No description provided for @subLanguageRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Language & Region'**
+  String get subLanguageRegion;
+
+  /// No description provided for @subBackups.
+  ///
+  /// In en, this message translates to:
+  /// **'Backups'**
+  String get subBackups;
+
+  /// No description provided for @subTransferReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer or Reset'**
+  String get subTransferReset;
+
+  /// No description provided for @wifiNoDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'No Wi-Fi device found'**
+  String get wifiNoDevice;
+
+  /// No description provided for @wifiConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get wifiConnected;
+
+  /// No description provided for @wifiKnownNetworks.
+  ///
+  /// In en, this message translates to:
+  /// **'Known Networks'**
+  String get wifiKnownNetworks;
+
+  /// No description provided for @wifiOtherNetworks.
+  ///
+  /// In en, this message translates to:
+  /// **'Other Networks'**
+  String get wifiOtherNetworks;
+
+  /// No description provided for @wifiConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect'**
+  String get wifiConnect;
+
+  /// No description provided for @wifiSearching.
+  ///
+  /// In en, this message translates to:
+  /// **'Looking for networks…'**
+  String get wifiSearching;
+
+  /// No description provided for @wifiNoOtherNetworks.
+  ///
+  /// In en, this message translates to:
+  /// **'No other networks'**
+  String get wifiNoOtherNetworks;
+
+  /// No description provided for @wifiNewNetworkUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Joining a new network needs its password, which Silica can\'t ask for yet. Saved networks can be joined.'**
+  String get wifiNewNetworkUnavailable;
+
+  /// No description provided for @wifiAskToJoin.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask to join networks'**
+  String get wifiAskToJoin;
+
+  /// No description provided for @wifiAskToJoinHotspots.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask to join hotspots'**
+  String get wifiAskToJoinHotspots;
+
+  /// No description provided for @wifiAskNotify.
+  ///
+  /// In en, this message translates to:
+  /// **'Notify'**
+  String get wifiAskNotify;
+
+  /// No description provided for @wifiAskNever.
+  ///
+  /// In en, this message translates to:
+  /// **'Never'**
+  String get wifiAskNever;
+
+  /// No description provided for @bluetoothNoAdapter.
+  ///
+  /// In en, this message translates to:
+  /// **'No Bluetooth adapter found'**
+  String get bluetoothNoAdapter;
+
+  /// No description provided for @bluetoothMyDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'My Devices'**
+  String get bluetoothMyDevices;
+
+  /// No description provided for @bluetoothNoDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'No paired devices'**
+  String get bluetoothNoDevices;
+
+  /// No description provided for @bluetoothConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get bluetoothConnected;
+
+  /// No description provided for @bluetoothNotConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Not connected'**
+  String get bluetoothNotConnected;
+
+  /// No description provided for @bluetoothConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect'**
+  String get bluetoothConnect;
+
+  /// No description provided for @bluetoothDisconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect'**
+  String get bluetoothDisconnect;
+
+  /// No description provided for @bluetoothNearby.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearby Devices'**
+  String get bluetoothNearby;
+
+  /// No description provided for @bluetoothNearbyNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Searching for new devices'**
+  String get bluetoothNearbyNone;
+
+  /// No description provided for @networkWired.
+  ///
+  /// In en, this message translates to:
+  /// **'Ethernet'**
+  String get networkWired;
+
+  /// No description provided for @networkConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get networkConnected;
+
+  /// No description provided for @networkNotConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Not connected'**
+  String get networkNotConnected;
+
+  /// No description provided for @networkOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get networkOff;
+
+  /// No description provided for @networkFirewall.
+  ///
+  /// In en, this message translates to:
+  /// **'Firewall'**
+  String get networkFirewall;
+
+  /// No description provided for @vpnNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No VPN configurations'**
+  String get vpnNone;
+
+  /// No description provided for @vpnAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add VPN Configuration…'**
+  String get vpnAdd;
+
+  /// No description provided for @energyPreventSleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep the computer awake when the display is off'**
+  String get energyPreventSleep;
+
+  /// No description provided for @energyWakeForNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Wake for network access'**
+  String get energyWakeForNetwork;
+
+  /// No description provided for @energyRestartAfterPowerFailure.
+  ///
+  /// In en, this message translates to:
+  /// **'Start up again after a power failure'**
+  String get energyRestartAfterPowerFailure;
+
+  /// No description provided for @batteryLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Battery level'**
+  String get batteryLevel;
+
+  /// No description provided for @batteryCharging.
+  ///
+  /// In en, this message translates to:
+  /// **'Charging'**
+  String get batteryCharging;
+
+  /// No description provided for @batteryOnBattery.
+  ///
+  /// In en, this message translates to:
+  /// **'On battery'**
+  String get batteryOnBattery;
+
+  /// No description provided for @batteryLowPowerMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Low power mode'**
+  String get batteryLowPowerMode;
+
+  /// No description provided for @batteryOptimizedCharging.
+  ///
+  /// In en, this message translates to:
+  /// **'Optimised charging'**
+  String get batteryOptimizedCharging;
+
+  /// No description provided for @generalDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage this computer: its software, storage, sharing, date, language and more.'**
+  String get generalDescription;
+
+  /// No description provided for @aboutThisComputer.
+  ///
+  /// In en, this message translates to:
+  /// **'This computer'**
+  String get aboutThisComputer;
+
+  /// No description provided for @aboutName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get aboutName;
+
+  /// No description provided for @aboutProcessor.
+  ///
+  /// In en, this message translates to:
+  /// **'Processor'**
+  String get aboutProcessor;
+
+  /// No description provided for @aboutMemory.
+  ///
+  /// In en, this message translates to:
+  /// **'Memory'**
+  String get aboutMemory;
+
+  /// No description provided for @aboutSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get aboutSystem;
+
+  /// No description provided for @aboutKernel.
+  ///
+  /// In en, this message translates to:
+  /// **'Kernel'**
+  String get aboutKernel;
+
+  /// No description provided for @aboutDisplays.
+  ///
+  /// In en, this message translates to:
+  /// **'Displays'**
+  String get aboutDisplays;
+
+  /// No description provided for @aboutUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get aboutUnknown;
+
+  /// No description provided for @storageCalculating.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculating…'**
+  String get storageCalculating;
+
+  /// No description provided for @storageSystemDisk.
+  ///
+  /// In en, this message translates to:
+  /// **'System disk'**
+  String get storageSystemDisk;
+
+  /// No description provided for @storageRecommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendations'**
+  String get storageRecommendations;
+
+  /// No description provided for @storageEmptyTrash.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty the Trash automatically'**
+  String get storageEmptyTrash;
+
+  /// No description provided for @sharingFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'File sharing'**
+  String get sharingFiles;
+
+  /// No description provided for @sharingScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen sharing'**
+  String get sharingScreen;
+
+  /// No description provided for @sharingRemoteLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote login'**
+  String get sharingRemoteLogin;
+
+  /// No description provided for @sharingComputerName.
+  ///
+  /// In en, this message translates to:
+  /// **'Computer name'**
+  String get sharingComputerName;
+
+  /// No description provided for @sharingNameReadOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'The name can\'t be changed from Settings yet.'**
+  String get sharingNameReadOnly;
+
+  /// No description provided for @dateTimeZone.
+  ///
+  /// In en, this message translates to:
+  /// **'Time zone'**
+  String get dateTimeZone;
+
+  /// No description provided for @dateTimeAutomatic.
+  ///
+  /// In en, this message translates to:
+  /// **'Set time and date automatically'**
+  String get dateTimeAutomatic;
+
+  /// No description provided for @dateTime24Hour.
+  ///
+  /// In en, this message translates to:
+  /// **'24-hour time'**
+  String get dateTime24Hour;
+
+  /// No description provided for @languagePreferred.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferred language'**
+  String get languagePreferred;
+
+  /// No description provided for @languageReadOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'The system language can\'t be changed from Settings yet.'**
+  String get languageReadOnly;
+
+  /// No description provided for @languageRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Region'**
+  String get languageRegion;
+
+  /// No description provided for @languageFirstDay.
+  ///
+  /// In en, this message translates to:
+  /// **'First day of the week'**
+  String get languageFirstDay;
+
+  /// No description provided for @languageMonday.
+  ///
+  /// In en, this message translates to:
+  /// **'Monday'**
+  String get languageMonday;
+
+  /// No description provided for @updateInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed system'**
+  String get updateInstalled;
+
+  /// No description provided for @updateCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Check for updates'**
+  String get updateCheck;
+
+  /// No description provided for @updateCheckButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Now'**
+  String get updateCheckButton;
+
+  /// No description provided for @updateAutomatic.
+  ///
+  /// In en, this message translates to:
+  /// **'Install updates automatically'**
+  String get updateAutomatic;
+
+  /// No description provided for @accessibilityDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Make the computer easier to see, hear and control, in the way that suits you.'**
+  String get accessibilityDescription;
+
+  /// No description provided for @accessibilityVision.
+  ///
+  /// In en, this message translates to:
+  /// **'Vision'**
+  String get accessibilityVision;
+
+  /// No description provided for @accessibilityPhysical.
+  ///
+  /// In en, this message translates to:
+  /// **'Motor'**
+  String get accessibilityPhysical;
+
+  /// No description provided for @accessibilityHearing.
+  ///
+  /// In en, this message translates to:
+  /// **'Hearing'**
+  String get accessibilityHearing;
+
+  /// No description provided for @accessibilityScreenReader.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen reader'**
+  String get accessibilityScreenReader;
+
+  /// No description provided for @accessibilityZoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Zoom'**
+  String get accessibilityZoom;
+
+  /// No description provided for @accessibilityLargerText.
+  ///
+  /// In en, this message translates to:
+  /// **'Larger text'**
+  String get accessibilityLargerText;
+
+  /// No description provided for @accessibilityDisplay.
+  ///
+  /// In en, this message translates to:
+  /// **'Display'**
+  String get accessibilityDisplay;
+
+  /// No description provided for @accessibilityMotion.
+  ///
+  /// In en, this message translates to:
+  /// **'Motion'**
+  String get accessibilityMotion;
+
+  /// No description provided for @accessibilitySpokenContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Spoken content'**
+  String get accessibilitySpokenContent;
+
+  /// No description provided for @accessibilityVoiceControl.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice control'**
+  String get accessibilityVoiceControl;
+
+  /// No description provided for @accessibilityPointer.
+  ///
+  /// In en, this message translates to:
+  /// **'Pointer control'**
+  String get accessibilityPointer;
+
+  /// No description provided for @accessibilityAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio'**
+  String get accessibilityAudio;
+
+  /// No description provided for @accessibilityCaptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Captions'**
+  String get accessibilityCaptions;
+
+  /// No description provided for @appearanceMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearanceMode;
+
+  /// No description provided for @appearanceLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get appearanceLight;
+
+  /// No description provided for @appearanceDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get appearanceDark;
+
+  /// No description provided for @appearanceAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic'**
+  String get appearanceAuto;
+
+  /// No description provided for @appearanceNoDaemon.
+  ///
+  /// In en, this message translates to:
+  /// **'The system service isn\'t running: this can\'t be changed now.'**
+  String get appearanceNoDaemon;
+
+  /// No description provided for @appearanceTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get appearanceTheme;
+
+  /// No description provided for @appearanceAccent.
+  ///
+  /// In en, this message translates to:
+  /// **'Accent colour'**
+  String get appearanceAccent;
+
+  /// No description provided for @appearanceHighlight.
+  ///
+  /// In en, this message translates to:
+  /// **'Highlight colour'**
+  String get appearanceHighlight;
+
+  /// No description provided for @appearanceIconStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Icon and widget style'**
+  String get appearanceIconStyle;
+
+  /// No description provided for @appearanceFolderColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder colour'**
+  String get appearanceFolderColor;
+
+  /// No description provided for @appearanceGlass.
+  ///
+  /// In en, this message translates to:
+  /// **'Glass'**
+  String get appearanceGlass;
+
+  /// No description provided for @appearanceAutomaticChoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic'**
+  String get appearanceAutomaticChoice;
+
+  /// No description provided for @appearanceDefaultChoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get appearanceDefaultChoice;
+
+  /// No description provided for @appearanceWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'Windows'**
+  String get appearanceWindows;
+
+  /// No description provided for @appearanceSidebarIconSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Sidebar icon size'**
+  String get appearanceSidebarIconSize;
+
+  /// No description provided for @appearanceMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get appearanceMedium;
+
+  /// No description provided for @appearanceTint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tint windows with the wallpaper colour'**
+  String get appearanceTint;
+
+  /// No description provided for @appearanceScrollBars.
+  ///
+  /// In en, this message translates to:
+  /// **'Show scroll bars'**
+  String get appearanceScrollBars;
+
+  /// No description provided for @appearanceScrollAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically'**
+  String get appearanceScrollAuto;
+
+  /// No description provided for @appearanceScrollClick.
+  ///
+  /// In en, this message translates to:
+  /// **'Click in the scroll bar to'**
+  String get appearanceScrollClick;
+
+  /// No description provided for @appearanceScrollNextPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Jump to the next page'**
+  String get appearanceScrollNextPage;
+
+  /// No description provided for @accentMulticolour.
+  ///
+  /// In en, this message translates to:
+  /// **'Multicolour'**
+  String get accentMulticolour;
+
+  /// No description provided for @accentBlue.
+  ///
+  /// In en, this message translates to:
+  /// **'Blue'**
+  String get accentBlue;
+
+  /// No description provided for @accentPurple.
+  ///
+  /// In en, this message translates to:
+  /// **'Purple'**
+  String get accentPurple;
+
+  /// No description provided for @accentPink.
+  ///
+  /// In en, this message translates to:
+  /// **'Pink'**
+  String get accentPink;
+
+  /// No description provided for @accentRed.
+  ///
+  /// In en, this message translates to:
+  /// **'Red'**
+  String get accentRed;
+
+  /// No description provided for @accentOrange.
+  ///
+  /// In en, this message translates to:
+  /// **'Orange'**
+  String get accentOrange;
+
+  /// No description provided for @accentYellow.
+  ///
+  /// In en, this message translates to:
+  /// **'Yellow'**
+  String get accentYellow;
+
+  /// No description provided for @accentGreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Green'**
+  String get accentGreen;
+
+  /// No description provided for @accentGraphite.
+  ///
+  /// In en, this message translates to:
+  /// **'Graphite'**
+  String get accentGraphite;
+
+  /// No description provided for @menuBarAutoHide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide the menu bar automatically'**
+  String get menuBarAutoHide;
+
+  /// No description provided for @menuBarNever.
+  ///
+  /// In en, this message translates to:
+  /// **'Never'**
+  String get menuBarNever;
+
+  /// No description provided for @menuBarBackground.
+  ///
+  /// In en, this message translates to:
+  /// **'Show the menu bar background'**
+  String get menuBarBackground;
+
+  /// No description provided for @menuBarRecentItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent items'**
+  String get menuBarRecentItems;
+
+  /// No description provided for @menuBarControls.
+  ///
+  /// In en, this message translates to:
+  /// **'Menu bar controls'**
+  String get menuBarControls;
+
+  /// No description provided for @menuBarShowWhenActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Show when active'**
+  String get menuBarShowWhenActive;
+
+  /// No description provided for @displaysResolution.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolution'**
+  String get displaysResolution;
+
+  /// No description provided for @displaysScale.
+  ///
+  /// In en, this message translates to:
+  /// **'Scale'**
+  String get displaysScale;
+
+  /// No description provided for @displaysRefreshRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh rate'**
+  String get displaysRefreshRate;
+
+  /// No description provided for @displaysReadOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Silica can\'t change the display mode from Settings yet.'**
+  String get displaysReadOnly;
+
+  /// No description provided for @displaysColorProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Colour profile'**
+  String get displaysColorProfile;
+
+  /// No description provided for @displaysRotation.
+  ///
+  /// In en, this message translates to:
+  /// **'Rotation'**
+  String get displaysRotation;
+
+  /// No description provided for @displaysStandard.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard'**
+  String get displaysStandard;
+
+  /// No description provided for @displaysNightLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Night light'**
+  String get displaysNightLight;
+
+  /// No description provided for @displaysNightLightButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Night Light…'**
+  String get displaysNightLightButton;
+
+  /// No description provided for @dockSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Dock'**
+  String get dockSection;
+
+  /// No description provided for @dockMagnification.
+  ///
+  /// In en, this message translates to:
+  /// **'Magnification'**
+  String get dockMagnification;
+
+  /// No description provided for @dockRecents.
+  ///
+  /// In en, this message translates to:
+  /// **'Show suggested and recent apps'**
+  String get dockRecents;
+
+  /// No description provided for @dockRestartNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The Dock reads these choices when the session starts.'**
+  String get dockRestartNote;
+
+  /// No description provided for @dockSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get dockSize;
+
+  /// No description provided for @dockPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Position on screen'**
+  String get dockPosition;
+
+  /// No description provided for @dockBottom.
+  ///
+  /// In en, this message translates to:
+  /// **'Bottom'**
+  String get dockBottom;
+
+  /// No description provided for @dockMinimizeEffect.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimise windows using'**
+  String get dockMinimizeEffect;
+
+  /// No description provided for @dockGenie.
+  ///
+  /// In en, this message translates to:
+  /// **'Genie effect'**
+  String get dockGenie;
+
+  /// No description provided for @dockDoubleClick.
+  ///
+  /// In en, this message translates to:
+  /// **'Double-click a title bar to'**
+  String get dockDoubleClick;
+
+  /// No description provided for @dockZoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Zoom'**
+  String get dockZoom;
+
+  /// No description provided for @dockMinimizeIntoIcon.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimise windows into the app icon'**
+  String get dockMinimizeIntoIcon;
+
+  /// No description provided for @dockAutoHide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide and show the Dock automatically'**
+  String get dockAutoHide;
+
+  /// No description provided for @dockAnimate.
+  ///
+  /// In en, this message translates to:
+  /// **'Animate opening apps'**
+  String get dockAnimate;
+
+  /// No description provided for @dockIndicators.
+  ///
+  /// In en, this message translates to:
+  /// **'Show indicators for open apps'**
+  String get dockIndicators;
+
+  /// No description provided for @dockShortcutsButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Shortcuts…'**
+  String get dockShortcutsButton;
+
+  /// No description provided for @dockHotCorners.
+  ///
+  /// In en, this message translates to:
+  /// **'Hot Corners…'**
+  String get dockHotCorners;
+
+  /// No description provided for @desktopSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Desktop'**
+  String get desktopSection;
+
+  /// No description provided for @desktopClickWallpaper.
+  ///
+  /// In en, this message translates to:
+  /// **'Click the wallpaper to show the desktop'**
+  String get desktopClickWallpaper;
+
+  /// No description provided for @desktopOnlyInStage.
+  ///
+  /// In en, this message translates to:
+  /// **'Only in stage view'**
+  String get desktopOnlyInStage;
+
+  /// No description provided for @desktopStage.
+  ///
+  /// In en, this message translates to:
+  /// **'Stage view'**
+  String get desktopStage;
+
+  /// No description provided for @panoramaSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Panorama'**
+  String get panoramaSection;
+
+  /// No description provided for @panoramaRearrange.
+  ///
+  /// In en, this message translates to:
+  /// **'Rearrange spaces by most recent use'**
+  String get panoramaRearrange;
+
+  /// No description provided for @panoramaSwitchToApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to a space with the app\'s windows'**
+  String get panoramaSwitchToApp;
+
+  /// No description provided for @panoramaGroupByApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Group windows by app'**
+  String get panoramaGroupByApp;
+
+  /// No description provided for @panoramaSeparateSpaces.
+  ///
+  /// In en, this message translates to:
+  /// **'Displays have separate spaces'**
+  String get panoramaSeparateSpaces;
+
+  /// No description provided for @hotCornerNone.
+  ///
+  /// In en, this message translates to:
+  /// **'—'**
+  String get hotCornerNone;
+
+  /// No description provided for @wallpaperRestartNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The desktop reads the wallpaper when the session starts.'**
+  String get wallpaperRestartNote;
+
+  /// No description provided for @wallpaperFill.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill screen'**
+  String get wallpaperFill;
+
+  /// No description provided for @wallpaperSilica.
+  ///
+  /// In en, this message translates to:
+  /// **'Silica'**
+  String get wallpaperSilica;
+
+  /// No description provided for @wallpaperSilicaName.
+  ///
+  /// In en, this message translates to:
+  /// **'Dunes at twilight'**
+  String get wallpaperSilicaName;
+
+  /// No description provided for @wallpaperColors.
+  ///
+  /// In en, this message translates to:
+  /// **'Colours'**
+  String get wallpaperColors;
+
+  /// No description provided for @wallpaperPictures.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Pictures'**
+  String get wallpaperPictures;
+
+  /// No description provided for @wallpaperScreenSaver.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen Saver…'**
+  String get wallpaperScreenSaver;
+
+  /// No description provided for @searchDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose what Faro, the search panel, looks through.'**
+  String get searchDescription;
+
+  /// No description provided for @searchHelpImprove.
+  ///
+  /// In en, this message translates to:
+  /// **'Help improve search'**
+  String get searchHelpImprove;
+
+  /// No description provided for @searchShowRelated.
+  ///
+  /// In en, this message translates to:
+  /// **'Show related content'**
+  String get searchShowRelated;
+
+  /// No description provided for @searchResultsFromApps.
+  ///
+  /// In en, this message translates to:
+  /// **'Results from apps'**
+  String get searchResultsFromApps;
+
+  /// No description provided for @searchApplications.
+  ///
+  /// In en, this message translates to:
+  /// **'Applications'**
+  String get searchApplications;
+
+  /// No description provided for @searchFolders.
+  ///
+  /// In en, this message translates to:
+  /// **'Folders'**
+  String get searchFolders;
+
+  /// No description provided for @searchCalculator.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculations and conversions'**
+  String get searchCalculator;
+
+  /// No description provided for @notificationsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose how apps can get your attention.'**
+  String get notificationsDescription;
+
+  /// No description provided for @notificationsCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Center'**
+  String get notificationsCenter;
+
+  /// No description provided for @notificationsPreviews.
+  ///
+  /// In en, this message translates to:
+  /// **'Show previews'**
+  String get notificationsPreviews;
+
+  /// No description provided for @notificationsWhenUnlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'When unlocked'**
+  String get notificationsWhenUnlocked;
+
+  /// No description provided for @notificationsWhenSleeping.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow notifications when the display is sleeping'**
+  String get notificationsWhenSleeping;
+
+  /// No description provided for @notificationsWhenLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow notifications when the screen is locked'**
+  String get notificationsWhenLocked;
+
+  /// No description provided for @notificationsWhenMirroring.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow notifications when mirroring or sharing the display'**
+  String get notificationsWhenMirroring;
+
+  /// No description provided for @notificationsApps.
+  ///
+  /// In en, this message translates to:
+  /// **'Application notifications'**
+  String get notificationsApps;
+
+  /// No description provided for @notificationsAppsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No apps have sent notifications'**
+  String get notificationsAppsNone;
+
+  /// No description provided for @soundEffects.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound effects'**
+  String get soundEffects;
+
+  /// No description provided for @soundAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert sound'**
+  String get soundAlert;
+
+  /// No description provided for @soundAlertDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get soundAlertDefault;
+
+  /// No description provided for @soundAlertVolume.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert volume'**
+  String get soundAlertVolume;
+
+  /// No description provided for @soundStartup.
+  ///
+  /// In en, this message translates to:
+  /// **'Play sound on startup'**
+  String get soundStartup;
+
+  /// No description provided for @soundInterface.
+  ///
+  /// In en, this message translates to:
+  /// **'Play user interface sound effects'**
+  String get soundInterface;
+
+  /// No description provided for @soundVolumeFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Play feedback when volume is changed'**
+  String get soundVolumeFeedback;
+
+  /// No description provided for @soundOutput.
+  ///
+  /// In en, this message translates to:
+  /// **'Output'**
+  String get soundOutput;
+
+  /// No description provided for @soundOutputDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Output device'**
+  String get soundOutputDevice;
+
+  /// No description provided for @soundNoAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'No audio service found.'**
+  String get soundNoAudio;
+
+  /// No description provided for @soundOutputVolume.
+  ///
+  /// In en, this message translates to:
+  /// **'Output volume'**
+  String get soundOutputVolume;
+
+  /// No description provided for @soundMute.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute'**
+  String get soundMute;
+
+  /// No description provided for @soundInput.
+  ///
+  /// In en, this message translates to:
+  /// **'Input'**
+  String get soundInput;
+
+  /// No description provided for @soundInputLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Input volume'**
+  String get soundInputLevel;
+
+  /// No description provided for @focusDoNotDisturb.
+  ///
+  /// In en, this message translates to:
+  /// **'Do Not Disturb'**
+  String get focusDoNotDisturb;
+
+  /// No description provided for @focusWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Work'**
+  String get focusWork;
+
+  /// No description provided for @focusReduceInterruptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Fewer interruptions'**
+  String get focusReduceInterruptions;
+
+  /// No description provided for @focusSleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep'**
+  String get focusSleep;
+
+  /// No description provided for @focusStudy.
+  ///
+  /// In en, this message translates to:
+  /// **'Study'**
+  String get focusStudy;
+
+  /// No description provided for @focusShareAcrossDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'Share across devices'**
+  String get focusShareAcrossDevices;
+
+  /// No description provided for @focusStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus status'**
+  String get focusStatus;
+
+  /// No description provided for @screenTimeActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity'**
+  String get screenTimeActivity;
+
+  /// No description provided for @screenTimeAppUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'App and website activity'**
+  String get screenTimeAppUsage;
+
+  /// No description provided for @screenTimeNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get screenTimeNotifications;
+
+  /// No description provided for @screenTimeLimits.
+  ///
+  /// In en, this message translates to:
+  /// **'Limits'**
+  String get screenTimeLimits;
+
+  /// No description provided for @screenTimeDowntime.
+  ///
+  /// In en, this message translates to:
+  /// **'Downtime'**
+  String get screenTimeDowntime;
+
+  /// No description provided for @screenTimeAppLimits.
+  ///
+  /// In en, this message translates to:
+  /// **'App limits'**
+  String get screenTimeAppLimits;
+
+  /// No description provided for @screenTimeAppActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Share app and website activity'**
+  String get screenTimeAppActivity;
+
+  /// No description provided for @lockDisplayOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn the display off when inactive'**
+  String get lockDisplayOff;
+
+  /// No description provided for @lockPasswordDelay.
+  ///
+  /// In en, this message translates to:
+  /// **'Require password after sleep or screen saver'**
+  String get lockPasswordDelay;
+
+  /// No description provided for @lockSavedForLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Silica has no lock screen yet: these choices are saved for it.'**
+  String get lockSavedForLater;
+
+  /// No description provided for @lockNever.
+  ///
+  /// In en, this message translates to:
+  /// **'Never'**
+  String get lockNever;
+
+  /// No description provided for @lockImmediately.
+  ///
+  /// In en, this message translates to:
+  /// **'Immediately'**
+  String get lockImmediately;
+
+  /// No description provided for @lockShowUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Show user name and photo'**
+  String get lockShowUser;
+
+  /// No description provided for @lockShowHints.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password hints'**
+  String get lockShowHints;
+
+  /// No description provided for @lockShowMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Show a message when locked'**
+  String get lockShowMessage;
+
+  /// No description provided for @lockLoginWindowShows.
+  ///
+  /// In en, this message translates to:
+  /// **'Login window shows'**
+  String get lockLoginWindowShows;
+
+  /// No description provided for @lockListOfUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'List of users'**
+  String get lockListOfUsers;
+
+  /// No description provided for @lockNameAndPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Name and password'**
+  String get lockNameAndPassword;
+
+  /// No description provided for @lockShowPowerButtons.
+  ///
+  /// In en, this message translates to:
+  /// **'Show the sleep, restart and shut down buttons'**
+  String get lockShowPowerButtons;
+
+  /// No description provided for @privacyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Control which apps can use your location, camera, microphone and files.'**
+  String get privacyDescription;
+
+  /// No description provided for @privacyLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get privacyLocation;
+
+  /// No description provided for @privacyCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get privacyCamera;
+
+  /// No description provided for @privacyMicrophone.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone'**
+  String get privacyMicrophone;
+
+  /// No description provided for @privacyScreenRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen recording'**
+  String get privacyScreenRecording;
+
+  /// No description provided for @privacyFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Files and folders'**
+  String get privacyFiles;
+
+  /// No description provided for @passwordLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Login password'**
+  String get passwordLogin;
+
+  /// No description provided for @passwordSet.
+  ///
+  /// In en, this message translates to:
+  /// **'A password is set for your account'**
+  String get passwordSet;
+
+  /// No description provided for @passwordChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change…'**
+  String get passwordChange;
+
+  /// No description provided for @passwordFingerprint.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a fingerprint to unlock'**
+  String get passwordFingerprint;
+
+  /// No description provided for @usersAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin'**
+  String get usersAdmin;
+
+  /// No description provided for @usersYou.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get usersYou;
+
+  /// No description provided for @usersGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest user'**
+  String get usersGuest;
+
+  /// No description provided for @usersAutomaticLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically log in as'**
+  String get usersAutomaticLogin;
+
+  /// No description provided for @usersAddGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Group…'**
+  String get usersAddGroup;
+
+  /// No description provided for @usersAddUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Add User…'**
+  String get usersAddUser;
+
+  /// No description provided for @accountsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet accounts'**
+  String get accountsNone;
+
+  /// No description provided for @accountsAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Account…'**
+  String get accountsAdd;
+
+  /// No description provided for @keyboardRepeatRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Key repeat rate'**
+  String get keyboardRepeatRate;
+
+  /// No description provided for @keyboardRepeatDelay.
+  ///
+  /// In en, this message translates to:
+  /// **'Delay until repeat'**
+  String get keyboardRepeatDelay;
+
+  /// No description provided for @keyboardRepeatNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Ossido applies these to the keys held down in every app.'**
+  String get keyboardRepeatNote;
+
+  /// No description provided for @keyboardOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get keyboardOff;
+
+  /// No description provided for @keyboardSlow.
+  ///
+  /// In en, this message translates to:
+  /// **'Slow'**
+  String get keyboardSlow;
+
+  /// No description provided for @keyboardFast.
+  ///
+  /// In en, this message translates to:
+  /// **'Fast'**
+  String get keyboardFast;
+
+  /// No description provided for @keyboardLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Long'**
+  String get keyboardLong;
+
+  /// No description provided for @keyboardShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Short'**
+  String get keyboardShort;
+
+  /// No description provided for @keyboardGlobeKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Press the function key to'**
+  String get keyboardGlobeKey;
+
+  /// No description provided for @keyboardDoNothing.
+  ///
+  /// In en, this message translates to:
+  /// **'Do nothing'**
+  String get keyboardDoNothing;
+
+  /// No description provided for @keyboardNavigation.
+  ///
+  /// In en, this message translates to:
+  /// **'Keyboard navigation'**
+  String get keyboardNavigation;
+
+  /// No description provided for @keyboardShortcuts.
+  ///
+  /// In en, this message translates to:
+  /// **'Keyboard shortcuts'**
+  String get keyboardShortcuts;
+
+  /// No description provided for @keyboardShortcutsButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Keyboard Shortcuts…'**
+  String get keyboardShortcutsButton;
+
+  /// No description provided for @keyboardTextInput.
+  ///
+  /// In en, this message translates to:
+  /// **'Text input'**
+  String get keyboardTextInput;
+
+  /// No description provided for @keyboardInputSources.
+  ///
+  /// In en, this message translates to:
+  /// **'Input sources'**
+  String get keyboardInputSources;
+
+  /// No description provided for @keyboardInputSourcesValue.
+  ///
+  /// In en, this message translates to:
+  /// **'The system layout'**
+  String get keyboardInputSourcesValue;
+
+  /// No description provided for @keyboardTextReplacements.
+  ///
+  /// In en, this message translates to:
+  /// **'Text replacements'**
+  String get keyboardTextReplacements;
+
+  /// No description provided for @keyboardDictation.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictation'**
+  String get keyboardDictation;
+
+  /// No description provided for @shortcutsReadOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'These shortcuts can\'t be changed from Settings yet. Logo is the key with the system logo.'**
+  String get shortcutsReadOnly;
+
+  /// No description provided for @shortcutsScreenshots.
+  ///
+  /// In en, this message translates to:
+  /// **'Screenshots'**
+  String get shortcutsScreenshots;
+
+  /// No description provided for @shortcutsSpaces.
+  ///
+  /// In en, this message translates to:
+  /// **'Spaces and Panorama'**
+  String get shortcutsSpaces;
+
+  /// No description provided for @shortcutsApps.
+  ///
+  /// In en, this message translates to:
+  /// **'Apps'**
+  String get shortcutsApps;
+
+  /// No description provided for @shortcutsWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'Windows'**
+  String get shortcutsWindows;
+
+  /// No description provided for @shortcutsSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Session'**
+  String get shortcutsSession;
+
+  /// No description provided for @shortcutScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Picture of the whole screen'**
+  String get shortcutScreen;
+
+  /// No description provided for @shortcutSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Picture of a selected area'**
+  String get shortcutSelection;
+
+  /// No description provided for @shortcutTools.
+  ///
+  /// In en, this message translates to:
+  /// **'Screenshot and recording tools'**
+  String get shortcutTools;
+
+  /// No description provided for @shortcutPanorama.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Panorama'**
+  String get shortcutPanorama;
+
+  /// No description provided for @shortcutAppWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'Show the app\'s windows'**
+  String get shortcutAppWindows;
+
+  /// No description provided for @shortcutShowDesktop.
+  ///
+  /// In en, this message translates to:
+  /// **'Show the desktop'**
+  String get shortcutShowDesktop;
+
+  /// No description provided for @shortcutPreviousSpace.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous space'**
+  String get shortcutPreviousSpace;
+
+  /// No description provided for @shortcutNextSpace.
+  ///
+  /// In en, this message translates to:
+  /// **'Next space'**
+  String get shortcutNextSpace;
+
+  /// No description provided for @shortcutSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Faro'**
+  String get shortcutSearch;
+
+  /// No description provided for @shortcutNextApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Next app'**
+  String get shortcutNextApp;
+
+  /// No description provided for @shortcutPreviousApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous app'**
+  String get shortcutPreviousApp;
+
+  /// No description provided for @shortcutQuitApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Quit the app'**
+  String get shortcutQuitApp;
+
+  /// No description provided for @shortcutForceQuit.
+  ///
+  /// In en, this message translates to:
+  /// **'Force quit'**
+  String get shortcutForceQuit;
+
+  /// No description provided for @shortcutCloseWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Close the window'**
+  String get shortcutCloseWindow;
+
+  /// No description provided for @shortcutMinimize.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimise the window'**
+  String get shortcutMinimize;
+
+  /// No description provided for @shortcutFullScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Full screen'**
+  String get shortcutFullScreen;
+
+  /// No description provided for @shortcutLogOut.
+  ///
+  /// In en, this message translates to:
+  /// **'End the session'**
+  String get shortcutLogOut;
+
+  /// No description provided for @mousePointerSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Pointer speed'**
+  String get mousePointerSpeed;
+
+  /// No description provided for @mouseNaturalScrolling.
+  ///
+  /// In en, this message translates to:
+  /// **'Natural scrolling'**
+  String get mouseNaturalScrolling;
+
+  /// No description provided for @mouseSecondaryClick.
+  ///
+  /// In en, this message translates to:
+  /// **'Secondary click'**
+  String get mouseSecondaryClick;
+
+  /// No description provided for @mouseRightButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Right button'**
+  String get mouseRightButton;
+
+  /// No description provided for @mouseDoubleClickSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Double-click speed'**
+  String get mouseDoubleClickSpeed;
+
+  /// No description provided for @mouseScrollSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Scrolling speed'**
+  String get mouseScrollSpeed;
+
+  /// No description provided for @printersDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Default printer'**
+  String get printersDefault;
+
+  /// No description provided for @printersLastUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Last printer used'**
+  String get printersLastUsed;
+
+  /// No description provided for @printersPaperSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Default paper size'**
+  String get printersPaperSize;
+
+  /// No description provided for @printersNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No printers'**
+  String get printersNone;
+
+  /// No description provided for @printersIsDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get printersIsDefault;
+
+  /// No description provided for @printersAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Printer…'**
+  String get printersAdd;
+
+  /// No description provided for @aboutDisplayN.
+  ///
+  /// In en, this message translates to:
+  /// **'Display {number}'**
+  String aboutDisplayN(int number);
+
+  /// No description provided for @aboutProcessorCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} ({count} cores)'**
+  String aboutProcessorCount(String name, int count);
+
+  /// No description provided for @storageAvailableOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{available} available of {total}'**
+  String storageAvailableOf(String available, String total);
+
+  /// No description provided for @lockMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 minute} other{{count} minutes}}'**
+  String lockMinutes(int count);
+
+  /// No description provided for @lockHours.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 hour} other{{count} hours}}'**
+  String lockHours(int count);
+
+  /// No description provided for @lockSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} seconds'**
+  String lockSeconds(int count);
+}
+
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
+  const _AppLocalizationsDelegate();
+
+  @override
+  Future<AppLocalizations> load(Locale locale) {
+    return SynchronousFuture<AppLocalizations>(lookupAppLocalizations(locale));
+  }
+
+  @override
+  bool isSupported(Locale locale) =>
+      <String>['en', 'it'].contains(locale.languageCode);
+
+  @override
+  bool shouldReload(_AppLocalizationsDelegate old) => false;
+}
+
+AppLocalizations lookupAppLocalizations(Locale locale) {
+  // Lookup logic when only language code is specified.
+  switch (locale.languageCode) {
+    case 'en':
+      return AppLocalizationsEn();
+    case 'it':
+      return AppLocalizationsIt();
+  }
+
+  throw FlutterError(
+    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.',
+  );
+}

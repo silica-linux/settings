@@ -1,0 +1,17 @@
+[Desktop Entry]
+Type=Application
+Name=Settings
+Name[it]=Impostazioni
+GenericName=System Settings
+GenericName[it]=Impostazioni di sistema
+Comment=Appearance, network, sound, Dock, keyboard and the other system settings
+Comment[it]=Aspetto, rete, suono, Dock, tastiera e le altre impostazioni di sistema
+Exec=@EMBEDDER@ --size 832x727 --title Settings --app-id dev.frascella.Settings @BUNDLE@
+Icon=preferences-system
+X-Silica-Icon=settings
+StartupWMClass=dev.frascella.Settings
+Categories=Settings;System;
+Keywords=settings;preferences;appearance;wifi;bluetooth;sound;dock;keyboard;
+Keywords[it]=impostazioni;preferenze;aspetto;wifi;bluetooth;suono;dock;tastiera;
+Terminal=false
+OnlyShowIn=Silica;
