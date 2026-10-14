@@ -34,7 +34,8 @@ class Navigation extends ChangeNotifier {
 
   void openPane(PaneId pane) => open(Location(pane));
 
-  void openSub(SubPaneId sub) => open(Location(pane, sub));
+  void openSub(SubPaneId sub, [String detail = '']) =>
+      open(Location(pane, sub, detail));
 
   void back() {
     if (!canGoBack) return;

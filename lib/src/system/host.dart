@@ -53,7 +53,15 @@ class HostInfo {
     this.userName = '',
     this.timezone = '',
     this.language = '',
+    this.graphics = const [],
+    this.firmware = '',
   });
+
+  /// The graphics adapters (`/sys/class/drm/card*/device`, named from pci.ids).
+  final List<String> graphics;
+
+  /// The firmware's version (`/sys/class/dmi/id/bios_version`).
+  final String firmware;
 
   final String osName;
   final String osVersion;
@@ -146,7 +154,67 @@ class HostReader {
       userName: name.isEmpty ? login : name,
       timezone: _timezone(),
       language: env['LANG'] ?? '',
+      graphics: _graphics(),
+      firmware: (_read('/sys/class/dmi/id/bios_version') ?? '').trim(),
     );
+  }
+
+  /// The PCI ids of every DRM card, named through pci.ids when it is installed.
+  List<String> _graphics() {
+    final names = <String>[];
+    try {
+      final drm = Directory('$root/sys/class/drm');
+      if (!drm.existsSync()) return names;
+      final cards = [
+        for (final e in drm.listSync())
+          if (RegExp(r'/card\d+$').hasMatch(e.path)) e.path,
+      ]..sort();
+      final ids =
+          _read('/usr/share/hwdata/pci.ids') ??
+          _read('/usr/share/misc/pci.ids') ??
+          '';
+      for (final card in cards) {
+        final relative = card.substring(root.length);
+        final vendor = (_read('$relative/device/vendor') ?? '').trim();
+        final device = (_read('$relative/device/device') ?? '').trim();
+        if (vendor.isEmpty) continue;
+        final name = pciName(ids, vendor, device);
+        if (!names.contains(name)) names.add(name);
+      }
+    } on FileSystemException {
+      return names;
+    }
+    return names;
+  }
+
+  /// "Vendor Device" from pci.ids for `0x8086` / `0x46a6`; the ids when unknown.
+  static String pciName(String ids, String vendor, String device) {
+    String hex(String v) =>
+        v.toLowerCase().replaceFirst('0x', '').padLeft(4, '0');
+    final v = hex(vendor), d = hex(device);
+    String? vendorName, deviceName;
+    var inVendor = false;
+    for (final line in ids.split('\n')) {
+      if (line.isEmpty || line.startsWith('#')) continue;
+      if (!line.startsWith('\t')) {
+        if (inVendor) break;
+        if (line.startsWith('$v ')) {
+          vendorName = line.substring(4).trim();
+          inVendor = true;
+        }
+        continue;
+      }
+      if (inVendor && !line.startsWith('\t\t') && line.startsWith('\t$d ')) {
+        deviceName = line.substring(6).trim();
+        break;
+      }
+    }
+    if (vendorName == null) return '$v:$d';
+    final short = vendorName
+        .replaceAll(RegExp(r'\s*\[.*?\]'), '')
+        .replaceAll(RegExp(r',? (Corporation|Inc\.|Co\., Ltd\.|Ltd\.)$'), '')
+        .trim();
+    return deviceName == null ? '$short $d' : '$short $deviceName';
   }
 
   String _timezone() {
@@ -194,4 +262,46 @@ class HostReader {
         Printer(name: m.group(1) ?? '', isDefault: m.group(1) == defaultName),
     ];
   }
+}
+
+/// The space a folder takes (`du -sb`), null when it cannot be measured.
+Future<int?> folderSize(CommandRunner run, String path) async {
+  final out = await run('du', ['-sb', path]);
+  if (out == null) return null;
+  return int.tryParse(out.trim().split(RegExp(r'\s+')).first);
+}
+
+/// The user's trash (freedesktop trash specification): `$XDG_DATA_HOME/Trash`.
+String trashFolder(Map<String, String> env) {
+  final home = env['HOME'] ?? '';
+  final data = env['XDG_DATA_HOME'];
+  return '${data != null && data.isNotEmpty ? data : '$home/.local/share'}/Trash';
+}
+
+/// Deletes everything in the trash (its files and their info records). False if something
+/// could not be removed.
+Future<bool> emptyTrash(Map<String, String> env) async {
+  var ok = true;
+  for (final sub in ['files', 'info', 'expunged']) {
+    final dir = Directory('${trashFolder(env)}/$sub');
+    try {
+      if (!dir.existsSync()) continue;
+      for (final entry in dir.listSync(followLinks: false)) {
+        try {
+          await entry.delete(recursive: true);
+        } on FileSystemException {
+          ok = false;
+        }
+      }
+    } on FileSystemException {
+      ok = false;
+    }
+  }
+  final sizes = File('${trashFolder(env)}/directorysizes');
+  try {
+    if (sizes.existsSync()) sizes.deleteSync();
+  } on FileSystemException {
+    ok = false;
+  }
+  return ok;
 }

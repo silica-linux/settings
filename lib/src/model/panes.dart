@@ -12,18 +12,18 @@ enum PaneId {
   bluetooth('bluetooth', Color(0xFF0A84FF)),
   network('globe', Color(0xFF0A84FF)),
   vpn('network', Color(0xFF0A84FF)),
-  energy('bolt-fill', Color(0xFFFFB800)),
+  energy('bolt-fill', Color(0xFF34C759)),
   battery('battery', Color(0xFF34C759)),
   general('gear', Color(0xFF8E8E93)),
   accessibility('accessibility', Color(0xFF0A84FF)),
   appearance('appearance', Color(0xFF1C1C1E)),
-  menuBar('menubar', Color(0xFF1C1C1E)),
+  menuBar('menubar', Color(0xFF8E8E93)),
   displays('display', Color(0xFF0A84FF)),
   desktopDock('dock', Color(0xFF1C1C1E)),
   wallpaper('photo', Color(0xFF32ADE6)),
   search('search', Color(0xFF8E8E93)),
   notifications('bell-badge', Color(0xFFFF3B30)),
-  sound('speaker', Color(0xFFFF2D55)),
+  sound('volume', Color(0xFFFF3B30)),
   focus('moon', Color(0xFF5E5CE6)),
   screenTime('hourglass', Color(0xFF5E5CE6)),
   lockScreen('lock', Color(0xFF1C1C1E)),
@@ -87,17 +87,39 @@ enum SubPaneId {
 
 /// Where the window is: a pane, optionally one of its sub-panes.
 class Location {
-  const Location(this.pane, [this.sub]);
+  const Location(this.pane, [this.sub, this.detail = '']);
   final PaneId pane;
   final SubPaneId? sub;
 
+  /// What a sub-pane shows, when it shows one of many (an app's notifications).
+  final String detail;
+
   @override
   bool operator ==(Object other) =>
-      other is Location && other.pane == pane && other.sub == sub;
+      other is Location &&
+      other.pane == pane &&
+      other.sub == sub &&
+      other.detail == detail;
 
   @override
-  int get hashCode => Object.hash(pane, sub);
+  int get hashCode => Object.hash(pane, sub, detail);
 
   @override
-  String toString() => sub == null ? pane.name : '${pane.name}/${sub!.name}';
+  String toString() => sub == null
+      ? pane.name
+      : '${pane.name}/${sub!.name}${detail.isEmpty ? '' : '/$detail'}';
 }
+
+/// The key and the name of a notifying app, kept together in [Location.detail].
+(String key, String name) appDetail(String detail) {
+  final at = detail.indexOf('\u001f');
+  return at < 0
+      ? (detail, detail)
+      : (detail.substring(0, at), detail.substring(at + 1));
+}
+
+String encodeAppDetail(String key, String name) => '$key\u001f$name';
+
+/// The places that open with a large centred header card (General): the toolbar leaves their
+/// title out until the card scrolls away (ST-NAV-01; the smaller cards keep the title).
+bool hasHeaderCard(Location at) => at.sub == null && at.pane == PaneId.general;

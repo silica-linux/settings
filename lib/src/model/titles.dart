@@ -102,6 +102,18 @@ List<SearchEntry> searchIndex(AppLocalizations l, Iterable<PaneId> panes) {
     at(l.mousePointerSpeed, PaneId.mouse),
     at(l.mouseNaturalScrolling, PaneId.mouse),
     at(l.energyPreventSleep, PaneId.energy),
+    at(l.soundInputVolume, PaneId.sound),
+    at(l.notificationsApps, PaneId.notifications),
+    at(l.dockAutoHide, PaneId.desktopDock),
+    at(l.dockPosition, PaneId.desktopDock),
+    at(l.dockMinimizeEffect, PaneId.desktopDock),
+    at(l.desktopDefaultBrowser, PaneId.desktopDock),
+    at(l.dateTimeZone, PaneId.general, SubPaneId.dateTime),
+    at(l.sharingComputerName, PaneId.general, SubPaneId.sharing),
+    at(l.languageRegion, PaneId.general, SubPaneId.languageRegion),
+    at(l.batteryLowPowerMode, PaneId.battery),
+    at(l.batteryLowPowerMode, PaneId.energy),
+    at(l.menuBarControls, PaneId.menuBar),
   ];
   return [
     for (final entry in all)

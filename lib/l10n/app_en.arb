@@ -67,7 +67,7 @@
   "bluetoothConnect": "Connect",
   "bluetoothDisconnect": "Disconnect",
   "bluetoothNearby": "Nearby Devices",
-  "bluetoothNearbyNone": "Searching for new devices",
+  "bluetoothNearbyNone": "Looking for devices…",
   "networkWired": "Ethernet",
   "networkConnected": "Connected",
   "networkNotConnected": "Not connected",
@@ -102,11 +102,11 @@
   "sharingComputerName": "Computer name",
   "sharingNameReadOnly": "The name can't be changed from Settings yet.",
   "dateTimeZone": "Time zone",
-  "dateTimeAutomatic": "Set time and date automatically",
+  "dateTimeAutomatic": "Set the date and time automatically",
   "dateTime24Hour": "24-hour time",
-  "languagePreferred": "Preferred language",
+  "languagePreferred": "Language",
   "languageReadOnly": "The system language can't be changed from Settings yet.",
-  "languageRegion": "Region",
+  "languageRegion": "Region formats",
   "languageFirstDay": "First day of the week",
   "languageMonday": "Monday",
   "updateInstalled": "Installed system",
@@ -145,7 +145,7 @@
   "appearanceMedium": "Medium",
   "appearanceTint": "Tint windows with the wallpaper colour",
   "appearanceScrollBars": "Show scroll bars",
-  "appearanceScrollAuto": "Automatically",
+  "appearanceScrollAuto": "Automatically, depending on the pointing device",
   "appearanceScrollClick": "Click in the scroll bar to",
   "appearanceScrollNextPage": "Jump to the next page",
   "accentMulticolour": "Multicolour",
@@ -162,7 +162,7 @@
   "menuBarBackground": "Show the menu bar background",
   "menuBarRecentItems": "Recent items",
   "menuBarControls": "Menu bar controls",
-  "menuBarShowWhenActive": "Show when active",
+  "menuBarShowWhenActive": "Show when in use",
   "displaysResolution": "Resolution",
   "displaysScale": "Scale",
   "displaysRefreshRate": "Refresh rate",
@@ -202,7 +202,7 @@
   "wallpaperRestartNote": "The desktop reads the wallpaper when the session starts.",
   "wallpaperFill": "Fill screen",
   "wallpaperSilica": "Silica",
-  "wallpaperSilicaName": "Dunes at twilight",
+  "wallpaperSilicaName": "Silica",
   "wallpaperColors": "Colours",
   "wallpaperPictures": "Your Pictures",
   "wallpaperScreenSaver": "Screen Saver…",
@@ -217,18 +217,18 @@
   "notificationsCenter": "Notification Center",
   "notificationsPreviews": "Show previews",
   "notificationsWhenUnlocked": "When unlocked",
-  "notificationsWhenSleeping": "Allow notifications when the display is sleeping",
-  "notificationsWhenLocked": "Allow notifications when the screen is locked",
-  "notificationsWhenMirroring": "Allow notifications when mirroring or sharing the display",
+  "notificationsWhenSleeping": "while the display sleeps",
+  "notificationsWhenLocked": "while the screen is locked",
+  "notificationsWhenMirroring": "while the screen is mirrored or shared",
   "notificationsApps": "Application notifications",
   "notificationsAppsNone": "No apps have sent notifications",
   "soundEffects": "Sound effects",
   "soundAlert": "Alert sound",
   "soundAlertDefault": "Default",
   "soundAlertVolume": "Alert volume",
-  "soundStartup": "Play sound on startup",
-  "soundInterface": "Play user interface sound effects",
-  "soundVolumeFeedback": "Play feedback when volume is changed",
+  "soundStartup": "Play a sound at startup",
+  "soundInterface": "Play interface sound effects",
+  "soundVolumeFeedback": "Play a sound when the volume changes",
   "soundOutput": "Output",
   "soundOutputDevice": "Output device",
   "soundNoAudio": "No audio service found.",
@@ -386,5 +386,311 @@
         "type": "int"
       }
     }
-  }
+  },
+  "notAvailableIssue": "Not available yet in Silica (silica-linux/settings#{issue}).",
+  "@notAvailableIssue": {
+    "placeholders": {
+      "issue": {
+        "type": "int"
+      }
+    }
+  },
+  "appearanceAutoMissing": "Automatic switches between light and dark once the system service can follow a schedule (#{issue}).",
+  "@appearanceAutoMissing": {
+    "placeholders": {
+      "issue": {
+        "type": "int"
+      }
+    }
+  },
+  "appearanceOtherApps": "Settings uses this at once; the other apps follow once they read it (#{issue}).",
+  "@appearanceOtherApps": {
+    "placeholders": {
+      "issue": {
+        "type": "int"
+      }
+    }
+  },
+  "appearanceSmall": "Small",
+  "appearanceLarge": "Large",
+  "appearanceScrollWhenScrolling": "While scrolling",
+  "appearanceScrollAlways": "Always",
+  "appearanceScrollSpot": "Jump to the spot that's clicked",
+  "ok": "OK",
+  "cancel": "Cancel",
+  "addButton": "Add…",
+  "detailsButton": "Details…",
+  "moreFor": "More for {name}",
+  "@moreFor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "errorMissing": "The service this needs isn't installed on this system.",
+  "errorAuthentication": "The system wants an administrator's password for this, and Silica can't ask for it yet (#{issue}).",
+  "@errorAuthentication": {
+    "placeholders": {
+      "issue": {
+        "type": "int"
+      }
+    }
+  },
+  "errorRefused": "The system refused the change: {detail}",
+  "@errorRefused": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "errorFailed": "The change didn't go through: {detail}",
+  "@errorFailed": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "wifiDescription": "Connect to the internet without a cable. Turn Wi-Fi on, then choose a network.",
+  "wifiDisconnect": "Disconnect",
+  "wifiAutoJoin": "Join Automatically",
+  "wifiAutoJoinTitle": "Join this network automatically",
+  "wifiForget": "Forget This Network…",
+  "wifiOther": "Other…",
+  "wifiAskToJoinHelp": "Known networks are joined automatically. Without one, Silica tells you which networks are around.",
+  "wifiAskToJoinHotspotsHelp": "Lets Silica find a phone's hotspot nearby when no Wi-Fi network is around.",
+  "wifiAskAsk": "Ask",
+  "wifiJoinTitle": "Join “{ssid}”",
+  "@wifiJoinTitle": {
+    "placeholders": {
+      "ssid": {
+        "type": "String"
+      }
+    }
+  },
+  "wifiJoinHidden": "Join a hidden network",
+  "wifiJoinHelp": "Type the network's password. Silica keeps it for the next time.",
+  "wifiNetworkName": "Network name",
+  "wifiPassword": "Password",
+  "wifiWrongPassword": "The network didn't accept the password.",
+  "wifiJoin": "Join",
+  "networkIpAddress": "IP address",
+  "networkRouter": "Router",
+  "networkDns": "DNS servers",
+  "networkIpv6": "IPv6 address",
+  "networkHardwareAddress": "Hardware address",
+  "networkInterface": "Interface",
+  "networkBridge": "Bridge",
+  "networkCellular": "Cellular",
+  "networkNoServices": "No network services",
+  "networkUnplugged": "Cable unplugged",
+  "networkDisconnect": "Disconnect",
+  "bluetoothDescription": "Use wireless headphones, keyboards, mice and other devices.",
+  "bluetoothForget": "Forget This Device…",
+  "bluetoothPinNote": "Devices that ask for a PIN or a code can't be paired yet (#{issue}).",
+  "@bluetoothPinNote": {
+    "placeholders": {
+      "issue": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationsCenterHelp": "Notifications collect in the Notification Center at the top right of the screen. Click the clock in the menu bar to show or hide it.",
+  "notificationsShowWhen": "Show notifications:",
+  "notificationsAppsHelp": "Apps appear here once they send a notification.",
+  "notificationsStyleBanners": "Banners",
+  "notificationsStyleAlerts": "Alerts",
+  "notificationsStyleOff": "Off",
+  "notificationsAllow": "Allow notifications",
+  "notificationsAlertStyle": "Banner style",
+  "notificationsStyleTemporary": "Leave by themselves",
+  "notificationsStylePersistent": "Stay until dismissed",
+  "notificationsStyleHelp": "Banners that leave by themselves go away after a few seconds; the others stay on screen until you act on them.",
+  "notificationsBadges": "Badge app icon",
+  "notificationsSound": "Play a sound",
+  "notificationsGrouping": "Group notifications",
+  "soundEffectsThrough": "Play sound effects through",
+  "soundSelectedOutput": "Selected output device",
+  "soundOutputInput": "Output and input",
+  "soundName": "Name",
+  "soundType": "Type",
+  "soundNoDevices": "No devices",
+  "soundBuiltIn": "Built-in",
+  "soundVirtual": "Virtual",
+  "soundInputVolume": "Input volume",
+  "focusDoNotDisturbHelp": "Do Not Disturb keeps notifications in the Notification Center without banners or sounds.",
+  "menuBarInFullScreen": "In full screen only",
+  "menuBarControlsHelp": "Choose which status items the menu bar shows.",
+  "menuBarLive": "The menu bar changes at once.",
+  "menuBarAlways": "Always show",
+  "menuBarBatteryPercent": "Show the percentage",
+  "displaysNone": "No connected display found",
+  "displaysModesHelp": "The modes this display offers. Silica can't switch them from Settings yet.",
+  "displaysUseAs": "Use as",
+  "displaysMain": "Main display",
+  "displaysDefaultMode": "{mode} (native)",
+  "@displaysDefaultMode": {
+    "placeholders": {
+      "mode": {
+        "type": "String"
+      }
+    }
+  },
+  "displaysNow": "What the display shows now.",
+  "dockSmall": "Small",
+  "dockLarge": "Large",
+  "dockMagnificationSize": "Magnification size",
+  "dockLiveNote": "The Dock changes at once. The side positions, the title bar double click and minimizing into the app icon wait for the shell (#{issue}).",
+  "@dockLiveNote": {
+    "placeholders": {
+      "issue": {
+        "type": "int"
+      }
+    }
+  },
+  "dockLeft": "Left",
+  "dockRight": "Right",
+  "dockScale": "Scale effect",
+  "desktopDefaultBrowser": "Default web browser",
+  "wallpaperAllSpaces": "Show on all spaces",
+  "wallpaperNote": "The desktop shows a new wallpaper from the next login (#{issue}).",
+  "@wallpaperNote": {
+    "placeholders": {
+      "issue": {
+        "type": "int"
+      }
+    }
+  },
+  "wallpaperShowAll": "Show all ({count})",
+  "@wallpaperShowAll": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "wallpaperShowFewer": "Show fewer",
+  "choose": "Choose",
+  "changeButton": "Change…",
+  "aboutFirmware": "Firmware {version}",
+  "@aboutFirmware": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "aboutGraphics": "Graphics",
+  "aboutSoftware": "System",
+  "aboutVersion": "Version {version}",
+  "@aboutVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "storageDocuments": "Documents",
+  "storageDownloads": "Downloads",
+  "storagePictures": "Pictures",
+  "storageMusic": "Music",
+  "storageVideos": "Videos",
+  "storageTrash": "Trash",
+  "storageEmptyTrashButton": "Empty Trash",
+  "storageEmptyTrashTitle": "Empty the Trash?",
+  "storageEmptyTrashMessage": "The items in the Trash are deleted for good. This can't be undone.",
+  "storageEmptyTrashFailed": "Some items couldn't be deleted.",
+  "sharingServices": "Services",
+  "sharingNameHelp": "Other computers on the local network see this computer as “{host}.local”.",
+  "@sharingNameHelp": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingRename": "Rename",
+  "dateTimeSynchronized": "Synchronized with a time server",
+  "dateTimeNow": "Date and time",
+  "dateTimeChooseZone": "Choose a time zone",
+  "languageSystem": "System language",
+  "languageRegionHelp": "Dates, times, numbers, currency and measures",
+  "languageNextLogin": "Apps use a new language and formats from the next login.",
+  "languageChooseLanguage": "Choose the system language",
+  "languageChooseRegion": "Choose the formats",
+  "soundEffectsNote": "Interface sounds come from the system sound service; alert sounds and the other effects wait for it (#{issue}).",
+  "@soundEffectsNote": {
+    "placeholders": {
+      "issue": {
+        "type": "int"
+      }
+    }
+  },
+  "powerMode": "Power mode",
+  "powerModeHelp": "Balance speed against power use and heat.",
+  "powerSaver": "Low power",
+  "powerBalanced": "Automatic",
+  "powerPerformance": "High performance",
+  "powerNoProfiles": "Power modes need power-profiles-daemon, which this system doesn't have (#{issue}).",
+  "@powerNoProfiles": {
+    "placeholders": {
+      "issue": {
+        "type": "int"
+      }
+    }
+  },
+  "durationHoursMinutes": "{hours} h {minutes} min",
+  "@durationHoursMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "durationMinutes": "{minutes} min",
+  "@durationMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "batteryUntilFull": "{time} until full",
+  "@batteryUntilFull": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "batteryLeft": "{time} left",
+  "@batteryLeft": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "batteryHealth": "Battery health",
+  "batteryHealthHelp": "How much the battery holds compared to when it was new.",
+  "batteryLowPowerHelp": "Uses less power so the battery lasts longer.",
+  "keyboardRepeatNow": "In effect now: {rate} repeats per second after {delay} ms.",
+  "@keyboardRepeatNow": {
+    "placeholders": {
+      "rate": {
+        "type": "int"
+      },
+      "delay": {
+        "type": "int"
+      }
+    }
+  },
+  "mouseNaturalScrollingHelp": "Content follows the movement of your fingers.",
+  "printersDefaultFailed": "The default printer couldn't be changed.",
+  "usersStandard": "Standard"
 }

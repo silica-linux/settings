@@ -139,10 +139,16 @@ void main() {
     expect(n.canGoForward, isFalse);
   });
 
-  test('repeat steps and their defaults', () {
+  test('repeat steps', () {
     expect(repeatRateSteps[nearestStep(repeatRateSteps, 26)], 25);
     expect(repeatDelaySteps[nearestStep(repeatDelaySteps, 610)], 600);
     expect(repeatRateSteps.first, 0);
+  });
+
+  test('a notifying app travels in the location', () {
+    final detail = encodeAppDetail('org.gnome.Nautilus', 'Files');
+    expect(appDetail(detail), ('org.gnome.Nautilus', 'Files'));
+    expect(appDetail('plain'), ('plain', 'plain'));
   });
 
   test('bytes in decimal units', () {

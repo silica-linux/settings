@@ -160,6 +160,11 @@ abstract class SystemBackend {
   Future<List<AudioOutput>> audioOutputs();
   Future<void> setAudioOutput(int id);
   Future<void> setDoNotDisturb(bool enabled);
+
+  /// "Play interface sound effects" (`dev.frascella.Silica.Sound1`); null when the daemon
+  /// has no sound service.
+  Future<bool?> uiSoundsEnabled();
+  Future<void> setUiSoundsEnabled(bool enabled);
 }
 
 /// silica-daemon over D-Bus. Errors (no daemon, a missing source) become an unreachable state
@@ -332,4 +337,43 @@ class DaemonBackend implements SystemBackend {
   @override
   Future<void> setDoNotDisturb(bool enabled) =>
       _set('SetDoNotDisturb', 'b', enabled);
+
+  static const String _soundPath = '/dev/frascella/Silica/Sound1';
+  static const String _soundInterface = 'dev.frascella.Silica.Sound1';
+
+  @override
+  Future<bool?> uiSoundsEnabled() async {
+    try {
+      final reply = await _bus.call(
+        destination: systemName,
+        path: _soundPath,
+        interface: _soundInterface,
+        method: 'UiSoundsEnabled',
+      );
+      final first = reply.isEmpty ? null : reply.first;
+      return first is bool ? first : null;
+    } on PlatformException {
+      return null;
+    } on MissingPluginException {
+      return null;
+    }
+  }
+
+  @override
+  Future<void> setUiSoundsEnabled(bool enabled) async {
+    try {
+      await _bus.call(
+        destination: systemName,
+        path: _soundPath,
+        interface: _soundInterface,
+        method: 'SetUiSoundsEnabled',
+        signature: 'b',
+        args: [enabled],
+      );
+    } on PlatformException {
+      // No sound service: the switch reads the state again.
+    } on MissingPluginException {
+      // Outside Silica.
+    }
+  }
 }

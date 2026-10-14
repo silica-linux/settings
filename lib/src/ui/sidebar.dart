@@ -1,19 +1,41 @@
 // The sidebar (ST-NAV-02, ST-NAV-03): the search field at the top, the account cell under it,
 // then the panes in blocks with their coloured icons; the selected row is an accent capsule
-// with white text (gray in an inactive window). Typing replaces the list with two-line
-// results (setting, then the path to it); Esc clears the query and brings the panes back.
+// as tall as the row pitch with white semibold text (gray in an inactive window). Typing
+// replaces the list with two-line results (setting, then the path to it); Esc clears the
+// query and brings the panes back. The sidebar icon size of Appearance scales the rows.
 
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:silica_ui/silica_ui.dart';
 
 import '../../l10n/gen/app_localizations.dart';
+import '../accent.dart';
 import '../model/navigation.dart';
 import '../model/panes.dart';
 import '../model/titles.dart';
 import '../services.dart';
 import '../style.dart';
+import 'search.dart';
 import 'symbol.dart';
+
+/// The row geometry for each sidebar icon size (Appearance › sidebar icon size). Medium is
+/// measured (ST-NAV-02); small and large are provisional.
+@immutable
+class SidebarRowSize {
+  const SidebarRowSize(this.pitch, this.icon, this.text);
+  final double pitch;
+  final double icon;
+  final double text;
+
+  static SidebarRowSize of(SidebarIconSize size) => switch (size) {
+    SidebarIconSize.small => const SidebarRowSize(26, 16, 11),
+    SidebarIconSize.medium => const SidebarRowSize(
+      SettingsMetrics.rowPitch,
+      SettingsMetrics.iconSize,
+      13,
+    ),
+    SidebarIconSize.large => const SidebarRowSize(38, 24, 15),
+  };
+}
 
 class SettingsSidebar extends StatefulWidget {
   const SettingsSidebar({
@@ -33,10 +55,14 @@ class SettingsSidebar extends StatefulWidget {
 
 class _SettingsSidebarState extends State<SettingsSidebar> {
   final TextEditingController _query = TextEditingController();
+  FocusNode? _ownFocus;
+  FocusNode get _focus =>
+      widget.searchFocus ?? (_ownFocus ??= FocusNode(debugLabel: 'search'));
 
   @override
   void dispose() {
     _query.dispose();
+    _ownFocus?.dispose();
     super.dispose();
   }
 
@@ -51,6 +77,21 @@ class _SettingsSidebarState extends State<SettingsSidebar> {
     final l = AppLocalizations.of(context);
     final navigation = widget.navigation;
     final searching = navigation.query.trim().isNotEmpty;
+    // The accent and the icon size change the rows (Appearance).
+    return ListenableBuilder(
+      listenable: ServicesScope.of(context).look,
+      builder: (context, _) =>
+          _build(context, colors, l, navigation, searching),
+    );
+  }
+
+  Widget _build(
+    BuildContext context,
+    SettingsColors colors,
+    AppLocalizations l,
+    Navigation navigation,
+    bool searching,
+  ) {
     return ColoredBox(
       color: colors.sidebar,
       child: Column(
@@ -61,42 +102,44 @@ class _SettingsSidebarState extends State<SettingsSidebar> {
             height: SettingsMetrics.searchTop,
             child: WindowDragArea(child: SizedBox.expand()),
           ),
-          Center(
-            child: CallbackShortcuts(
-              bindings: {
-                const SingleActivator(LogicalKeyboardKey.escape): _clear,
-              },
-              child: SizedBox(
-                width: SettingsMetrics.searchWidth,
-                height: SettingsMetrics.searchHeight,
-                child: SilicaSearchField(
-                  key: const ValueKey('sidebar search'),
-                  labels: SearchFieldLabels(
-                    placeholder: l.searchPlaceholder,
-                    clear: l.searchClear,
-                  ),
-                  controller: _query,
-                  focusNode: widget.searchFocus,
-                  width: SettingsMetrics.searchWidth,
-                  onChanged: (text) => navigation.query = text,
-                  onCancel: _clear,
-                ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.only(left: SettingsMetrics.searchLeft),
+              child: SidebarSearchField(
+                key: const ValueKey('sidebar search'),
+                controller: _query,
+                focusNode: _focus,
+                placeholder: l.searchPlaceholder,
+                clearLabel: l.searchClear,
+                onChanged: (text) => navigation.query = text,
+                onCancel: _clear,
               ),
             ),
           ),
-          const SizedBox(height: 8),
-          if (!searching) ...[
-            _AccountCell(
-              onTap: () => navigation.openPane(PaneId.users),
-              selected: navigation.pane == PaneId.users,
+          if (searching) ...[
+            const SizedBox(height: 10),
+            Expanded(
+              child: _Results(navigation: navigation, groups: widget.groups),
             ),
-            const SizedBox(height: 6),
+          ] else ...[
+            const SizedBox(
+              height:
+                  SettingsMetrics.accountTop -
+                  SettingsMetrics.searchTop -
+                  SettingsMetrics.searchHeight,
+            ),
+            _AccountCell(onTap: () => navigation.openPane(PaneId.users)),
+            const SizedBox(
+              height:
+                  SettingsMetrics.paneListTop -
+                  SettingsMetrics.accountTop -
+                  SettingsMetrics.accountHeight,
+            ),
+            Expanded(
+              child: _PaneList(navigation: navigation, groups: widget.groups),
+            ),
           ],
-          Expanded(
-            child: searching
-                ? _Results(navigation: navigation, groups: widget.groups)
-                : _PaneList(navigation: navigation, groups: widget.groups),
-          ),
         ],
       ),
     );
@@ -105,9 +148,8 @@ class _SettingsSidebarState extends State<SettingsSidebar> {
 
 /// The local user: initials, full name, "Local account"; opens Users & Groups.
 class _AccountCell extends StatelessWidget {
-  const _AccountCell({required this.onTap, required this.selected});
+  const _AccountCell({required this.onTap});
   final VoidCallback onTap;
-  final bool selected;
 
   @override
   Widget build(BuildContext context) {
@@ -121,30 +163,38 @@ class _AccountCell extends StatelessWidget {
         .take(2)
         .map((w) => w.characters.first.toUpperCase())
         .join();
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Padding(
-        padding: const EdgeInsets.only(left: SettingsMetrics.rowInset),
-        child: GestureDetector(
-          key: const ValueKey('account cell'),
-          onTap: onTap,
-          child: SizedBox(
-            width: SettingsMetrics.accountWidth,
-            height: SettingsMetrics.accountHeight,
+    return Semantics(
+      button: true,
+      label: name,
+      child: GestureDetector(
+        key: const ValueKey('account cell'),
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: SizedBox(
+          height: SettingsMetrics.accountHeight,
+          child: Padding(
+            padding: const EdgeInsets.only(
+              left: SettingsMetrics.rowInset + SettingsMetrics.rowIconLeft - 2,
+              right: SettingsMetrics.rowInset,
+            ),
             child: Row(
               children: [
                 Container(
-                  width: 30,
-                  height: 30,
+                  width: 34,
+                  height: 34,
                   alignment: Alignment.center,
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Color(0xFF8E8E93),
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Color(0xFFA5A5AA), Color(0xFF85858B)],
+                    ),
                   ),
                   child: Text(
                     initials,
                     style: settingsText(
-                      12,
+                      13,
                       const Color(0xFFFFFFFF),
                       weight: FontWeight.w600,
                     ),
@@ -163,7 +213,7 @@ class _AccountCell extends StatelessWidget {
                         style: settingsText(
                           13,
                           colors.text,
-                          weight: selected ? FontWeight.w600 : null,
+                          weight: FontWeight.w600,
                         ),
                       ),
                       Text(
@@ -211,6 +261,17 @@ class _PaneList extends StatelessWidget {
   }
 }
 
+/// The selection fill: the measured blue with the default accent, the accent's fill with
+/// another one, gray in an inactive window.
+Color sidebarSelection(BuildContext context, {required bool active}) {
+  final colors = SettingsColors.of(context);
+  if (!active) return colors.inactiveSelection;
+  final accent = ServicesScope.of(context).accent.value;
+  return accent == Accent.multicolour || accent == Accent.blue
+      ? colors.selection
+      : accent.fill(dark: colors.dark);
+}
+
 class _SidebarRow extends StatelessWidget {
   const _SidebarRow({
     super.key,
@@ -235,63 +296,66 @@ class _SidebarRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = SettingsColors.of(context);
     final active = WindowActiveScope.of(context);
-    final accent = ControlAccent.of(context);
-    final fill = selected ? (active ? accent : colors.inactiveSelection) : null;
-    final textColor = selected && active
-        ? const Color(0xFFFFFFFF)
-        : colors.text;
-    final secondaryColor = selected && active
-        ? const Color(0xCCFFFFFF)
-        : colors.secondary;
+    final size = SidebarRowSize.of(
+      ServicesScope.of(context).sidebarIconSize.value,
+    );
+    final fill = selected ? sidebarSelection(context, active: active) : null;
+    final white = selected && active;
+    final textColor = white ? const Color(0xFFFFFFFF) : colors.text;
+    final secondaryColor = white ? const Color(0xCCFFFFFF) : colors.secondary;
     final two = subtitle != null;
-    return SizedBox(
-      height: two ? 44 : SettingsMetrics.rowPitch,
-      child: Center(
-        child: Semantics(
-          button: true,
-          selected: selected,
-          label: title,
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            // The selection moves on release (ST-NAV-05: ~40–80 ms after the mouse up).
-            onTap: onTap,
-            child: Container(
-              height: two ? 40 : SettingsMetrics.rowHeight,
-              margin: const EdgeInsets.symmetric(
-                horizontal: SettingsMetrics.rowInset,
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 6),
-              decoration: BoxDecoration(
-                color: fill,
-                borderRadius: BorderRadius.circular(two ? 8 : 12),
-              ),
-              child: Row(
-                children: [
-                  IconTile(symbol: pane.symbol, tint: pane.tint),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _highlighted(
-                          title,
-                          settingsText(13, textColor),
-                          highlight,
-                        ),
-                        if (subtitle case final subtitle?)
-                          Text(
-                            subtitle,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: settingsText(11, secondaryColor),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: title,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        // The selection moves on release (ST-NAV-05: ~40–80 ms after the mouse up).
+        onTap: onTap,
+        child: Container(
+          height: two ? 44 : size.pitch,
+          margin: const EdgeInsets.symmetric(
+            horizontal: SettingsMetrics.rowInset,
+          ),
+          padding: const EdgeInsets.only(
+            left: SettingsMetrics.rowIconLeft,
+            right: 8,
+          ),
+          decoration: BoxDecoration(
+            color: fill,
+            borderRadius: BorderRadius.circular(
+              SettingsMetrics.selectionRadius,
             ),
+          ),
+          child: Row(
+            children: [
+              IconTile(symbol: pane.symbol, tint: pane.tint, size: size.icon),
+              const SizedBox(width: SettingsMetrics.rowIconGap),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _highlighted(
+                      title,
+                      settingsText(
+                        size.text,
+                        textColor,
+                        weight: selected ? FontWeight.w600 : null,
+                      ),
+                      highlight,
+                    ),
+                    if (subtitle case final subtitle?)
+                      Text(
+                        subtitle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: settingsText(11, secondaryColor),
+                      ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

@@ -12,6 +12,7 @@ import 'package:silica_settings/src/services.dart';
 import 'package:silica_settings/src/system/config.dart';
 import 'package:silica_settings/src/system/host.dart';
 import 'package:silica_settings/src/system/system.dart';
+import 'package:silica_settings/src/system/tools.dart';
 
 class FakeSystem implements SystemBackend {
   FakeSystem([this.current = const SystemState(reachable: true)]);
@@ -79,6 +80,196 @@ class FakeSystem implements SystemBackend {
   @override
   Future<void> setDoNotDisturb(bool enabled) async =>
       calls.add('setDoNotDisturb $enabled');
+
+  /// Null: no sound service.
+  bool? uiSounds;
+
+  @override
+  Future<bool?> uiSoundsEnabled() async => uiSounds;
+
+  @override
+  Future<void> setUiSoundsEnabled(bool enabled) async {
+    calls.add('setUiSoundsEnabled $enabled');
+    uiSounds = enabled;
+  }
+}
+
+/// The system tools in memory: every change is logged in [calls] and applied to the state the
+/// next read returns; [fail] makes the named call fail with that error.
+class FakeTools implements SystemTools {
+  final List<String> calls = [];
+  final Map<String, ToolError> fail = {};
+
+  List<AccessPoint> points = const [];
+  List<NetworkDevice> devices = const [];
+  Map<String, DeviceDetails> details = const {};
+  List<SavedConnection> connections = const [];
+  AudioDevices audio = const AudioDevices();
+  ClockState clockState = const ClockState();
+  List<String> zones = const [
+    'Europe/Rome',
+    'Europe/London',
+    'America/New_York',
+  ];
+  String name = 'Ada’s Silica';
+  LocaleState localeState = const LocaleState(language: 'en_GB.UTF-8');
+  List<String> localeList = const ['en_GB.UTF-8', 'en_US.UTF-8', 'it_IT.UTF-8'];
+  List<BluetoothPeer> peers = const [];
+  PowerState powerState = const PowerState();
+  List<AppEntry> browserList = const [];
+  String browser = '';
+  List<DisplayOutput> outputs = const [];
+  List<UserAccount> accounts = const [];
+  List<NotifyingApp> apps = const [];
+
+  Future<ToolError?> _log(String call) async {
+    calls.add(call);
+    return fail[call.split(' ').first];
+  }
+
+  @override
+  Future<List<AccessPoint>> accessPoints({bool rescan = false}) async {
+    if (rescan) calls.add('rescan');
+    return points;
+  }
+
+  @override
+  Future<List<NetworkDevice>> networkDevices() async => devices;
+
+  @override
+  Future<DeviceDetails> deviceDetails(String device) async =>
+      details[device] ?? const DeviceDetails();
+
+  @override
+  Future<List<SavedConnection>> savedConnections() async => connections;
+
+  @override
+  Future<ToolError?> joinWifi(String ssid, {String? password}) =>
+      _log('joinWifi $ssid ${password ?? '-'}');
+
+  @override
+  Future<ToolError?> disconnect(String device) => _log('disconnect $device');
+
+  @override
+  Future<ToolError?> forgetConnection(String name) => _log('forget $name');
+
+  @override
+  Future<ToolError?> setAutoconnect(String name, bool enabled) =>
+      _log('autoconnect $name $enabled');
+
+  @override
+  Future<ToolError?> setConnectionActive(String name, bool active) =>
+      _log('connection $name $active');
+
+  @override
+  Future<AudioDevices> audioDevices() async => audio;
+
+  @override
+  Future<ToolError?> setDefaultAudio(int id) => _log('defaultAudio $id');
+
+  @override
+  Future<ToolError?> setAudioVolume(int id, double volume) =>
+      _log('audioVolume $id ${volume.toStringAsFixed(2)}');
+
+  @override
+  Future<ToolError?> setAudioMuted(int id, bool muted) =>
+      _log('audioMuted $id $muted');
+
+  @override
+  Future<ClockState> clock() async => clockState;
+
+  @override
+  Future<List<String>> timezones() async => zones;
+
+  @override
+  Future<ToolError?> setTimezone(String zone) async {
+    final error = await _log('timezone $zone');
+    if (error == null) {
+      clockState = ClockState(
+        timezone: zone,
+        ntp: clockState.ntp,
+        canNtp: clockState.canNtp,
+      );
+    }
+    return error;
+  }
+
+  @override
+  Future<ToolError?> setNtp(bool enabled) => _log('ntp $enabled');
+
+  @override
+  Future<String> computerName() async => name;
+
+  @override
+  Future<ToolError?> setComputerName(String name) async {
+    final error = await _log('computerName $name');
+    if (error == null) this.name = name;
+    return error;
+  }
+
+  @override
+  Future<LocaleState> locale() async => localeState;
+
+  @override
+  Future<List<String>> locales() async => localeList;
+
+  @override
+  Future<ToolError?> setLocale({
+    required String language,
+    String formats = '',
+  }) async {
+    final error = await _log('locale $language $formats');
+    if (error == null) {
+      localeState = LocaleState(language: language, formats: formats);
+    }
+    return error;
+  }
+
+  @override
+  Future<List<BluetoothPeer>> bluetoothPeers() async => peers;
+
+  @override
+  Future<ToolError?> setBluetoothDiscovery(bool discovering) =>
+      _log('discovery $discovering');
+
+  @override
+  Future<ToolError?> pairBluetooth(String path) => _log('pair $path');
+
+  @override
+  Future<ToolError?> connectBluetooth(String path, bool connect) =>
+      _log('btConnect $path $connect');
+
+  @override
+  Future<ToolError?> forgetBluetooth(String path) => _log('btForget $path');
+
+  @override
+  Future<PowerState> power() async => powerState;
+
+  @override
+  Future<ToolError?> setPowerProfile(PowerProfile profile) =>
+      _log('profile ${profile.name}');
+
+  @override
+  Future<List<AppEntry>> browsers() async => browserList;
+
+  @override
+  Future<String> defaultBrowser() async => browser;
+
+  @override
+  Future<ToolError?> setDefaultBrowser(String id) async {
+    final error = await _log('browser $id');
+    if (error == null) browser = id;
+    return error;
+  }
+
+  @override
+  Future<List<DisplayOutput>> displays() async => outputs;
+
+  @override
+  Future<List<UserAccount>> users() async => accounts;
+
+  @override
+  Future<List<NotifyingApp>> notifyingApps() async => apps;
 }
 
 /// A machine folder with os-release, cpuinfo, meminfo, hostname and passwd.
@@ -113,10 +304,14 @@ class Harness {
     required this.system,
     required this.config,
     required this.navigation,
+    required this.tools,
+    required this.services,
   });
   final FakeSystem system;
   final ConfigStore config;
   final Navigation navigation;
+  final FakeTools tools;
+  final Services services;
 }
 
 Future<Harness> pumpSettings(
@@ -127,6 +322,8 @@ Future<Harness> pumpSettings(
   Directory? root,
   CommandRunner? run,
   double height = 727,
+  FakeTools? tools,
+  Map<String, String> extraEnv = const {},
 }) async {
   tester.view.physicalSize = Size(832, height);
   tester.view.devicePixelRatio = 1;
@@ -138,26 +335,32 @@ Future<Harness> pumpSettings(
     'USER': 'ada',
     'XDG_DATA_DIRS': '${home.path}/none',
     'LANG': 'en_GB.UTF-8',
+    ...extraEnv,
   };
   final fake = system ?? FakeSystem();
   final config = ConfigStore('${home.path}/.config/silica');
   final navigation = Navigation(initial: Location(pane));
-  await tester.pumpWidget(
-    SettingsApp(
-      locale: locale,
-      navigation: navigation,
-      services: Services(
-        system: fake,
-        config: config,
-        host: HostReader(
-          root: machine.path,
-          env: env,
-          run: run ?? (executable, arguments) async => null,
-        ),
-        env: env,
-      ),
+  final fakeTools = tools ?? FakeTools();
+  final services = Services(
+    system: fake,
+    config: config,
+    host: HostReader(
+      root: machine.path,
+      env: env,
+      run: run ?? (executable, arguments) async => null,
     ),
+    env: env,
+    tools: fakeTools,
+  );
+  await tester.pumpWidget(
+    SettingsApp(locale: locale, navigation: navigation, services: services),
   );
   await tester.pump();
-  return Harness(system: fake, config: config, navigation: navigation);
+  return Harness(
+    system: fake,
+    config: config,
+    navigation: navigation,
+    tools: fakeTools,
+    services: services,
+  );
 }

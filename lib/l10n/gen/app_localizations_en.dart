@@ -211,7 +211,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bluetoothNearby => 'Nearby Devices';
 
   @override
-  String get bluetoothNearbyNone => 'Searching for new devices';
+  String get bluetoothNearbyNone => 'Looking for devices…';
 
   @override
   String get networkWired => 'Ethernet';
@@ -320,20 +320,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dateTimeZone => 'Time zone';
 
   @override
-  String get dateTimeAutomatic => 'Set time and date automatically';
+  String get dateTimeAutomatic => 'Set the date and time automatically';
 
   @override
   String get dateTime24Hour => '24-hour time';
 
   @override
-  String get languagePreferred => 'Preferred language';
+  String get languagePreferred => 'Language';
 
   @override
   String get languageReadOnly =>
       'The system language can\'t be changed from Settings yet.';
 
   @override
-  String get languageRegion => 'Region';
+  String get languageRegion => 'Region formats';
 
   @override
   String get languageFirstDay => 'First day of the week';
@@ -452,7 +452,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appearanceScrollBars => 'Show scroll bars';
 
   @override
-  String get appearanceScrollAuto => 'Automatically';
+  String get appearanceScrollAuto =>
+      'Automatically, depending on the pointing device';
 
   @override
   String get appearanceScrollClick => 'Click in the scroll bar to';
@@ -503,7 +504,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get menuBarControls => 'Menu bar controls';
 
   @override
-  String get menuBarShowWhenActive => 'Show when active';
+  String get menuBarShowWhenActive => 'Show when in use';
 
   @override
   String get displaysResolution => 'Resolution';
@@ -626,7 +627,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get wallpaperSilica => 'Silica';
 
   @override
-  String get wallpaperSilicaName => 'Dunes at twilight';
+  String get wallpaperSilicaName => 'Silica';
 
   @override
   String get wallpaperColors => 'Colours';
@@ -673,16 +674,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationsWhenUnlocked => 'When unlocked';
 
   @override
-  String get notificationsWhenSleeping =>
-      'Allow notifications when the display is sleeping';
+  String get notificationsWhenSleeping => 'while the display sleeps';
 
   @override
-  String get notificationsWhenLocked =>
-      'Allow notifications when the screen is locked';
+  String get notificationsWhenLocked => 'while the screen is locked';
 
   @override
   String get notificationsWhenMirroring =>
-      'Allow notifications when mirroring or sharing the display';
+      'while the screen is mirrored or shared';
 
   @override
   String get notificationsApps => 'Application notifications';
@@ -703,13 +702,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get soundAlertVolume => 'Alert volume';
 
   @override
-  String get soundStartup => 'Play sound on startup';
+  String get soundStartup => 'Play a sound at startup';
 
   @override
-  String get soundInterface => 'Play user interface sound effects';
+  String get soundInterface => 'Play interface sound effects';
 
   @override
-  String get soundVolumeFeedback => 'Play feedback when volume is changed';
+  String get soundVolumeFeedback => 'Play a sound when the volume changes';
 
   @override
   String get soundOutput => 'Output';
@@ -1070,4 +1069,486 @@ class AppLocalizationsEn extends AppLocalizations {
   String lockSeconds(int count) {
     return '$count seconds';
   }
+
+  @override
+  String notAvailableIssue(int issue) {
+    return 'Not available yet in Silica (silica-linux/settings#$issue).';
+  }
+
+  @override
+  String appearanceAutoMissing(int issue) {
+    return 'Automatic switches between light and dark once the system service can follow a schedule (#$issue).';
+  }
+
+  @override
+  String appearanceOtherApps(int issue) {
+    return 'Settings uses this at once; the other apps follow once they read it (#$issue).';
+  }
+
+  @override
+  String get appearanceSmall => 'Small';
+
+  @override
+  String get appearanceLarge => 'Large';
+
+  @override
+  String get appearanceScrollWhenScrolling => 'While scrolling';
+
+  @override
+  String get appearanceScrollAlways => 'Always';
+
+  @override
+  String get appearanceScrollSpot => 'Jump to the spot that\'s clicked';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get addButton => 'Add…';
+
+  @override
+  String get detailsButton => 'Details…';
+
+  @override
+  String moreFor(String name) {
+    return 'More for $name';
+  }
+
+  @override
+  String get errorMissing =>
+      'The service this needs isn\'t installed on this system.';
+
+  @override
+  String errorAuthentication(int issue) {
+    return 'The system wants an administrator\'s password for this, and Silica can\'t ask for it yet (#$issue).';
+  }
+
+  @override
+  String errorRefused(String detail) {
+    return 'The system refused the change: $detail';
+  }
+
+  @override
+  String errorFailed(String detail) {
+    return 'The change didn\'t go through: $detail';
+  }
+
+  @override
+  String get wifiDescription =>
+      'Connect to the internet without a cable. Turn Wi-Fi on, then choose a network.';
+
+  @override
+  String get wifiDisconnect => 'Disconnect';
+
+  @override
+  String get wifiAutoJoin => 'Join Automatically';
+
+  @override
+  String get wifiAutoJoinTitle => 'Join this network automatically';
+
+  @override
+  String get wifiForget => 'Forget This Network…';
+
+  @override
+  String get wifiOther => 'Other…';
+
+  @override
+  String get wifiAskToJoinHelp =>
+      'Known networks are joined automatically. Without one, Silica tells you which networks are around.';
+
+  @override
+  String get wifiAskToJoinHotspotsHelp =>
+      'Lets Silica find a phone\'s hotspot nearby when no Wi-Fi network is around.';
+
+  @override
+  String get wifiAskAsk => 'Ask';
+
+  @override
+  String wifiJoinTitle(String ssid) {
+    return 'Join “$ssid”';
+  }
+
+  @override
+  String get wifiJoinHidden => 'Join a hidden network';
+
+  @override
+  String get wifiJoinHelp =>
+      'Type the network\'s password. Silica keeps it for the next time.';
+
+  @override
+  String get wifiNetworkName => 'Network name';
+
+  @override
+  String get wifiPassword => 'Password';
+
+  @override
+  String get wifiWrongPassword => 'The network didn\'t accept the password.';
+
+  @override
+  String get wifiJoin => 'Join';
+
+  @override
+  String get networkIpAddress => 'IP address';
+
+  @override
+  String get networkRouter => 'Router';
+
+  @override
+  String get networkDns => 'DNS servers';
+
+  @override
+  String get networkIpv6 => 'IPv6 address';
+
+  @override
+  String get networkHardwareAddress => 'Hardware address';
+
+  @override
+  String get networkInterface => 'Interface';
+
+  @override
+  String get networkBridge => 'Bridge';
+
+  @override
+  String get networkCellular => 'Cellular';
+
+  @override
+  String get networkNoServices => 'No network services';
+
+  @override
+  String get networkUnplugged => 'Cable unplugged';
+
+  @override
+  String get networkDisconnect => 'Disconnect';
+
+  @override
+  String get bluetoothDescription =>
+      'Use wireless headphones, keyboards, mice and other devices.';
+
+  @override
+  String get bluetoothForget => 'Forget This Device…';
+
+  @override
+  String bluetoothPinNote(int issue) {
+    return 'Devices that ask for a PIN or a code can\'t be paired yet (#$issue).';
+  }
+
+  @override
+  String get notificationsCenterHelp =>
+      'Notifications collect in the Notification Center at the top right of the screen. Click the clock in the menu bar to show or hide it.';
+
+  @override
+  String get notificationsShowWhen => 'Show notifications:';
+
+  @override
+  String get notificationsAppsHelp =>
+      'Apps appear here once they send a notification.';
+
+  @override
+  String get notificationsStyleBanners => 'Banners';
+
+  @override
+  String get notificationsStyleAlerts => 'Alerts';
+
+  @override
+  String get notificationsStyleOff => 'Off';
+
+  @override
+  String get notificationsAllow => 'Allow notifications';
+
+  @override
+  String get notificationsAlertStyle => 'Banner style';
+
+  @override
+  String get notificationsStyleTemporary => 'Leave by themselves';
+
+  @override
+  String get notificationsStylePersistent => 'Stay until dismissed';
+
+  @override
+  String get notificationsStyleHelp =>
+      'Banners that leave by themselves go away after a few seconds; the others stay on screen until you act on them.';
+
+  @override
+  String get notificationsBadges => 'Badge app icon';
+
+  @override
+  String get notificationsSound => 'Play a sound';
+
+  @override
+  String get notificationsGrouping => 'Group notifications';
+
+  @override
+  String get soundEffectsThrough => 'Play sound effects through';
+
+  @override
+  String get soundSelectedOutput => 'Selected output device';
+
+  @override
+  String get soundOutputInput => 'Output and input';
+
+  @override
+  String get soundName => 'Name';
+
+  @override
+  String get soundType => 'Type';
+
+  @override
+  String get soundNoDevices => 'No devices';
+
+  @override
+  String get soundBuiltIn => 'Built-in';
+
+  @override
+  String get soundVirtual => 'Virtual';
+
+  @override
+  String get soundInputVolume => 'Input volume';
+
+  @override
+  String get focusDoNotDisturbHelp =>
+      'Do Not Disturb keeps notifications in the Notification Center without banners or sounds.';
+
+  @override
+  String get menuBarInFullScreen => 'In full screen only';
+
+  @override
+  String get menuBarControlsHelp =>
+      'Choose which status items the menu bar shows.';
+
+  @override
+  String get menuBarLive => 'The menu bar changes at once.';
+
+  @override
+  String get menuBarAlways => 'Always show';
+
+  @override
+  String get menuBarBatteryPercent => 'Show the percentage';
+
+  @override
+  String get displaysNone => 'No connected display found';
+
+  @override
+  String get displaysModesHelp =>
+      'The modes this display offers. Silica can\'t switch them from Settings yet.';
+
+  @override
+  String get displaysUseAs => 'Use as';
+
+  @override
+  String get displaysMain => 'Main display';
+
+  @override
+  String displaysDefaultMode(String mode) {
+    return '$mode (native)';
+  }
+
+  @override
+  String get displaysNow => 'What the display shows now.';
+
+  @override
+  String get dockSmall => 'Small';
+
+  @override
+  String get dockLarge => 'Large';
+
+  @override
+  String get dockMagnificationSize => 'Magnification size';
+
+  @override
+  String dockLiveNote(int issue) {
+    return 'The Dock changes at once. The side positions, the title bar double click and minimizing into the app icon wait for the shell (#$issue).';
+  }
+
+  @override
+  String get dockLeft => 'Left';
+
+  @override
+  String get dockRight => 'Right';
+
+  @override
+  String get dockScale => 'Scale effect';
+
+  @override
+  String get desktopDefaultBrowser => 'Default web browser';
+
+  @override
+  String get wallpaperAllSpaces => 'Show on all spaces';
+
+  @override
+  String wallpaperNote(int issue) {
+    return 'The desktop shows a new wallpaper from the next login (#$issue).';
+  }
+
+  @override
+  String wallpaperShowAll(int count) {
+    return 'Show all ($count)';
+  }
+
+  @override
+  String get wallpaperShowFewer => 'Show fewer';
+
+  @override
+  String get choose => 'Choose';
+
+  @override
+  String get changeButton => 'Change…';
+
+  @override
+  String aboutFirmware(String version) {
+    return 'Firmware $version';
+  }
+
+  @override
+  String get aboutGraphics => 'Graphics';
+
+  @override
+  String get aboutSoftware => 'System';
+
+  @override
+  String aboutVersion(String version) {
+    return 'Version $version';
+  }
+
+  @override
+  String get storageDocuments => 'Documents';
+
+  @override
+  String get storageDownloads => 'Downloads';
+
+  @override
+  String get storagePictures => 'Pictures';
+
+  @override
+  String get storageMusic => 'Music';
+
+  @override
+  String get storageVideos => 'Videos';
+
+  @override
+  String get storageTrash => 'Trash';
+
+  @override
+  String get storageEmptyTrashButton => 'Empty Trash';
+
+  @override
+  String get storageEmptyTrashTitle => 'Empty the Trash?';
+
+  @override
+  String get storageEmptyTrashMessage =>
+      'The items in the Trash are deleted for good. This can\'t be undone.';
+
+  @override
+  String get storageEmptyTrashFailed => 'Some items couldn\'t be deleted.';
+
+  @override
+  String get sharingServices => 'Services';
+
+  @override
+  String sharingNameHelp(String host) {
+    return 'Other computers on the local network see this computer as “$host.local”.';
+  }
+
+  @override
+  String get sharingRename => 'Rename';
+
+  @override
+  String get dateTimeSynchronized => 'Synchronized with a time server';
+
+  @override
+  String get dateTimeNow => 'Date and time';
+
+  @override
+  String get dateTimeChooseZone => 'Choose a time zone';
+
+  @override
+  String get languageSystem => 'System language';
+
+  @override
+  String get languageRegionHelp =>
+      'Dates, times, numbers, currency and measures';
+
+  @override
+  String get languageNextLogin =>
+      'Apps use a new language and formats from the next login.';
+
+  @override
+  String get languageChooseLanguage => 'Choose the system language';
+
+  @override
+  String get languageChooseRegion => 'Choose the formats';
+
+  @override
+  String soundEffectsNote(int issue) {
+    return 'Interface sounds come from the system sound service; alert sounds and the other effects wait for it (#$issue).';
+  }
+
+  @override
+  String get powerMode => 'Power mode';
+
+  @override
+  String get powerModeHelp => 'Balance speed against power use and heat.';
+
+  @override
+  String get powerSaver => 'Low power';
+
+  @override
+  String get powerBalanced => 'Automatic';
+
+  @override
+  String get powerPerformance => 'High performance';
+
+  @override
+  String powerNoProfiles(int issue) {
+    return 'Power modes need power-profiles-daemon, which this system doesn\'t have (#$issue).';
+  }
+
+  @override
+  String durationHoursMinutes(int hours, int minutes) {
+    return '$hours h $minutes min';
+  }
+
+  @override
+  String durationMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String batteryUntilFull(String time) {
+    return '$time until full';
+  }
+
+  @override
+  String batteryLeft(String time) {
+    return '$time left';
+  }
+
+  @override
+  String get batteryHealth => 'Battery health';
+
+  @override
+  String get batteryHealthHelp =>
+      'How much the battery holds compared to when it was new.';
+
+  @override
+  String get batteryLowPowerHelp =>
+      'Uses less power so the battery lasts longer.';
+
+  @override
+  String keyboardRepeatNow(int rate, int delay) {
+    return 'In effect now: $rate repeats per second after $delay ms.';
+  }
+
+  @override
+  String get mouseNaturalScrollingHelp =>
+      'Content follows the movement of your fingers.';
+
+  @override
+  String get printersDefaultFailed =>
+      'The default printer couldn\'t be changed.';
+
+  @override
+  String get usersStandard => 'Standard';
 }

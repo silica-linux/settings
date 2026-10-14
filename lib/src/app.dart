@@ -9,7 +9,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:silica_ui/silica_ui.dart';
 
 import '../l10n/gen/app_localizations.dart';
-import 'accent.dart';
 import 'model/navigation.dart';
 import 'services.dart';
 import 'ui/window.dart';
@@ -100,13 +99,22 @@ class _Scopes extends StatelessWidget {
   Widget build(BuildContext context) {
     final dark =
         MediaQuery.maybePlatformBrightnessOf(context) == Brightness.dark;
-    return ValueListenableBuilder<Accent>(
-      valueListenable: services.accent,
-      builder: (context, accent, _) => ToolbarScope(
+    return ListenableBuilder(
+      listenable: services.look,
+      builder: (context, _) => ToolbarScope(
         active: WindowActiveScope.of(context),
         child: ControlAccent(
-          color: accent.fill(dark: dark),
-          child: child,
+          color: services.accent.value.fill(dark: dark),
+          // Appearance › show scroll bars: always keeps the track; automatically and while
+          // scrolling show it over the content as the pointer scrolls.
+          child: ScrollConfiguration(
+            behavior: SilicaScrollBehavior(
+              style: services.scrollBars.value == ScrollBarsMode.always
+                  ? ScrollerStyle.legacy
+                  : ScrollerStyle.overlay,
+            ),
+            child: child,
+          ),
         ),
       ),
     );

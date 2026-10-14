@@ -503,7 +503,7 @@ abstract class AppLocalizations {
   /// No description provided for @bluetoothNearbyNone.
   ///
   /// In en, this message translates to:
-  /// **'Searching for new devices'**
+  /// **'Looking for devices…'**
   String get bluetoothNearbyNone;
 
   /// No description provided for @networkWired.
@@ -713,7 +713,7 @@ abstract class AppLocalizations {
   /// No description provided for @dateTimeAutomatic.
   ///
   /// In en, this message translates to:
-  /// **'Set time and date automatically'**
+  /// **'Set the date and time automatically'**
   String get dateTimeAutomatic;
 
   /// No description provided for @dateTime24Hour.
@@ -725,7 +725,7 @@ abstract class AppLocalizations {
   /// No description provided for @languagePreferred.
   ///
   /// In en, this message translates to:
-  /// **'Preferred language'**
+  /// **'Language'**
   String get languagePreferred;
 
   /// No description provided for @languageReadOnly.
@@ -737,7 +737,7 @@ abstract class AppLocalizations {
   /// No description provided for @languageRegion.
   ///
   /// In en, this message translates to:
-  /// **'Region'**
+  /// **'Region formats'**
   String get languageRegion;
 
   /// No description provided for @languageFirstDay.
@@ -971,7 +971,7 @@ abstract class AppLocalizations {
   /// No description provided for @appearanceScrollAuto.
   ///
   /// In en, this message translates to:
-  /// **'Automatically'**
+  /// **'Automatically, depending on the pointing device'**
   String get appearanceScrollAuto;
 
   /// No description provided for @appearanceScrollClick.
@@ -1073,7 +1073,7 @@ abstract class AppLocalizations {
   /// No description provided for @menuBarShowWhenActive.
   ///
   /// In en, this message translates to:
-  /// **'Show when active'**
+  /// **'Show when in use'**
   String get menuBarShowWhenActive;
 
   /// No description provided for @displaysResolution.
@@ -1313,7 +1313,7 @@ abstract class AppLocalizations {
   /// No description provided for @wallpaperSilicaName.
   ///
   /// In en, this message translates to:
-  /// **'Dunes at twilight'**
+  /// **'Silica'**
   String get wallpaperSilicaName;
 
   /// No description provided for @wallpaperColors.
@@ -1403,19 +1403,19 @@ abstract class AppLocalizations {
   /// No description provided for @notificationsWhenSleeping.
   ///
   /// In en, this message translates to:
-  /// **'Allow notifications when the display is sleeping'**
+  /// **'while the display sleeps'**
   String get notificationsWhenSleeping;
 
   /// No description provided for @notificationsWhenLocked.
   ///
   /// In en, this message translates to:
-  /// **'Allow notifications when the screen is locked'**
+  /// **'while the screen is locked'**
   String get notificationsWhenLocked;
 
   /// No description provided for @notificationsWhenMirroring.
   ///
   /// In en, this message translates to:
-  /// **'Allow notifications when mirroring or sharing the display'**
+  /// **'while the screen is mirrored or shared'**
   String get notificationsWhenMirroring;
 
   /// No description provided for @notificationsApps.
@@ -1457,19 +1457,19 @@ abstract class AppLocalizations {
   /// No description provided for @soundStartup.
   ///
   /// In en, this message translates to:
-  /// **'Play sound on startup'**
+  /// **'Play a sound at startup'**
   String get soundStartup;
 
   /// No description provided for @soundInterface.
   ///
   /// In en, this message translates to:
-  /// **'Play user interface sound effects'**
+  /// **'Play interface sound effects'**
   String get soundInterface;
 
   /// No description provided for @soundVolumeFeedback.
   ///
   /// In en, this message translates to:
-  /// **'Play feedback when volume is changed'**
+  /// **'Play a sound when the volume changes'**
   String get soundVolumeFeedback;
 
   /// No description provided for @soundOutput.
@@ -2131,6 +2131,840 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} seconds'**
   String lockSeconds(int count);
+
+  /// No description provided for @notAvailableIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available yet in Silica (silica-linux/settings#{issue}).'**
+  String notAvailableIssue(int issue);
+
+  /// No description provided for @appearanceAutoMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic switches between light and dark once the system service can follow a schedule (#{issue}).'**
+  String appearanceAutoMissing(int issue);
+
+  /// No description provided for @appearanceOtherApps.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings uses this at once; the other apps follow once they read it (#{issue}).'**
+  String appearanceOtherApps(int issue);
+
+  /// No description provided for @appearanceSmall.
+  ///
+  /// In en, this message translates to:
+  /// **'Small'**
+  String get appearanceSmall;
+
+  /// No description provided for @appearanceLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Large'**
+  String get appearanceLarge;
+
+  /// No description provided for @appearanceScrollWhenScrolling.
+  ///
+  /// In en, this message translates to:
+  /// **'While scrolling'**
+  String get appearanceScrollWhenScrolling;
+
+  /// No description provided for @appearanceScrollAlways.
+  ///
+  /// In en, this message translates to:
+  /// **'Always'**
+  String get appearanceScrollAlways;
+
+  /// No description provided for @appearanceScrollSpot.
+  ///
+  /// In en, this message translates to:
+  /// **'Jump to the spot that\'s clicked'**
+  String get appearanceScrollSpot;
+
+  /// No description provided for @ok.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @addButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add…'**
+  String get addButton;
+
+  /// No description provided for @detailsButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Details…'**
+  String get detailsButton;
+
+  /// No description provided for @moreFor.
+  ///
+  /// In en, this message translates to:
+  /// **'More for {name}'**
+  String moreFor(String name);
+
+  /// No description provided for @errorMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'The service this needs isn\'t installed on this system.'**
+  String get errorMissing;
+
+  /// No description provided for @errorAuthentication.
+  ///
+  /// In en, this message translates to:
+  /// **'The system wants an administrator\'s password for this, and Silica can\'t ask for it yet (#{issue}).'**
+  String errorAuthentication(int issue);
+
+  /// No description provided for @errorRefused.
+  ///
+  /// In en, this message translates to:
+  /// **'The system refused the change: {detail}'**
+  String errorRefused(String detail);
+
+  /// No description provided for @errorFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The change didn\'t go through: {detail}'**
+  String errorFailed(String detail);
+
+  /// No description provided for @wifiDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect to the internet without a cable. Turn Wi-Fi on, then choose a network.'**
+  String get wifiDescription;
+
+  /// No description provided for @wifiDisconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect'**
+  String get wifiDisconnect;
+
+  /// No description provided for @wifiAutoJoin.
+  ///
+  /// In en, this message translates to:
+  /// **'Join Automatically'**
+  String get wifiAutoJoin;
+
+  /// No description provided for @wifiAutoJoinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Join this network automatically'**
+  String get wifiAutoJoinTitle;
+
+  /// No description provided for @wifiForget.
+  ///
+  /// In en, this message translates to:
+  /// **'Forget This Network…'**
+  String get wifiForget;
+
+  /// No description provided for @wifiOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other…'**
+  String get wifiOther;
+
+  /// No description provided for @wifiAskToJoinHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Known networks are joined automatically. Without one, Silica tells you which networks are around.'**
+  String get wifiAskToJoinHelp;
+
+  /// No description provided for @wifiAskToJoinHotspotsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Lets Silica find a phone\'s hotspot nearby when no Wi-Fi network is around.'**
+  String get wifiAskToJoinHotspotsHelp;
+
+  /// No description provided for @wifiAskAsk.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask'**
+  String get wifiAskAsk;
+
+  /// No description provided for @wifiJoinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Join “{ssid}”'**
+  String wifiJoinTitle(String ssid);
+
+  /// No description provided for @wifiJoinHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Join a hidden network'**
+  String get wifiJoinHidden;
+
+  /// No description provided for @wifiJoinHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Type the network\'s password. Silica keeps it for the next time.'**
+  String get wifiJoinHelp;
+
+  /// No description provided for @wifiNetworkName.
+  ///
+  /// In en, this message translates to:
+  /// **'Network name'**
+  String get wifiNetworkName;
+
+  /// No description provided for @wifiPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get wifiPassword;
+
+  /// No description provided for @wifiWrongPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'The network didn\'t accept the password.'**
+  String get wifiWrongPassword;
+
+  /// No description provided for @wifiJoin.
+  ///
+  /// In en, this message translates to:
+  /// **'Join'**
+  String get wifiJoin;
+
+  /// No description provided for @networkIpAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'IP address'**
+  String get networkIpAddress;
+
+  /// No description provided for @networkRouter.
+  ///
+  /// In en, this message translates to:
+  /// **'Router'**
+  String get networkRouter;
+
+  /// No description provided for @networkDns.
+  ///
+  /// In en, this message translates to:
+  /// **'DNS servers'**
+  String get networkDns;
+
+  /// No description provided for @networkIpv6.
+  ///
+  /// In en, this message translates to:
+  /// **'IPv6 address'**
+  String get networkIpv6;
+
+  /// No description provided for @networkHardwareAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Hardware address'**
+  String get networkHardwareAddress;
+
+  /// No description provided for @networkInterface.
+  ///
+  /// In en, this message translates to:
+  /// **'Interface'**
+  String get networkInterface;
+
+  /// No description provided for @networkBridge.
+  ///
+  /// In en, this message translates to:
+  /// **'Bridge'**
+  String get networkBridge;
+
+  /// No description provided for @networkCellular.
+  ///
+  /// In en, this message translates to:
+  /// **'Cellular'**
+  String get networkCellular;
+
+  /// No description provided for @networkNoServices.
+  ///
+  /// In en, this message translates to:
+  /// **'No network services'**
+  String get networkNoServices;
+
+  /// No description provided for @networkUnplugged.
+  ///
+  /// In en, this message translates to:
+  /// **'Cable unplugged'**
+  String get networkUnplugged;
+
+  /// No description provided for @networkDisconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect'**
+  String get networkDisconnect;
+
+  /// No description provided for @bluetoothDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Use wireless headphones, keyboards, mice and other devices.'**
+  String get bluetoothDescription;
+
+  /// No description provided for @bluetoothForget.
+  ///
+  /// In en, this message translates to:
+  /// **'Forget This Device…'**
+  String get bluetoothForget;
+
+  /// No description provided for @bluetoothPinNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Devices that ask for a PIN or a code can\'t be paired yet (#{issue}).'**
+  String bluetoothPinNote(int issue);
+
+  /// No description provided for @notificationsCenterHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications collect in the Notification Center at the top right of the screen. Click the clock in the menu bar to show or hide it.'**
+  String get notificationsCenterHelp;
+
+  /// No description provided for @notificationsShowWhen.
+  ///
+  /// In en, this message translates to:
+  /// **'Show notifications:'**
+  String get notificationsShowWhen;
+
+  /// No description provided for @notificationsAppsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Apps appear here once they send a notification.'**
+  String get notificationsAppsHelp;
+
+  /// No description provided for @notificationsStyleBanners.
+  ///
+  /// In en, this message translates to:
+  /// **'Banners'**
+  String get notificationsStyleBanners;
+
+  /// No description provided for @notificationsStyleAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts'**
+  String get notificationsStyleAlerts;
+
+  /// No description provided for @notificationsStyleOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get notificationsStyleOff;
+
+  /// No description provided for @notificationsAllow.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow notifications'**
+  String get notificationsAllow;
+
+  /// No description provided for @notificationsAlertStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Banner style'**
+  String get notificationsAlertStyle;
+
+  /// No description provided for @notificationsStyleTemporary.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave by themselves'**
+  String get notificationsStyleTemporary;
+
+  /// No description provided for @notificationsStylePersistent.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay until dismissed'**
+  String get notificationsStylePersistent;
+
+  /// No description provided for @notificationsStyleHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Banners that leave by themselves go away after a few seconds; the others stay on screen until you act on them.'**
+  String get notificationsStyleHelp;
+
+  /// No description provided for @notificationsBadges.
+  ///
+  /// In en, this message translates to:
+  /// **'Badge app icon'**
+  String get notificationsBadges;
+
+  /// No description provided for @notificationsSound.
+  ///
+  /// In en, this message translates to:
+  /// **'Play a sound'**
+  String get notificationsSound;
+
+  /// No description provided for @notificationsGrouping.
+  ///
+  /// In en, this message translates to:
+  /// **'Group notifications'**
+  String get notificationsGrouping;
+
+  /// No description provided for @soundEffectsThrough.
+  ///
+  /// In en, this message translates to:
+  /// **'Play sound effects through'**
+  String get soundEffectsThrough;
+
+  /// No description provided for @soundSelectedOutput.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected output device'**
+  String get soundSelectedOutput;
+
+  /// No description provided for @soundOutputInput.
+  ///
+  /// In en, this message translates to:
+  /// **'Output and input'**
+  String get soundOutputInput;
+
+  /// No description provided for @soundName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get soundName;
+
+  /// No description provided for @soundType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get soundType;
+
+  /// No description provided for @soundNoDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'No devices'**
+  String get soundNoDevices;
+
+  /// No description provided for @soundBuiltIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Built-in'**
+  String get soundBuiltIn;
+
+  /// No description provided for @soundVirtual.
+  ///
+  /// In en, this message translates to:
+  /// **'Virtual'**
+  String get soundVirtual;
+
+  /// No description provided for @soundInputVolume.
+  ///
+  /// In en, this message translates to:
+  /// **'Input volume'**
+  String get soundInputVolume;
+
+  /// No description provided for @focusDoNotDisturbHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Do Not Disturb keeps notifications in the Notification Center without banners or sounds.'**
+  String get focusDoNotDisturbHelp;
+
+  /// No description provided for @menuBarInFullScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'In full screen only'**
+  String get menuBarInFullScreen;
+
+  /// No description provided for @menuBarControlsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose which status items the menu bar shows.'**
+  String get menuBarControlsHelp;
+
+  /// No description provided for @menuBarLive.
+  ///
+  /// In en, this message translates to:
+  /// **'The menu bar changes at once.'**
+  String get menuBarLive;
+
+  /// No description provided for @menuBarAlways.
+  ///
+  /// In en, this message translates to:
+  /// **'Always show'**
+  String get menuBarAlways;
+
+  /// No description provided for @menuBarBatteryPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'Show the percentage'**
+  String get menuBarBatteryPercent;
+
+  /// No description provided for @displaysNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No connected display found'**
+  String get displaysNone;
+
+  /// No description provided for @displaysModesHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The modes this display offers. Silica can\'t switch them from Settings yet.'**
+  String get displaysModesHelp;
+
+  /// No description provided for @displaysUseAs.
+  ///
+  /// In en, this message translates to:
+  /// **'Use as'**
+  String get displaysUseAs;
+
+  /// No description provided for @displaysMain.
+  ///
+  /// In en, this message translates to:
+  /// **'Main display'**
+  String get displaysMain;
+
+  /// No description provided for @displaysDefaultMode.
+  ///
+  /// In en, this message translates to:
+  /// **'{mode} (native)'**
+  String displaysDefaultMode(String mode);
+
+  /// No description provided for @displaysNow.
+  ///
+  /// In en, this message translates to:
+  /// **'What the display shows now.'**
+  String get displaysNow;
+
+  /// No description provided for @dockSmall.
+  ///
+  /// In en, this message translates to:
+  /// **'Small'**
+  String get dockSmall;
+
+  /// No description provided for @dockLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Large'**
+  String get dockLarge;
+
+  /// No description provided for @dockMagnificationSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Magnification size'**
+  String get dockMagnificationSize;
+
+  /// No description provided for @dockLiveNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The Dock changes at once. The side positions, the title bar double click and minimizing into the app icon wait for the shell (#{issue}).'**
+  String dockLiveNote(int issue);
+
+  /// No description provided for @dockLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Left'**
+  String get dockLeft;
+
+  /// No description provided for @dockRight.
+  ///
+  /// In en, this message translates to:
+  /// **'Right'**
+  String get dockRight;
+
+  /// No description provided for @dockScale.
+  ///
+  /// In en, this message translates to:
+  /// **'Scale effect'**
+  String get dockScale;
+
+  /// No description provided for @desktopDefaultBrowser.
+  ///
+  /// In en, this message translates to:
+  /// **'Default web browser'**
+  String get desktopDefaultBrowser;
+
+  /// No description provided for @wallpaperAllSpaces.
+  ///
+  /// In en, this message translates to:
+  /// **'Show on all spaces'**
+  String get wallpaperAllSpaces;
+
+  /// No description provided for @wallpaperNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The desktop shows a new wallpaper from the next login (#{issue}).'**
+  String wallpaperNote(int issue);
+
+  /// No description provided for @wallpaperShowAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Show all ({count})'**
+  String wallpaperShowAll(int count);
+
+  /// No description provided for @wallpaperShowFewer.
+  ///
+  /// In en, this message translates to:
+  /// **'Show fewer'**
+  String get wallpaperShowFewer;
+
+  /// No description provided for @choose.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose'**
+  String get choose;
+
+  /// No description provided for @changeButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Change…'**
+  String get changeButton;
+
+  /// No description provided for @aboutFirmware.
+  ///
+  /// In en, this message translates to:
+  /// **'Firmware {version}'**
+  String aboutFirmware(String version);
+
+  /// No description provided for @aboutGraphics.
+  ///
+  /// In en, this message translates to:
+  /// **'Graphics'**
+  String get aboutGraphics;
+
+  /// No description provided for @aboutSoftware.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get aboutSoftware;
+
+  /// No description provided for @aboutVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version}'**
+  String aboutVersion(String version);
+
+  /// No description provided for @storageDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get storageDocuments;
+
+  /// No description provided for @storageDownloads.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloads'**
+  String get storageDownloads;
+
+  /// No description provided for @storagePictures.
+  ///
+  /// In en, this message translates to:
+  /// **'Pictures'**
+  String get storagePictures;
+
+  /// No description provided for @storageMusic.
+  ///
+  /// In en, this message translates to:
+  /// **'Music'**
+  String get storageMusic;
+
+  /// No description provided for @storageVideos.
+  ///
+  /// In en, this message translates to:
+  /// **'Videos'**
+  String get storageVideos;
+
+  /// No description provided for @storageTrash.
+  ///
+  /// In en, this message translates to:
+  /// **'Trash'**
+  String get storageTrash;
+
+  /// No description provided for @storageEmptyTrashButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty Trash'**
+  String get storageEmptyTrashButton;
+
+  /// No description provided for @storageEmptyTrashTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty the Trash?'**
+  String get storageEmptyTrashTitle;
+
+  /// No description provided for @storageEmptyTrashMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The items in the Trash are deleted for good. This can\'t be undone.'**
+  String get storageEmptyTrashMessage;
+
+  /// No description provided for @storageEmptyTrashFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Some items couldn\'t be deleted.'**
+  String get storageEmptyTrashFailed;
+
+  /// No description provided for @sharingServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Services'**
+  String get sharingServices;
+
+  /// No description provided for @sharingNameHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Other computers on the local network see this computer as “{host}.local”.'**
+  String sharingNameHelp(String host);
+
+  /// No description provided for @sharingRename.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get sharingRename;
+
+  /// No description provided for @dateTimeSynchronized.
+  ///
+  /// In en, this message translates to:
+  /// **'Synchronized with a time server'**
+  String get dateTimeSynchronized;
+
+  /// No description provided for @dateTimeNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Date and time'**
+  String get dateTimeNow;
+
+  /// No description provided for @dateTimeChooseZone.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a time zone'**
+  String get dateTimeChooseZone;
+
+  /// No description provided for @languageSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System language'**
+  String get languageSystem;
+
+  /// No description provided for @languageRegionHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Dates, times, numbers, currency and measures'**
+  String get languageRegionHelp;
+
+  /// No description provided for @languageNextLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Apps use a new language and formats from the next login.'**
+  String get languageNextLogin;
+
+  /// No description provided for @languageChooseLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the system language'**
+  String get languageChooseLanguage;
+
+  /// No description provided for @languageChooseRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the formats'**
+  String get languageChooseRegion;
+
+  /// No description provided for @soundEffectsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Interface sounds come from the system sound service; alert sounds and the other effects wait for it (#{issue}).'**
+  String soundEffectsNote(int issue);
+
+  /// No description provided for @powerMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Power mode'**
+  String get powerMode;
+
+  /// No description provided for @powerModeHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance speed against power use and heat.'**
+  String get powerModeHelp;
+
+  /// No description provided for @powerSaver.
+  ///
+  /// In en, this message translates to:
+  /// **'Low power'**
+  String get powerSaver;
+
+  /// No description provided for @powerBalanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic'**
+  String get powerBalanced;
+
+  /// No description provided for @powerPerformance.
+  ///
+  /// In en, this message translates to:
+  /// **'High performance'**
+  String get powerPerformance;
+
+  /// No description provided for @powerNoProfiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Power modes need power-profiles-daemon, which this system doesn\'t have (#{issue}).'**
+  String powerNoProfiles(int issue);
+
+  /// No description provided for @durationHoursMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} h {minutes} min'**
+  String durationHoursMinutes(int hours, int minutes);
+
+  /// No description provided for @durationMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String durationMinutes(int minutes);
+
+  /// No description provided for @batteryUntilFull.
+  ///
+  /// In en, this message translates to:
+  /// **'{time} until full'**
+  String batteryUntilFull(String time);
+
+  /// No description provided for @batteryLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{time} left'**
+  String batteryLeft(String time);
+
+  /// No description provided for @batteryHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Battery health'**
+  String get batteryHealth;
+
+  /// No description provided for @batteryHealthHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'How much the battery holds compared to when it was new.'**
+  String get batteryHealthHelp;
+
+  /// No description provided for @batteryLowPowerHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Uses less power so the battery lasts longer.'**
+  String get batteryLowPowerHelp;
+
+  /// No description provided for @keyboardRepeatNow.
+  ///
+  /// In en, this message translates to:
+  /// **'In effect now: {rate} repeats per second after {delay} ms.'**
+  String keyboardRepeatNow(int rate, int delay);
+
+  /// No description provided for @mouseNaturalScrollingHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Content follows the movement of your fingers.'**
+  String get mouseNaturalScrollingHelp;
+
+  /// No description provided for @printersDefaultFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The default printer couldn\'t be changed.'**
+  String get printersDefaultFailed;
+
+  /// No description provided for @usersStandard.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard'**
+  String get usersStandard;
 }
 
 class _AppLocalizationsDelegate

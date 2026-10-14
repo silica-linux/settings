@@ -34,18 +34,39 @@ void main() {
     );
   });
 
-  testWidgets('the window is 832 wide with the sidebar divider at 261', (
+  testWidgets('the measured sidebar: search, rows and selection', (
     tester,
   ) async {
     await pumpSettings(tester);
-    expect(
-      tester.getSize(find.byKey(const ValueKey('pane wifi'))).width,
-      SettingsMetrics.sidebarWidth - 1,
-    );
+    // The search field: 242 × 28, 9 from the edge, 60 below the top (ST-NAV-02).
+    final search = find.byKey(const ValueKey('sidebar search'));
+    expect(tester.getTopLeft(search), const Offset(9, 60));
+    expect(tester.getSize(search), const Size(242, 28));
+    // The rows start at 157; the row spans the sidebar, the capsule is inset 10.
+    final wifi = find.byKey(const ValueKey('pane wifi'));
+    expect(tester.getTopLeft(wifi).dy, SettingsMetrics.paneListTop);
+    expect(tester.getSize(wifi).width, SettingsMetrics.sidebarWidth);
+    final capsule = find
+        .descendant(
+          of: find.byKey(const ValueKey('pane appearance')),
+          matching: find.byType(DecoratedBox),
+        )
+        .first;
+    expect(tester.getSize(capsule), const Size(241, 32));
+    expect(tester.getTopLeft(capsule).dx, 10);
     expect(
       tester.getTopLeft(find.byKey(const ValueKey('back'))).dx,
       greaterThanOrEqualTo(SettingsMetrics.navX),
     );
+  });
+
+  testWidgets('the measured grouped list: inset 20, 12 under the toolbar', (
+    tester,
+  ) async {
+    await pumpSettings(tester, pane: PaneId.general);
+    final about = find.byKey(const ValueKey('general about'));
+    expect(tester.getSize(about), const Size(531, 48));
+    expect(tester.getTopLeft(about).dx, 261 + 20);
   });
 
   testWidgets('a click switches the pane in one frame, and back and forward '

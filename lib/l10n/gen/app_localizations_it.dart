@@ -211,7 +211,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get bluetoothNearby => 'Dispositivi nelle vicinanze';
 
   @override
-  String get bluetoothNearbyNone => 'Ricerca di nuovi dispositivi';
+  String get bluetoothNearbyNone => 'Ricerca dei dispositivi…';
 
   @override
   String get networkWired => 'Ethernet';
@@ -320,20 +320,20 @@ class AppLocalizationsIt extends AppLocalizations {
   String get dateTimeZone => 'Fuso orario';
 
   @override
-  String get dateTimeAutomatic => 'Imposta data e ora automaticamente';
+  String get dateTimeAutomatic => 'Imposta automaticamente data e ora';
 
   @override
   String get dateTime24Hour => 'Formato 24 ore';
 
   @override
-  String get languagePreferred => 'Lingua preferita';
+  String get languagePreferred => 'Lingua';
 
   @override
   String get languageReadOnly =>
       'La lingua del sistema non si può ancora cambiare da Impostazioni.';
 
   @override
-  String get languageRegion => 'Regione';
+  String get languageRegion => 'Formati della zona';
 
   @override
   String get languageFirstDay => 'Primo giorno della settimana';
@@ -444,7 +444,7 @@ class AppLocalizationsIt extends AppLocalizations {
       'Dimensione delle icone nella barra laterale';
 
   @override
-  String get appearanceMedium => 'Media';
+  String get appearanceMedium => 'Medie';
 
   @override
   String get appearanceTint => 'Colora le finestre con lo sfondo';
@@ -453,13 +453,14 @@ class AppLocalizationsIt extends AppLocalizations {
   String get appearanceScrollBars => 'Mostra le barre di scorrimento';
 
   @override
-  String get appearanceScrollAuto => 'Automaticamente';
+  String get appearanceScrollAuto =>
+      'Automaticamente, secondo il dispositivo di puntamento';
 
   @override
   String get appearanceScrollClick => 'Un clic nella barra di scorrimento';
 
   @override
-  String get appearanceScrollNextPage => 'Va alla pagina successiva';
+  String get appearanceScrollNextPage => 'Passare alla pagina successiva';
 
   @override
   String get accentMulticolour => 'Multicolore';
@@ -504,7 +505,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get menuBarControls => 'Controlli nella barra dei menu';
 
   @override
-  String get menuBarShowWhenActive => 'Mostra quando è attivo';
+  String get menuBarShowWhenActive => 'Mostra quando è in uso';
 
   @override
   String get displaysResolution => 'Risoluzione';
@@ -629,7 +630,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get wallpaperSilica => 'Silica';
 
   @override
-  String get wallpaperSilicaName => 'Dune al tramonto';
+  String get wallpaperSilicaName => 'Silica';
 
   @override
   String get wallpaperColors => 'Colori';
@@ -676,16 +677,14 @@ class AppLocalizationsIt extends AppLocalizations {
   String get notificationsWhenUnlocked => 'Se sbloccato';
 
   @override
-  String get notificationsWhenSleeping =>
-      'Consenti notifiche con lo schermo spento';
+  String get notificationsWhenSleeping => 'mentre lo schermo è spento';
 
   @override
-  String get notificationsWhenLocked =>
-      'Consenti notifiche con lo schermo bloccato';
+  String get notificationsWhenLocked => 'mentre lo schermo è bloccato';
 
   @override
   String get notificationsWhenMirroring =>
-      'Consenti notifiche durante la condivisione dello schermo';
+      'mentre lo schermo è duplicato o condiviso';
 
   @override
   String get notificationsApps => 'Notifiche delle app';
@@ -706,7 +705,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get soundAlertVolume => 'Volume degli avvisi';
 
   @override
-  String get soundStartup => 'Riproduci un suono all\'avvio';
+  String get soundStartup => 'Riproduci un suono all\'accensione';
 
   @override
   String get soundInterface => 'Riproduci gli effetti sonori dell\'interfaccia';
@@ -1073,4 +1072,486 @@ class AppLocalizationsIt extends AppLocalizations {
   String lockSeconds(int count) {
     return '$count secondi';
   }
+
+  @override
+  String notAvailableIssue(int issue) {
+    return 'Non ancora disponibile in Silica (silica-linux/settings#$issue).';
+  }
+
+  @override
+  String appearanceAutoMissing(int issue) {
+    return 'Automatico alterna chiaro e scuro quando il servizio di sistema potrà seguire un orario (#$issue).';
+  }
+
+  @override
+  String appearanceOtherApps(int issue) {
+    return 'Impostazioni lo usa subito; le altre app lo seguiranno quando lo leggeranno (#$issue).';
+  }
+
+  @override
+  String get appearanceSmall => 'Piccole';
+
+  @override
+  String get appearanceLarge => 'Grandi';
+
+  @override
+  String get appearanceScrollWhenScrolling => 'Mentre si scorre';
+
+  @override
+  String get appearanceScrollAlways => 'Sempre';
+
+  @override
+  String get appearanceScrollSpot => 'Passare al punto in cui si fa clic';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get cancel => 'Annulla';
+
+  @override
+  String get addButton => 'Aggiungi…';
+
+  @override
+  String get detailsButton => 'Dettagli…';
+
+  @override
+  String moreFor(String name) {
+    return 'Altro per $name';
+  }
+
+  @override
+  String get errorMissing =>
+      'Il servizio necessario non è installato su questo sistema.';
+
+  @override
+  String errorAuthentication(int issue) {
+    return 'Il sistema chiede la password di un amministratore e Silica non può ancora chiederla (#$issue).';
+  }
+
+  @override
+  String errorRefused(String detail) {
+    return 'Il sistema ha rifiutato la modifica: $detail';
+  }
+
+  @override
+  String errorFailed(String detail) {
+    return 'La modifica non è riuscita: $detail';
+  }
+
+  @override
+  String get wifiDescription =>
+      'Collegati a internet senza cavo. Attiva il Wi-Fi, poi scegli una rete.';
+
+  @override
+  String get wifiDisconnect => 'Disconnetti';
+
+  @override
+  String get wifiAutoJoin => 'Accedi automaticamente';
+
+  @override
+  String get wifiAutoJoinTitle => 'Accedi automaticamente a questa rete';
+
+  @override
+  String get wifiForget => 'Dimentica questa rete…';
+
+  @override
+  String get wifiOther => 'Altra…';
+
+  @override
+  String get wifiAskToJoinHelp =>
+      'Silica accede da solo alle reti conosciute. Se non ce n\'è nessuna, ti dice quali reti ci sono.';
+
+  @override
+  String get wifiAskToJoinHotspotsHelp =>
+      'Permette a Silica di trovare l\'hotspot di un telefono vicino quando non ci sono reti Wi-Fi.';
+
+  @override
+  String get wifiAskAsk => 'Chiedi';
+
+  @override
+  String wifiJoinTitle(String ssid) {
+    return 'Accedi a «$ssid»';
+  }
+
+  @override
+  String get wifiJoinHidden => 'Accedi a una rete nascosta';
+
+  @override
+  String get wifiJoinHelp =>
+      'Scrivi la password della rete. Silica la conserva per la prossima volta.';
+
+  @override
+  String get wifiNetworkName => 'Nome della rete';
+
+  @override
+  String get wifiPassword => 'Password';
+
+  @override
+  String get wifiWrongPassword => 'La rete non ha accettato la password.';
+
+  @override
+  String get wifiJoin => 'Accedi';
+
+  @override
+  String get networkIpAddress => 'Indirizzo IP';
+
+  @override
+  String get networkRouter => 'Router';
+
+  @override
+  String get networkDns => 'Server DNS';
+
+  @override
+  String get networkIpv6 => 'Indirizzo IPv6';
+
+  @override
+  String get networkHardwareAddress => 'Indirizzo hardware';
+
+  @override
+  String get networkInterface => 'Interfaccia';
+
+  @override
+  String get networkBridge => 'Bridge';
+
+  @override
+  String get networkCellular => 'Cellulare';
+
+  @override
+  String get networkNoServices => 'Nessun servizio di rete';
+
+  @override
+  String get networkUnplugged => 'Cavo scollegato';
+
+  @override
+  String get networkDisconnect => 'Disconnetti';
+
+  @override
+  String get bluetoothDescription =>
+      'Usa cuffie, tastiere, mouse e altri dispositivi senza fili.';
+
+  @override
+  String get bluetoothForget => 'Dimentica questo dispositivo…';
+
+  @override
+  String bluetoothPinNote(int issue) {
+    return 'I dispositivi che chiedono un PIN o un codice non si possono ancora abbinare (#$issue).';
+  }
+
+  @override
+  String get notificationsCenterHelp =>
+      'Le notifiche si raccolgono nel Centro Notifiche, in alto a destra. Fai clic sull\'orologio nella barra dei menu per mostrarlo o nasconderlo.';
+
+  @override
+  String get notificationsShowWhen => 'Mostra le notifiche:';
+
+  @override
+  String get notificationsAppsHelp =>
+      'Le app compaiono qui dopo aver inviato una notifica.';
+
+  @override
+  String get notificationsStyleBanners => 'Banner';
+
+  @override
+  String get notificationsStyleAlerts => 'Avvisi';
+
+  @override
+  String get notificationsStyleOff => 'No';
+
+  @override
+  String get notificationsAllow => 'Consenti le notifiche';
+
+  @override
+  String get notificationsAlertStyle => 'Stile dei banner';
+
+  @override
+  String get notificationsStyleTemporary => 'Spariscono da soli';
+
+  @override
+  String get notificationsStylePersistent => 'Restano finché non li chiudi';
+
+  @override
+  String get notificationsStyleHelp =>
+      'I banner che spariscono da soli se ne vanno dopo qualche secondo; gli altri restano sullo schermo finché non li usi.';
+
+  @override
+  String get notificationsBadges => 'Badge sull\'icona dell\'app';
+
+  @override
+  String get notificationsSound => 'Riproduci un suono';
+
+  @override
+  String get notificationsGrouping => 'Raggruppa le notifiche';
+
+  @override
+  String get soundEffectsThrough => 'Riproduci gli effetti sonori con';
+
+  @override
+  String get soundSelectedOutput => 'Dispositivo di uscita scelto';
+
+  @override
+  String get soundOutputInput => 'Uscita e ingresso';
+
+  @override
+  String get soundName => 'Nome';
+
+  @override
+  String get soundType => 'Tipo';
+
+  @override
+  String get soundNoDevices => 'Nessun dispositivo';
+
+  @override
+  String get soundBuiltIn => 'Integrato';
+
+  @override
+  String get soundVirtual => 'Virtuale';
+
+  @override
+  String get soundInputVolume => 'Volume di ingresso';
+
+  @override
+  String get focusDoNotDisturbHelp =>
+      'Non disturbare tiene le notifiche nel Centro Notifiche, senza banner né suoni.';
+
+  @override
+  String get menuBarInFullScreen => 'Solo a tutto schermo';
+
+  @override
+  String get menuBarControlsHelp =>
+      'Scegli quali elementi di stato mostra la barra dei menu.';
+
+  @override
+  String get menuBarLive => 'La barra dei menu cambia subito.';
+
+  @override
+  String get menuBarAlways => 'Mostra sempre';
+
+  @override
+  String get menuBarBatteryPercent => 'Mostra la percentuale';
+
+  @override
+  String get displaysNone => 'Nessuno schermo collegato trovato';
+
+  @override
+  String get displaysModesHelp =>
+      'Le modalità offerte da questo schermo. Silica non può ancora cambiarle da Impostazioni.';
+
+  @override
+  String get displaysUseAs => 'Usa come';
+
+  @override
+  String get displaysMain => 'Schermo principale';
+
+  @override
+  String displaysDefaultMode(String mode) {
+    return '$mode (nativa)';
+  }
+
+  @override
+  String get displaysNow => 'Cosa mostra ora lo schermo.';
+
+  @override
+  String get dockSmall => 'Piccolo';
+
+  @override
+  String get dockLarge => 'Grande';
+
+  @override
+  String get dockMagnificationSize => 'Dimensione ingrandimento';
+
+  @override
+  String dockLiveNote(int issue) {
+    return 'Il Dock cambia subito. Le posizioni laterali, il doppio clic sulla barra del titolo e la riduzione nell\'icona dell\'app aspettano la shell (#$issue).';
+  }
+
+  @override
+  String get dockLeft => 'A sinistra';
+
+  @override
+  String get dockRight => 'A destra';
+
+  @override
+  String get dockScale => 'Effetto scala';
+
+  @override
+  String get desktopDefaultBrowser => 'Browser web predefinito';
+
+  @override
+  String get wallpaperAllSpaces => 'Mostra su tutti gli spazi';
+
+  @override
+  String wallpaperNote(int issue) {
+    return 'La scrivania mostra il nuovo sfondo dal prossimo accesso (#$issue).';
+  }
+
+  @override
+  String wallpaperShowAll(int count) {
+    return 'Mostra tutti ($count)';
+  }
+
+  @override
+  String get wallpaperShowFewer => 'Mostra meno';
+
+  @override
+  String get choose => 'Scegli';
+
+  @override
+  String get changeButton => 'Cambia…';
+
+  @override
+  String aboutFirmware(String version) {
+    return 'Firmware $version';
+  }
+
+  @override
+  String get aboutGraphics => 'Grafica';
+
+  @override
+  String get aboutSoftware => 'Sistema';
+
+  @override
+  String aboutVersion(String version) {
+    return 'Versione $version';
+  }
+
+  @override
+  String get storageDocuments => 'Documenti';
+
+  @override
+  String get storageDownloads => 'Download';
+
+  @override
+  String get storagePictures => 'Immagini';
+
+  @override
+  String get storageMusic => 'Musica';
+
+  @override
+  String get storageVideos => 'Video';
+
+  @override
+  String get storageTrash => 'Cestino';
+
+  @override
+  String get storageEmptyTrashButton => 'Svuota il Cestino';
+
+  @override
+  String get storageEmptyTrashTitle => 'Svuotare il Cestino?';
+
+  @override
+  String get storageEmptyTrashMessage =>
+      'Gli elementi nel Cestino vengono eliminati per sempre. Non si può annullare.';
+
+  @override
+  String get storageEmptyTrashFailed =>
+      'Alcuni elementi non sono stati eliminati.';
+
+  @override
+  String get sharingServices => 'Servizi';
+
+  @override
+  String sharingNameHelp(String host) {
+    return 'Gli altri computer della rete locale vedono questo computer come «$host.local».';
+  }
+
+  @override
+  String get sharingRename => 'Rinomina';
+
+  @override
+  String get dateTimeSynchronized => 'Sincronizzato con un server dell\'ora';
+
+  @override
+  String get dateTimeNow => 'Data e ora';
+
+  @override
+  String get dateTimeChooseZone => 'Scegli un fuso orario';
+
+  @override
+  String get languageSystem => 'Lingua del sistema';
+
+  @override
+  String get languageRegionHelp => 'Date, ore, numeri, valute e misure';
+
+  @override
+  String get languageNextLogin =>
+      'Le app usano la nuova lingua e i nuovi formati dal prossimo accesso.';
+
+  @override
+  String get languageChooseLanguage => 'Scegli la lingua del sistema';
+
+  @override
+  String get languageChooseRegion => 'Scegli i formati';
+
+  @override
+  String soundEffectsNote(int issue) {
+    return 'I suoni dell\'interfaccia vengono dal servizio audio di sistema; i suoni di avviso e gli altri effetti lo aspettano (#$issue).';
+  }
+
+  @override
+  String get powerMode => 'Modalità di alimentazione';
+
+  @override
+  String get powerModeHelp => 'Bilancia velocità, consumo e calore.';
+
+  @override
+  String get powerSaver => 'Basso consumo';
+
+  @override
+  String get powerBalanced => 'Automatica';
+
+  @override
+  String get powerPerformance => 'Prestazioni elevate';
+
+  @override
+  String powerNoProfiles(int issue) {
+    return 'Le modalità di alimentazione richiedono power-profiles-daemon, assente su questo sistema (#$issue).';
+  }
+
+  @override
+  String durationHoursMinutes(int hours, int minutes) {
+    return '$hours h $minutes min';
+  }
+
+  @override
+  String durationMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String batteryUntilFull(String time) {
+    return '$time alla carica completa';
+  }
+
+  @override
+  String batteryLeft(String time) {
+    return '$time rimanenti';
+  }
+
+  @override
+  String get batteryHealth => 'Stato della batteria';
+
+  @override
+  String get batteryHealthHelp =>
+      'Quanta carica tiene la batteria rispetto a quando era nuova.';
+
+  @override
+  String get batteryLowPowerHelp =>
+      'Consuma meno, così la batteria dura di più.';
+
+  @override
+  String keyboardRepeatNow(int rate, int delay) {
+    return 'In uso ora: $rate ripetizioni al secondo dopo $delay ms.';
+  }
+
+  @override
+  String get mouseNaturalScrollingHelp =>
+      'Il contenuto segue il movimento delle dita.';
+
+  @override
+  String get printersDefaultFailed =>
+      'Non è stato possibile cambiare la stampante predefinita.';
+
+  @override
+  String get usersStandard => 'Standard';
 }

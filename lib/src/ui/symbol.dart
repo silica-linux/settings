@@ -73,7 +73,13 @@ class IconTile extends StatelessWidget {
     height: size,
     alignment: Alignment.center,
     decoration: BoxDecoration(
-      color: tint,
+      // A slight vertical gradient, lighter at the top, as the reference's tiles (shade
+      // provisional).
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [Color.lerp(tint, const Color(0xFFFFFFFF), 0.12)!, tint],
+      ),
       borderRadius: BorderRadius.circular(
         size * SettingsMetrics.iconRadius / SettingsMetrics.iconSize,
       ),
