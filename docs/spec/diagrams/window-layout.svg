@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 882 608" width="882" height="608" font-family="Helvetica, Arial, sans-serif" font-size="10">
+<title>Settings window: sidebar and grouped list geometry, points</title>
+<defs><marker id="a" viewBox="0 0 6 6" refX="3" refY="3" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 6 3 0 6z" fill="#c0392b"/></marker></defs>
+<rect width="882" height="608" fill="#ffffff"/>
+<g transform="translate(60 40)">
+<rect width="582.4" height="508.9" rx="10" fill="#ffffff" stroke="#9a9a9a"/>
+<rect x="5.6" y="5.6" width="177.1" height="497.7" rx="9.8" fill="#e3e4e6"/>
+<circle cx="18.2" cy="18.2" r="4.9" fill="#ff5f57"/>
+<circle cx="34.3" cy="18.2" r="4.9" fill="#febc2e"/>
+<circle cx="50.4" cy="18.2" r="4.9" fill="#28c840"/>
+<rect x="9.8" y="36.4" width="168.7" height="19.6" rx="9.8" fill="#ffffff" stroke="#cfcfcf"/>
+<text x="28.0" y="49.0" fill="#999">Search</text>
+<rect x="9.8" y="63.0" width="117.6" height="26.6" rx="5.6" fill="#d6d7da"/>
+<rect x="9.8" y="100.8" width="168.7" height="16.8" rx="8.4" fill="none"/>
+<rect x="15.4" y="102.2" width="14.0" height="14.0" rx="3.5" fill="#8e8e93"/>
+<rect x="35.0" y="106.4" width="77.0" height="5.6" fill="#b8b9bd"/>
+<rect x="9.8" y="123.2" width="168.7" height="16.8" rx="8.4" fill="none"/>
+<rect x="15.4" y="124.6" width="14.0" height="14.0" rx="3.5" fill="#8e8e93"/>
+<rect x="35.0" y="128.8" width="77.0" height="5.6" fill="#b8b9bd"/>
+<rect x="9.8" y="145.6" width="168.7" height="16.8" rx="8.4" fill="none"/>
+<rect x="15.4" y="147.0" width="14.0" height="14.0" rx="3.5" fill="#8e8e93"/>
+<rect x="35.0" y="151.2" width="77.0" height="5.6" fill="#b8b9bd"/>
+<rect x="9.8" y="177.1" width="168.7" height="16.8" rx="8.4" fill="#0a7aff"/>
+<rect x="15.4" y="178.5" width="14.0" height="14.0" rx="3.5" fill="#8e8e93"/>
+<rect x="35.0" y="182.7" width="77.0" height="5.6" fill="#ffffff"/>
+<rect x="9.8" y="199.5" width="168.7" height="16.8" rx="8.4" fill="none"/>
+<rect x="15.4" y="200.9" width="14.0" height="14.0" rx="3.5" fill="#8e8e93"/>
+<rect x="35.0" y="205.1" width="77.0" height="5.6" fill="#b8b9bd"/>
+<rect x="9.8" y="231.0" width="168.7" height="16.8" rx="8.4" fill="none"/>
+<rect x="15.4" y="232.4" width="14.0" height="14.0" rx="3.5" fill="#8e8e93"/>
+<rect x="35.0" y="236.6" width="77.0" height="5.6" fill="#b8b9bd"/>
+<rect x="9.8" y="253.4" width="168.7" height="16.8" rx="8.4" fill="none"/>
+<rect x="15.4" y="254.8" width="14.0" height="14.0" rx="3.5" fill="#8e8e93"/>
+<rect x="35.0" y="259.0" width="77.0" height="5.6" fill="#b8b9bd"/>
+<rect x="9.8" y="275.8" width="168.7" height="16.8" rx="8.4" fill="none"/>
+<rect x="15.4" y="277.2" width="14.0" height="14.0" rx="3.5" fill="#8e8e93"/>
+<rect x="35.0" y="281.4" width="77.0" height="5.6" fill="#b8b9bd"/>
+<rect x="9.8" y="298.2" width="168.7" height="16.8" rx="8.4" fill="none"/>
+<rect x="15.4" y="299.6" width="14.0" height="14.0" rx="3.5" fill="#8e8e93"/>
+<rect x="35.0" y="303.8" width="77.0" height="5.6" fill="#b8b9bd"/>
+<rect x="9.8" y="320.6" width="168.7" height="16.8" rx="8.4" fill="none"/>
+<rect x="15.4" y="322.0" width="14.0" height="14.0" rx="3.5" fill="#8e8e93"/>
+<rect x="35.0" y="326.2" width="77.0" height="5.6" fill="#b8b9bd"/>
+<rect x="9.8" y="352.1" width="168.7" height="16.8" rx="8.4" fill="none"/>
+<rect x="15.4" y="353.5" width="14.0" height="14.0" rx="3.5" fill="#8e8e93"/>
+<rect x="35.0" y="357.7" width="77.0" height="5.6" fill="#b8b9bd"/>
+<rect x="9.8" y="374.5" width="168.7" height="16.8" rx="8.4" fill="none"/>
+<rect x="15.4" y="375.9" width="14.0" height="14.0" rx="3.5" fill="#8e8e93"/>
+<rect x="35.0" y="380.1" width="77.0" height="5.6" fill="#b8b9bd"/>
+<rect x="9.8" y="396.9" width="168.7" height="16.8" rx="8.4" fill="none"/>
+<rect x="15.4" y="398.3" width="14.0" height="14.0" rx="3.5" fill="#8e8e93"/>
+<rect x="35.0" y="402.5" width="77.0" height="5.6" fill="#b8b9bd"/>
+<rect x="9.8" y="419.3" width="168.7" height="16.8" rx="8.4" fill="none"/>
+<rect x="15.4" y="420.7" width="14.0" height="14.0" rx="3.5" fill="#8e8e93"/>
+<rect x="35.0" y="424.9" width="77.0" height="5.6" fill="#b8b9bd"/>
+<line x1="182.7" y1="0" x2="182.7" y2="508.9" stroke="#d0d0d0"/>
+<line x1="182.7" y1="36.4" x2="582.4" y2="36.4" stroke="#d0d0d0" stroke-dasharray="3 3"/>
+<rect x="188.3" y="5.6" width="50.4" height="25.2" rx="12.6" fill="#f2f2f2" stroke="#d0d0d0"/>
+<text x="248.5" y="21.7" font-weight="bold" fill="#222">Pane title</text>
+<rect x="196.7" y="50.4" width="371.7" height="102.9" rx="7.0" fill="#f7f7f7"/>
+<rect x="203.7" y="58.8" width="16.8" height="16.8" rx="4.2" fill="#8e8e93"/>
+<rect x="228.9" y="64.4" width="98.0" height="5.6" fill="#b8b9bd"/>
+<text x="557.2" y="71.4" text-anchor="end" fill="#9a9a9a">›</text>
+<line x1="228.9" y1="84.3" x2="568.4" y2="84.3" stroke="#efefef"/>
+<rect x="203.7" y="93.1" width="16.8" height="16.8" rx="4.2" fill="#8e8e93"/>
+<rect x="228.9" y="98.7" width="98.0" height="5.6" fill="#b8b9bd"/>
+<text x="557.2" y="105.7" text-anchor="end" fill="#9a9a9a">›</text>
+<line x1="228.9" y1="118.6" x2="568.4" y2="118.6" stroke="#efefef"/>
+<rect x="203.7" y="127.4" width="16.8" height="16.8" rx="4.2" fill="#8e8e93"/>
+<rect x="228.9" y="133.0" width="98.0" height="5.6" fill="#b8b9bd"/>
+<text x="557.2" y="140.0" text-anchor="end" fill="#9a9a9a">›</text>
+<text x="196.7" y="170.1" font-weight="bold" fill="#222">Section heading</text>
+<rect x="196.7" y="174.3" width="371.7" height="61.6" rx="7.0" fill="#f7f7f7"/>
+<rect x="206.5" y="186.9" width="112.0" height="5.6" fill="#b8b9bd"/>
+<rect x="532.0" y="184.1" width="25.2" height="11.2" rx="5.6" fill="#0a7aff"/>
+<circle cx="549.8" cy="189.7" r="5.6" fill="#ffffff" stroke="#cccccc" stroke-width="0.5"/>
+<line x1="206.5" y1="204.8" x2="568.4" y2="204.8" stroke="#efefef"/>
+<rect x="206.5" y="217.7" width="112.0" height="5.6" fill="#b8b9bd"/>
+<rect x="532.0" y="214.9" width="25.2" height="11.2" rx="5.6" fill="#dddddd"/>
+<circle cx="539.3" cy="220.5" r="5.6" fill="#ffffff" stroke="#cccccc" stroke-width="0.5"/>
+</g>
+<line x1="60.0" y1="26" x2="642.4" y2="26" stroke="#c0392b" marker-start="url(#a)" marker-end="url(#a)"/>
+<text x="351.2" y="22" text-anchor="middle" fill="#c0392b">832 (fixed)</text>
+<line x1="60.0" y1="562.9" x2="242.7" y2="562.9" stroke="#c0392b" marker-start="url(#a)" marker-end="url(#a)"/>
+<text x="151.0" y="576.9" text-anchor="middle" fill="#c0392b">sidebar 261</text>
+<line x1="242.7" y1="562.9" x2="256.7" y2="562.9" stroke="#c0392b" marker-start="url(#a)" marker-end="url(#a)"/>
+<text x="249.7" y="576.9" text-anchor="middle" fill="#c0392b">20</text>
+<line x1="256.7" y1="562.9" x2="628.4" y2="562.9" stroke="#c0392b" marker-start="url(#a)" marker-end="url(#a)"/>
+<text x="442.2" y="576.9" text-anchor="middle" fill="#c0392b">group 531</text>
+<line x1="628.4" y1="562.9" x2="642.4" y2="562.9" stroke="#c0392b" marker-start="url(#a)" marker-end="url(#a)"/>
+<text x="635.4" y="576.9" text-anchor="middle" fill="#c0392b">20</text>
+<line x1="30" y1="40.0" x2="30" y2="548.9" stroke="#c0392b" marker-start="url(#a)" marker-end="url(#a)"/>
+<text x="26" y="294.4" text-anchor="end" fill="#c0392b">727</text>
+<line x1="48" y1="40.0" x2="48" y2="76.4" stroke="#c0392b" marker-start="url(#a)" marker-end="url(#a)"/>
+<text x="45" y="61.0" text-anchor="end" fill="#c0392b">52</text>
+<text x="656.4" y="58.2" fill="#333">toolbar 52: back / forward capsule</text>
+<text x="656.4" y="70.2" fill="#333">(two 36 pt segments) at x 269</text>
+<text x="656.4" y="86.2" fill="#333">search field 241 × 28 (x, y approximate)</text>
+<text x="656.4" y="116.3" fill="#333">account cell 168 × 38</text>
+<text x="656.4" y="145.0" fill="#333">sidebar rows: pitch 32, buttons 24;</text>
+<text x="656.4" y="157.0" fill="#333">≈ 13 extra between groups;</text>
+<text x="656.4" y="169.0" fill="#333">selected row: accent capsule, white text</text>
+<text x="656.4" y="208.0" fill="#333">navigation rows 48, pitch 49,</text>
+<text x="656.4" y="220.0" fill="#333">separator #efefef inset to the text</text>
+<text x="656.4" y="243.0" fill="#333">value rows 36–44; switch 36 × 16,</text>
+<text x="656.4" y="255.0" fill="#333">16 from the trailing edge</text>
+<text x="656.4" y="279.0" fill="#333">gap between groups ≈ 10</text>
+<text x="656.4" y="303.4" fill="#333">sidebar ≈ #e3e4e6, content #ffffff,</text>
+<text x="656.4" y="315.4" fill="#333">group #f7f7f7 (dark: #323335, #272728, #2d2d2e)</text>
+<text x="10" y="600" fill="#666">Settings window, light (ST-NAV-01..04). Height 727 by default, resizable. Drawn at 0.7 scale; sidebar icons and group contents are placeholders.</text>
+</svg>
