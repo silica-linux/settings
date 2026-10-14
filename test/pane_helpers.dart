@@ -16,6 +16,18 @@ Future<void> tapKey(WidgetTester tester, String key) async {
   await tester.pump(const Duration(milliseconds: 300));
 }
 
+/// Taps the push button inside the row with [key].
+Future<void> tapRowButton(WidgetTester tester, String key) async {
+  await tester.tap(
+    find.descendant(
+      of: find.byKey(ValueKey(key)),
+      matching: find.byType(SilicaButton),
+    ),
+  );
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 300));
+}
+
 /// The switch of the row with [key] (or of the widget itself when it is a switch).
 Finder switchIn(String key) => find.descendant(
   of: find.byKey(ValueKey(key)),

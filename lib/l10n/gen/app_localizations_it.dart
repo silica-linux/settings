@@ -917,9 +917,6 @@ class AppLocalizationsIt extends AppLocalizations {
   String get keyboardInputSources => 'Sorgenti di input';
 
   @override
-  String get keyboardInputSourcesValue => 'Il layout del sistema';
-
-  @override
   String get keyboardTextReplacements => 'Sostituzioni del testo';
 
   @override
@@ -1540,11 +1537,6 @@ class AppLocalizationsIt extends AppLocalizations {
       'Consuma meno, così la batteria dura di più.';
 
   @override
-  String keyboardRepeatNow(int rate, int delay) {
-    return 'In uso ora: $rate ripetizioni al secondo dopo $delay ms.';
-  }
-
-  @override
   String get mouseNaturalScrollingHelp =>
       'Il contenuto segue il movimento delle dita.';
 
@@ -1554,4 +1546,30 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get usersStandard => 'Standard';
+
+  @override
+  String get keyboardSystemDefault => 'Predefinito del sistema';
+
+  @override
+  String get keyboardSourceFirst => 'Attiva all’avvio';
+
+  @override
+  String get keyboardSourceRemove => 'Rimuovi';
+
+  @override
+  String get keyboardSourcesHelp =>
+      'Premi Ctrl+Spazio per passare alla fonte successiva. Ne puoi aggiungere fino a quattro.';
+
+  @override
+  String get keyboardSourcesFull =>
+      'Quattro fonti sono il massimo. Rimuovine una per aggiungerne un’altra.';
+
+  @override
+  String get keyboardChooseLayout => 'Scegli un layout di tastiera';
+
+  @override
+  String get keyboardChooseVariant => 'Scegli una variante';
+
+  @override
+  String get keyboardVariantDefault => 'Standard';
 }

@@ -129,6 +129,16 @@ class FakeTools implements SystemTools {
   String name = 'Ada’s Silica';
   LocaleState localeState = const LocaleState(language: 'en_GB.UTF-8');
   List<String> localeList = const ['en_GB.UTF-8', 'en_US.UTF-8', 'it_IT.UTF-8'];
+  List<String> layouts = const ['us', 'it', 'de'];
+  Map<String, List<String>> layoutVariants = const {
+    'de': ['nodeadkeys'],
+  };
+  Map<String, String> layoutNames = const {
+    'us': 'English (US)',
+    'it': 'Italian',
+    'de': 'German',
+    'de(nodeadkeys)': 'German (no dead keys)',
+  };
   List<BluetoothPeer> peers = const [];
   PowerState powerState = const PowerState();
   List<AppEntry> browserList = const [];
@@ -239,6 +249,16 @@ class FakeTools implements SystemTools {
     }
     return error;
   }
+
+  @override
+  Future<List<String>> keymapLayouts() async => layouts;
+
+  @override
+  Future<List<String>> keymapVariants(String layout) async =>
+      layoutVariants[layout] ?? const [];
+
+  @override
+  Future<Map<String, String>> keymapNames() async => layoutNames;
 
   @override
   Future<List<BluetoothPeer>> bluetoothPeers() async => peers;

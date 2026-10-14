@@ -249,4 +249,38 @@ Video
       'xdg-settings set default-web-browser firefox.desktop',
     ]);
   });
+
+  test('xkb rules: layout and variant names', () {
+    final names = HostSystemTools.parseKeymapNames(
+      '! model\n  pc105   Generic 105-key PC\n\n'
+      '! layout\n  us   English (US)\n  it   Italian\n\n'
+      '! variant\n  nodeadkeys   de: German (no dead keys)\n'
+      '  winkeys   it: Italian (Winkeys)\n\n! option\n  caps   Caps Lock\n',
+    );
+    expect(names['it'], 'Italian');
+    expect(names['de(nodeadkeys)'], 'German (no dead keys)');
+    expect(names['it(winkeys)'], 'Italian (Winkeys)');
+    expect(names.containsKey('pc105'), isFalse);
+    expect(names.containsKey('caps'), isFalse);
+  });
+
+  test(
+    'keymap lists come from localectl; a layout is never passed raw',
+    () async {
+      final runs = <String>[];
+      final tools = HostSystemTools(
+        run: (exe, args) async {
+          runs.add('$exe ${args.join(' ')}');
+          return const CommandResult(0, 'us\nit\n', '');
+        },
+      );
+      expect(await tools.keymapLayouts(), ['us', 'it']);
+      expect(await tools.keymapVariants('de'), ['us', 'it']);
+      expect(await tools.keymapVariants('--help; rm'), isEmpty);
+      expect(runs, [
+        'localectl list-x11-keymap-layouts',
+        'localectl list-x11-keymap-variants de',
+      ]);
+    },
+  );
 }

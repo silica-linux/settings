@@ -295,7 +295,6 @@
   "keyboardShortcutsButton": "Abbreviazioni da tastiera…",
   "keyboardTextInput": "Inserimento testo",
   "keyboardInputSources": "Sorgenti di input",
-  "keyboardInputSourcesValue": "Il layout del sistema",
   "keyboardTextReplacements": "Sostituzioni del testo",
   "keyboardDictation": "Dettatura",
   "shortcutsReadOnly": "Queste abbreviazioni non si possono ancora cambiare da Impostazioni. Logo è il tasto con il logo del sistema.",
@@ -474,8 +473,15 @@
   "batteryHealth": "Stato della batteria",
   "batteryHealthHelp": "Quanta carica tiene la batteria rispetto a quando era nuova.",
   "batteryLowPowerHelp": "Consuma meno, così la batteria dura di più.",
-  "keyboardRepeatNow": "In uso ora: {rate} ripetizioni al secondo dopo {delay} ms.",
   "mouseNaturalScrollingHelp": "Il contenuto segue il movimento delle dita.",
   "printersDefaultFailed": "Non è stato possibile cambiare la stampante predefinita.",
-  "usersStandard": "Standard"
+  "usersStandard": "Standard",
+  "keyboardSystemDefault": "Predefinito del sistema",
+  "keyboardSourceFirst": "Attiva all’avvio",
+  "keyboardSourceRemove": "Rimuovi",
+  "keyboardSourcesHelp": "Premi Ctrl+Spazio per passare alla fonte successiva. Ne puoi aggiungere fino a quattro.",
+  "keyboardSourcesFull": "Quattro fonti sono il massimo. Rimuovine una per aggiungerne un’altra.",
+  "keyboardChooseLayout": "Scegli un layout di tastiera",
+  "keyboardChooseVariant": "Scegli una variante",
+  "keyboardVariantDefault": "Standard"
 }

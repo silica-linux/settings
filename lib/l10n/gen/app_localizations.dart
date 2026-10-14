@@ -1868,12 +1868,6 @@ abstract class AppLocalizations {
   /// **'Input sources'**
   String get keyboardInputSources;
 
-  /// No description provided for @keyboardInputSourcesValue.
-  ///
-  /// In en, this message translates to:
-  /// **'The system layout'**
-  String get keyboardInputSourcesValue;
-
   /// No description provided for @keyboardTextReplacements.
   ///
   /// In en, this message translates to:
@@ -2942,12 +2936,6 @@ abstract class AppLocalizations {
   /// **'Uses less power so the battery lasts longer.'**
   String get batteryLowPowerHelp;
 
-  /// No description provided for @keyboardRepeatNow.
-  ///
-  /// In en, this message translates to:
-  /// **'In effect now: {rate} repeats per second after {delay} ms.'**
-  String keyboardRepeatNow(int rate, int delay);
-
   /// No description provided for @mouseNaturalScrollingHelp.
   ///
   /// In en, this message translates to:
@@ -2965,6 +2953,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Standard'**
   String get usersStandard;
+
+  /// No description provided for @keyboardSystemDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'System default'**
+  String get keyboardSystemDefault;
+
+  /// No description provided for @keyboardSourceFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Active at start'**
+  String get keyboardSourceFirst;
+
+  /// No description provided for @keyboardSourceRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get keyboardSourceRemove;
+
+  /// No description provided for @keyboardSourcesHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Press Ctrl+Space to switch to the next source. You can add up to four.'**
+  String get keyboardSourcesHelp;
+
+  /// No description provided for @keyboardSourcesFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Four sources is the most. Remove one to add another.'**
+  String get keyboardSourcesFull;
+
+  /// No description provided for @keyboardChooseLayout.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a keyboard layout'**
+  String get keyboardChooseLayout;
+
+  /// No description provided for @keyboardChooseVariant.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a variant'**
+  String get keyboardChooseVariant;
+
+  /// No description provided for @keyboardVariantDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard'**
+  String get keyboardVariantDefault;
 }
 
 class _AppLocalizationsDelegate

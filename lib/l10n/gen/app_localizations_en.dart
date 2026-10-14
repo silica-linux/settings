@@ -914,9 +914,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get keyboardInputSources => 'Input sources';
 
   @override
-  String get keyboardInputSourcesValue => 'The system layout';
-
-  @override
   String get keyboardTextReplacements => 'Text replacements';
 
   @override
@@ -1537,11 +1534,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Uses less power so the battery lasts longer.';
 
   @override
-  String keyboardRepeatNow(int rate, int delay) {
-    return 'In effect now: $rate repeats per second after $delay ms.';
-  }
-
-  @override
   String get mouseNaturalScrollingHelp =>
       'Content follows the movement of your fingers.';
 
@@ -1551,4 +1543,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get usersStandard => 'Standard';
+
+  @override
+  String get keyboardSystemDefault => 'System default';
+
+  @override
+  String get keyboardSourceFirst => 'Active at start';
+
+  @override
+  String get keyboardSourceRemove => 'Remove';
+
+  @override
+  String get keyboardSourcesHelp =>
+      'Press Ctrl+Space to switch to the next source. You can add up to four.';
+
+  @override
+  String get keyboardSourcesFull =>
+      'Four sources is the most. Remove one to add another.';
+
+  @override
+  String get keyboardChooseLayout => 'Choose a keyboard layout';
+
+  @override
+  String get keyboardChooseVariant => 'Choose a variant';
+
+  @override
+  String get keyboardVariantDefault => 'Standard';
 }

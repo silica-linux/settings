@@ -323,6 +323,17 @@ abstract class SystemTools {
   Future<List<String>> locales();
   Future<ToolError?> setLocale({required String language, String formats});
 
+  // Keyboard layouts (the input sources, written to keyboard.json).
+  /// The X11 layouts (`localectl list-x11-keymap-layouts`): `us`, `it`…
+  Future<List<String>> keymapLayouts();
+
+  /// The variants of [layout] (`localectl list-x11-keymap-variants`): `nodeadkeys`…
+  Future<List<String>> keymapVariants(String layout);
+
+  /// Readable names, `it` → `Italian`, `it(winkeys)` → `Italian (Winkeys)`, from xkb's rules
+  /// list when the system has it.
+  Future<Map<String, String>> keymapNames();
+
   // Bluetooth.
   Future<List<BluetoothPeer>> bluetoothPeers();
   Future<ToolError?> setBluetoothDiscovery(bool discovering);

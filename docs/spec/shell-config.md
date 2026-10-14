@@ -116,9 +116,26 @@ login. Today Settings says the change applies at the next login, because the she
 file only when the session starts; that note goes away when the watch lands. A missing or
 unreadable image falls back to the default color.
 
+## Files Ossido and silica-daemon read
+
+These are read by the compositor and the daemon (silica-desktop `docs/control.md` and
+`docs/daemon.md` are the contract); Settings writes them through `lib/src/system/settings_files.dart`
+and their controls are **written**. Ranges are the readers'; Settings stays inside them.
+
+### keyboard.json
+
+```json
+{ "repeatDelay": 600, "repeatRate": 25, "layouts": ["us", "de(nodeadkeys)"] }
+```
+
+`repeatDelay` is an integer of 100–3000 ms and `repeatRate` an integer of 0–100 per second
+(0 turns repeat off); the sliders offer the steps in `lib/src/panes/input.dart`. `layouts` is
+the list of input sources, at most four, an xkb layout with an optional variant in parentheses;
+none saved removes the key (xkb's default). `model` and `options` belong to the same file and
+are kept untouched.
+
 ## Other files (for completeness)
 
-`theme.json` (`accent`, `highlight`, `sidebarIconSize`, `scrollBars`), `keyboard.json`
-(`repeatRate`, `repeatDelay`), `lockscreen.json` and `settings.json` (`lastPane`, Settings'
+`theme.json` (`accent`, `highlight`, `sidebarIconSize`, `scrollBars`), `lockscreen.json` and `settings.json` (`lastPane`, Settings'
 own: the pane the window reopens on) are described in their panes' specs; the shell does not
 need `settings.json`.

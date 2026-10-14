@@ -1,9 +1,10 @@
 // Keyboard (ST-KBD-01..14), Mouse (ST-INP-01) and Printers and Scanners (ST-PRT-01).
 // Real: the list of Silica's system shortcuts (read-only, the bindings of silica-desktop's
 // command catalog); the CUPS printers (lpstat) and the default one (lpoptions). Ossido reads
-// key repeat only from its environment at start: the sliders show the values in effect and
-// wait for Ossido to read keyboard.json (#73). Input sources, dictation (#73), the pointer
-// settings (#74) and adding printers (#56) wait for their backends.
+// key repeat and the input sources from keyboard.json, which it watches (#73): the sliders
+// and the sources sheet write it. The function key, keyboard navigation, text replacements and
+// dictation (#73, #32), the pointer settings (#74) and adding printers (#56) wait for their
+// backends.
 
 import 'package:flutter/widgets.dart';
 import 'package:silica_ui/silica_ui.dart';
@@ -12,6 +13,8 @@ import '../../l10n/gen/app_localizations.dart';
 import '../services.dart';
 import '../style.dart';
 import '../system/host.dart';
+import '../system/settings_files.dart';
+import 'general.dart' show showChoiceSheet;
 import '../model/issues.dart';
 import '../ui/grouped.dart';
 
@@ -46,9 +49,23 @@ class KeyboardPane extends StatefulWidget {
 }
 
 class _KeyboardPaneState extends State<KeyboardPane> {
-  /// The repeat in effect: `OSSIDO_KEY_REPEAT` (`delay,rate`) when the session sets it,
-  /// Ossido's defaults otherwise (375 ms, 11 per second).
-  (int, int) _effective(Map<String, String> env) {
+  Map<String, String> _names = const {};
+  bool _loaded = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_loaded) {
+      _loaded = true;
+      ServicesScope.of(context).tools.keymapNames().then((names) {
+        if (mounted) setState(() => _names = names);
+      });
+    }
+  }
+
+  /// The repeat in effect when keyboard.json has none: `OSSIDO_KEY_REPEAT` (`delay,rate`)
+  /// when the session sets it, Ossido's defaults otherwise (375 ms, 11 per second).
+  (int, int) _fallback(Map<String, String> env) {
     final parts = (env['OSSIDO_KEY_REPEAT'] ?? '').split(',');
     if (parts.length == 2) {
       final delay = int.tryParse(parts[0].trim());
@@ -57,19 +74,25 @@ class _KeyboardPaneState extends State<KeyboardPane> {
         return (delay, rate);
       }
     }
-    return (375, 11);
+    return (KeyboardLimits.delayDefault, KeyboardLimits.rateDefault);
   }
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final (delay, rate) = _effective(ServicesScope.of(context).env);
+    final services = ServicesScope.of(context);
+    final config = services.config;
+    final (fallbackDelay, fallbackRate) = _fallback(services.env);
+    final delay = config.savedRepeatDelay ?? fallbackDelay;
+    final rate = config.savedRepeatRate ?? fallbackRate;
+    final sources = config.savedLayouts;
     return PanePage(
       children: [
         SettingsGroup(
-          unavailable: true,
-          issue: Issues.keyboard,
-          footer: l.keyboardRepeatNow(rate, delay),
+          footer: [
+            l.keyboardRepeatNote,
+            l.notAvailableIssue(Issues.keyboard),
+          ].join(' '),
           children: [
             ValueRow(
               title: l.keyboardRepeatRate,
@@ -84,7 +107,10 @@ class _KeyboardPaneState extends State<KeyboardPane> {
                 labels: [l.keyboardOff, l.keyboardSlow, l.keyboardFast],
                 width: 240,
                 semanticLabel: l.keyboardRepeatRate,
-                onChanged: (_) {},
+                onChanged: (v) {
+                  config.writeRepeatRate(repeatRateSteps[v.round()]);
+                  setState(() {});
+                },
               ),
             ),
             ValueRow(
@@ -100,16 +126,23 @@ class _KeyboardPaneState extends State<KeyboardPane> {
                 labels: [l.keyboardLong, l.keyboardShort],
                 width: 240,
                 semanticLabel: l.keyboardRepeatDelay,
+                onChanged: (v) {
+                  config.writeRepeatDelay(repeatDelaySteps[v.round()]);
+                  setState(() {});
+                },
+              ),
+            ),
+            Unavailable(
+              child: PopUpRow<int>(
+                title: l.keyboardGlobeKey,
+                items: [PopUpItem(0, l.keyboardDoNothing)],
+                value: 0,
                 onChanged: (_) {},
               ),
             ),
-            PopUpRow<int>(
-              title: l.keyboardGlobeKey,
-              items: [PopUpItem(0, l.keyboardDoNothing)],
-              value: 0,
-              onChanged: (_) {},
+            Unavailable(
+              child: SwitchRow(title: l.keyboardNavigation, value: false),
             ),
-            SwitchRow(title: l.keyboardNavigation, value: false),
           ],
         ),
         ButtonBar(
@@ -124,29 +157,186 @@ class _KeyboardPaneState extends State<KeyboardPane> {
         ),
         SettingsGroup(
           heading: l.keyboardTextInput,
-          unavailable: true,
-          issue: Issues.keyboard,
+          footer: l.notAvailableIssue(Issues.keyboard),
           children: [
             ButtonRow(
+              key: const ValueKey('input sources'),
               title: l.keyboardInputSources,
-              subtitle: l.keyboardInputSourcesValue,
+              subtitle: sources.isEmpty
+                  ? l.keyboardSystemDefault
+                  : [
+                      for (final s in sources) _layoutName(_names, s),
+                    ].join(', '),
               label: l.edit,
-              onPressed: () {},
+              onPressed: () async {
+                await showInputSources(context, names: _names);
+                if (mounted) setState(() {});
+              },
             ),
-            ButtonRow(
-              title: l.keyboardTextReplacements,
-              label: l.edit,
-              onPressed: () {},
+            Unavailable(
+              child: ButtonRow(
+                title: l.keyboardTextReplacements,
+                label: l.edit,
+                onPressed: () {},
+              ),
+            ),
+            Unavailable(
+              child: SwitchRow(title: l.keyboardDictation, value: false),
             ),
           ],
         ),
-        SettingsGroup(
-          heading: l.keyboardDictation,
-          unavailable: true,
-          issue: Issues.keyboard,
-          children: [SwitchRow(title: l.keyboardDictation, value: false)],
-        ),
       ],
+    );
+  }
+}
+
+/// A layout's readable name (`Italian`), or its code.
+String _layoutName(Map<String, String> names, String id) => names[id] ?? id;
+
+/// The input sources sheet: the sources in order (the first is active at start), each with a
+/// remove button, and Add… for another layout and its variant (keyboard.json `layouts`).
+Future<void> showInputSources(
+  BuildContext context, {
+  required Map<String, String> names,
+}) {
+  final l = AppLocalizations.of(context);
+  return showWindowSheet<void>(
+    context,
+    semanticLabel: l.keyboardInputSources,
+    builder: (context, sheet) =>
+        _SourcesSheet(names: names, close: sheet.close),
+  );
+}
+
+class _SourcesSheet extends StatefulWidget {
+  const _SourcesSheet({required this.names, required this.close});
+  final Map<String, String> names;
+  final VoidCallback close;
+
+  @override
+  State<_SourcesSheet> createState() => _SourcesSheetState();
+}
+
+class _SourcesSheetState extends State<_SourcesSheet> {
+  Future<void> _add() async {
+    final l = AppLocalizations.of(context);
+    final services = ServicesScope.of(context);
+    final layouts = await services.tools.keymapLayouts();
+    if (!mounted || layouts.isEmpty) return;
+    final layout = await showChoiceSheet(
+      context,
+      title: l.keyboardChooseLayout,
+      values: layouts,
+      current: '',
+      label: (v) => _layoutName(widget.names, v),
+    );
+    if (layout == null || !mounted) return;
+    final variants = await services.tools.keymapVariants(layout);
+    var variant = '';
+    if (variants.isNotEmpty && mounted) {
+      // '' stands for the layout's own keys.
+      final chosen = await showChoiceSheet(
+        context,
+        title: l.keyboardChooseVariant,
+        values: ['', ...variants],
+        current: '',
+        label: (v) => v.isEmpty
+            ? l.keyboardVariantDefault
+            : _layoutName(widget.names, layoutId(layout, v)),
+      );
+      if (chosen == null || !mounted) return;
+      variant = chosen;
+    }
+    final sources = services.config.savedLayouts;
+    final id = layoutId(layout, variant);
+    if (sources.contains(id) || sources.length >= KeyboardLimits.maxLayouts) {
+      return;
+    }
+    services.config.writeLayouts([...sources, id]);
+    setState(() {});
+  }
+
+  void _remove(String id) {
+    final config = ServicesScope.of(context).config;
+    config.writeLayouts([
+      for (final s in config.savedLayouts)
+        if (s != id) s,
+    ]);
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final colors = SettingsColors.of(context);
+    final sources = ServicesScope.of(context).config.savedLayouts;
+    final full = sources.length >= KeyboardLimits.maxLayouts;
+    return SizedBox(
+      width: 460,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              l.keyboardInputSources,
+              style: settingsText(13, colors.text, weight: FontWeight.w600),
+            ),
+            const SizedBox(height: 10),
+            GroupBox(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (sources.isEmpty)
+                    ValueRow(
+                      key: const ValueKey('source default'),
+                      title: l.keyboardSystemDefault,
+                    )
+                  else
+                    for (final (i, id) in sources.indexed) ...[
+                      if (i > 0) const RowSeparator(),
+                      ValueRow(
+                        key: ValueKey('source $id'),
+                        title: _layoutName(widget.names, id),
+                        subtitle: i == 0 ? l.keyboardSourceFirst : null,
+                        trailing: SilicaButton(
+                          key: ValueKey('remove source $id'),
+                          label: l.keyboardSourceRemove,
+                          size: ControlSize.small,
+                          onPressed: () => _remove(id),
+                        ),
+                      ),
+                    ],
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              full ? l.keyboardSourcesFull : l.keyboardSourcesHelp,
+              style: settingsText(11, colors.secondary, height: 1.3),
+            ),
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                SilicaButton(
+                  key: const ValueKey('add source'),
+                  label: l.addButton,
+                  size: ControlSize.small,
+                  onPressed: full ? null : _add,
+                ),
+                const Spacer(),
+                SilicaButton(
+                  key: const ValueKey('sources done'),
+                  label: l.done,
+                  role: ButtonRole.primary,
+                  onPressed: widget.close,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

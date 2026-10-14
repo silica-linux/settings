@@ -295,7 +295,6 @@
   "keyboardShortcutsButton": "Keyboard Shortcuts…",
   "keyboardTextInput": "Text input",
   "keyboardInputSources": "Input sources",
-  "keyboardInputSourcesValue": "The system layout",
   "keyboardTextReplacements": "Text replacements",
   "keyboardDictation": "Dictation",
   "shortcutsReadOnly": "These shortcuts can't be changed from Settings yet. Logo is the key with the system logo.",
@@ -679,18 +678,15 @@
   "batteryHealth": "Battery health",
   "batteryHealthHelp": "How much the battery holds compared to when it was new.",
   "batteryLowPowerHelp": "Uses less power so the battery lasts longer.",
-  "keyboardRepeatNow": "In effect now: {rate} repeats per second after {delay} ms.",
-  "@keyboardRepeatNow": {
-    "placeholders": {
-      "rate": {
-        "type": "int"
-      },
-      "delay": {
-        "type": "int"
-      }
-    }
-  },
   "mouseNaturalScrollingHelp": "Content follows the movement of your fingers.",
   "printersDefaultFailed": "The default printer couldn't be changed.",
-  "usersStandard": "Standard"
+  "usersStandard": "Standard",
+  "keyboardSystemDefault": "System default",
+  "keyboardSourceFirst": "Active at start",
+  "keyboardSourceRemove": "Remove",
+  "keyboardSourcesHelp": "Press Ctrl+Space to switch to the next source. You can add up to four.",
+  "keyboardSourcesFull": "Four sources is the most. Remove one to add another.",
+  "keyboardChooseLayout": "Choose a keyboard layout",
+  "keyboardChooseVariant": "Choose a variant",
+  "keyboardVariantDefault": "Standard"
 }

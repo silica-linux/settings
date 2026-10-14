@@ -499,6 +499,65 @@ class HostSystemTools implements SystemTools {
           ];
   }
 
+  @override
+  Future<List<String>> keymapLayouts() async =>
+      _lines(await _out('localectl', ['list-x11-keymap-layouts']));
+
+  @override
+  Future<List<String>> keymapVariants(String layout) async {
+    // The layout comes from our own list; anything else is not asked.
+    if (!RegExp(r'^[A-Za-z0-9_-]+$').hasMatch(layout)) return const [];
+    return _lines(
+      await _out('localectl', ['list-x11-keymap-variants', layout]),
+    );
+  }
+
+  static List<String> _lines(String? out) => out == null
+      ? const []
+      : [
+          for (final l in out.split('\n'))
+            if (l.trim().isNotEmpty) l.trim(),
+        ];
+
+  /// xkb's `evdev.lst`: after `! layout` rows of `code  description`, after `! variant`
+  /// rows of `name  layout: description`.
+  static Map<String, String> parseKeymapNames(String text) {
+    final names = <String, String>{};
+    var section = '';
+    for (final line in text.split('\n')) {
+      if (line.startsWith('!')) {
+        section = line.substring(1).trim();
+        continue;
+      }
+      final row = line.trim();
+      final gap = row.indexOf(RegExp(r'\s'));
+      if (row.isEmpty || gap < 0) continue;
+      final code = row.substring(0, gap);
+      final description = row.substring(gap).trim();
+      if (section == 'layout') {
+        names[code] = description;
+      } else if (section == 'variant') {
+        final colon = description.indexOf(': ');
+        if (colon > 0) {
+          names['${description.substring(0, colon)}($code)'] = description
+              .substring(colon + 2);
+        }
+      }
+    }
+    return names;
+  }
+
+  @override
+  Future<Map<String, String>> keymapNames() async {
+    try {
+      return parseKeymapNames(
+        File('$root/usr/share/X11/xkb/rules/evdev.lst').readAsStringSync(),
+      );
+    } on FileSystemException {
+      return const {};
+    }
+  }
+
   /// The categories a region sets: dates and times, numbers, currency, measures, paper.
   static const List<String> formatCategories = [
     'LC_TIME',

@@ -10,19 +10,105 @@ import 'fakes.dart';
 import 'pane_helpers.dart';
 
 void main() {
-  testWidgets('Keyboard: the repeat in effect, waiting for Ossido (#73)', (
-    tester,
-  ) async {
-    await pumpSettings(
+  group('Keyboard (#73)', () {
+    testWidgets('the sliders start from the session and write keyboard.json', (
       tester,
-      pane: PaneId.keyboard,
-      extraEnv: const {'OSSIDO_KEY_REPEAT': '250,30'},
-    );
-    expect(
-      find.textContaining('In effect now: 30 repeats per second after 250 ms.'),
-      findsOneWidget,
-    );
-    expect(find.textContaining('#73'), findsWidgets);
+    ) async {
+      final h = await pumpSettings(
+        tester,
+        pane: PaneId.keyboard,
+        extraEnv: const {'OSSIDO_KEY_REPEAT': '250,30'},
+      );
+      SilicaSlider slider(String key) =>
+          tester.widget<SilicaSlider>(find.byKey(ValueKey(key)));
+      // 30 per second and 250 ms are the steps 6 and 5 of the sliders.
+      expect(slider('repeat rate').value, 6);
+      expect(slider('repeat delay').value, 5);
+      expect(slider('repeat rate').onChanged, isNotNull);
+      expect(h.config.read('keyboard'), isEmpty);
+      await tester.drag(
+        find.byKey(const ValueKey('repeat rate')),
+        const Offset(-400, 0),
+      );
+      await tester.pump();
+      expect(h.config.read('keyboard')['repeatRate'], 0);
+      await tester.drag(
+        find.byKey(const ValueKey('repeat delay')),
+        const Offset(-400, 0),
+      );
+      await tester.pump();
+      expect(h.config.read('keyboard')['repeatDelay'], 1500);
+      expect(slider('repeat delay').value, 0);
+      // The other keys of the file are kept.
+      h.config.write('keyboard', 'options', 'caps:escape');
+      await tester.drag(
+        find.byKey(const ValueKey('repeat rate')),
+        const Offset(400, 0),
+      );
+      await tester.pump();
+      expect(h.config.read('keyboard'), {
+        'repeatRate': 40,
+        'repeatDelay': 1500,
+        'options': 'caps:escape',
+      });
+    });
+
+    testWidgets('input sources: add a layout and a variant, remove, at most 4', (
+      tester,
+    ) async {
+      final h = await pumpSettings(
+        tester,
+        pane: PaneId.keyboard,
+        tools: FakeTools()..layouts = const ['us', 'it', 'de', 'fr'],
+      );
+      await settle(tester);
+      expect(find.text('System default'), findsOneWidget);
+      await tapRowButton(tester, 'input sources');
+      expect(find.byKey(const ValueKey('source default')), findsOneWidget);
+      // Chooses [layout] (and [variant] when it has some) in the pop-up sheets.
+      Future<void> add(String layout, [String? variant]) async {
+        await tapKey(tester, 'add source');
+        await settle(tester);
+        await tapKey(tester, 'choice $layout');
+        await tapKey(tester, 'choice done');
+        await tester.pump(const Duration(seconds: 1));
+        await settle(tester);
+        if (variant != null) {
+          await tapKey(tester, 'choice $variant');
+          await tapKey(tester, 'choice done');
+          await tester.pump(const Duration(seconds: 1));
+          await settle(tester);
+        }
+      }
+
+      await add('it');
+      expect(h.config.read('keyboard')['layouts'], ['it']);
+      await add('de', 'nodeadkeys');
+      expect(h.config.read('keyboard')['layouts'], ['it', 'de(nodeadkeys)']);
+      expect(find.text('German (no dead keys)'), findsOneWidget);
+      await tapKey(tester, 'remove source it');
+      expect(h.config.read('keyboard')['layouts'], ['de(nodeadkeys)']);
+      // Four is the most: the fourth source disables Add.
+      await add('us');
+      await add('fr');
+      await add('it');
+      expect(h.config.read('keyboard')['layouts'], [
+        'de(nodeadkeys)',
+        'us',
+        'fr',
+        'it',
+      ]);
+      expect(
+        tester
+            .widget<SilicaButton>(find.byKey(const ValueKey('add source')))
+            .onPressed,
+        isNull,
+      );
+      for (final id in ['de(nodeadkeys)', 'us', 'fr', 'it']) {
+        await tapKey(tester, 'remove source $id');
+      }
+      expect(h.config.read('keyboard').containsKey('layouts'), isFalse);
+    });
   });
 
   testWidgets('Keyboard: the shortcuts sheet lists Silica bindings', (
