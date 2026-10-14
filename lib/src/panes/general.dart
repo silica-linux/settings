@@ -1,20 +1,30 @@
-// General (ST-GEN-01..03): the header card and the navigation rows to its sub-panes. About,
-// Storage, Sharing (the computer name), Date and Time and Language and Region show the real
-// machine; changing them, software updates, login items, backups and reset have no backend
-// yet. The reference's warranty, device management and password autofill rows belong to its
-// own services and are left out.
+// General (ST-GEN-01..03): the header card and the navigation rows to its sub-panes. About shows
+// the real machine (model, processor, graphics, memory, firmware, the system, the displays and
+// the disk). Storage measures the home folders and empties the trash. Sharing renames the
+// computer (hostnamectl). Date & Time sets the time zone and automatic time (timedatectl).
+// Language & Region sets the system language and formats (localectl). Changing them asks
+// polkit; without an authentication agent (#69) the system refuses and the pane says so.
+// Software update, file and screen sharing, login items, backups and reset wait for their
+// backends (#77). The reference's warranty, device management and password autofill rows
+// belong to its own services and are left out.
 
+import 'dart:async';
 import 'dart:ui' show PlatformDispatcher;
 
 import 'package:flutter/widgets.dart';
 import 'package:silica_ui/silica_ui.dart';
 
 import '../../l10n/gen/app_localizations.dart';
+import '../model/issues.dart';
 import '../model/panes.dart';
 import '../services.dart';
 import '../style.dart';
 import '../system/host.dart';
+import '../system/tools.dart';
+import '../system/tools_host.dart';
+import '../ui/errors.dart';
 import '../ui/grouped.dart';
+import '../ui/popup.dart';
 import '../ui/symbol.dart';
 
 /// Bytes in decimal units, as storage is sold ("512 GB").
@@ -58,29 +68,27 @@ class GeneralPane extends StatelessWidget {
           centered: true,
         ),
         SettingsGroup(
-          children: [row(SubPaneId.about, l.subAbout, 'desktop', gray)],
-        ),
-        SettingsGroup(
           children: [
+            row(SubPaneId.about, l.subAbout, 'laptop', gray),
             row(
               SubPaneId.softwareUpdate,
               l.subSoftwareUpdate,
               'arrow-clockwise',
               gray,
             ),
-            row(SubPaneId.storage, l.subStorage, 'circle-stack', gray),
+            row(SubPaneId.storage, l.subStorage, 'drive', gray),
           ],
         ),
         SettingsGroup(
-          children: [row(SubPaneId.sharing, l.subSharing, 'person-2', blue)],
+          children: [row(SubPaneId.sharing, l.subSharing, 'share', gray)],
         ),
         SettingsGroup(
           children: [
             row(SubPaneId.dateTime, l.subDateTime, 'calendar', blue),
-            row(SubPaneId.startupDisk, l.subStartupDisk, 'circle-stack', gray),
-            row(SubPaneId.loginItems, l.subLoginItems, 'checklist', gray),
+            row(SubPaneId.startupDisk, l.subStartupDisk, 'drive', gray),
+            row(SubPaneId.loginItems, l.subLoginItems, 'list-bullet', gray),
             row(SubPaneId.languageRegion, l.subLanguageRegion, 'globe', blue),
-            row(SubPaneId.backups, l.subBackups, 'clock', gray),
+            row(SubPaneId.backups, l.subBackups, 'history', gray),
           ],
         ),
         SettingsGroup(
@@ -102,18 +110,19 @@ class GeneralPane extends StatelessWidget {
 Widget generalSubPane(SubPaneId sub) => switch (sub) {
   SubPaneId.about => const AboutPane(),
   SubPaneId.storage => const StoragePane(),
-  SubPaneId.sharing => const _SharingPane(),
-  SubPaneId.dateTime => const _DateTimePane(),
-  SubPaneId.languageRegion => const _LanguagePane(),
+  SubPaneId.sharing => const SharingPane(),
+  SubPaneId.dateTime => const DateTimePane(),
+  SubPaneId.languageRegion => const LanguagePane(),
   SubPaneId.softwareUpdate => const _SoftwareUpdatePane(),
   SubPaneId.startupDisk ||
   SubPaneId.loginItems ||
   SubPaneId.backups ||
-  SubPaneId.transferReset => const _UnavailableSubPane(),
+  SubPaneId.transferReset ||
+  SubPaneId.notificationApp => const _UnavailableSubPane(),
 };
 
-/// General › About (ST-GEN-02): the product card, the specification table, the displays and
-/// the storage.
+/// General › About (ST-GEN-02): the computer's picture and model, the specification group,
+/// the system, the displays and the disk.
 class AboutPane extends StatelessWidget {
   const AboutPane({super.key});
 
@@ -131,41 +140,35 @@ class AboutPane extends StatelessWidget {
     String unknown(String s) => s.isEmpty ? l.aboutUnknown : s;
     return PanePage(
       children: [
-        DecoratedBox(
-          decoration: BoxDecoration(
-            color: colors.group,
-            borderRadius: BorderRadius.circular(SettingsMetrics.groupRadius),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                const IconTile(
-                  symbol: 'desktop',
-                  tint: Color(0xFF8E8E93),
-                  size: 72,
-                ),
-                const SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.only(top: 24, bottom: 4),
+          child: Column(
+            children: [
+              SettingsSymbol('laptop', color: colors.secondary, size: 64),
+              const SizedBox(height: 18),
+              Text(
+                model.isEmpty ? l.aboutThisComputer : model,
+                key: const ValueKey('about model'),
+                textAlign: TextAlign.center,
+                style: settingsText(22, colors.text, weight: FontWeight.w700),
+              ),
+              if (info.firmware.isNotEmpty)
                 Text(
-                  info.hostname.isEmpty ? l.aboutThisComputer : info.hostname,
-                  key: const ValueKey('about name'),
-                  style: settingsText(17, colors.text, weight: FontWeight.w600),
+                  l.aboutFirmware(info.firmware),
+                  style: settingsText(11, colors.secondary),
                 ),
-                if (model.isNotEmpty)
-                  Text(model, style: settingsText(12, colors.secondary)),
-              ],
-            ),
+            ],
           ),
         ),
         SettingsGroup(
           children: [
             ValueRow(
               title: l.aboutName,
-              trailing: _Value(unknown(info.hostname)),
+              trailing: RowValue(unknown(info.hostname)),
             ),
             ValueRow(
               title: l.aboutProcessor,
-              trailing: _Value(
+              trailing: RowValue(
                 info.cpu.isEmpty
                     ? l.aboutUnknown
                     : info.cpuCount > 1
@@ -173,21 +176,41 @@ class AboutPane extends StatelessWidget {
                     : info.cpu,
               ),
             ),
+            if (info.graphics.isNotEmpty)
+              ValueRow(
+                key: const ValueKey('about graphics'),
+                title: l.aboutGraphics,
+                trailing: RowValue(info.graphics.join('\n')),
+              ),
             ValueRow(
               title: l.aboutMemory,
-              trailing: _Value(
+              trailing: RowValue(
                 info.memoryBytes == 0
                     ? l.aboutUnknown
                     : formatBytes(info.memoryBytes),
               ),
             ),
+          ],
+        ),
+        SettingsGroup(
+          heading: l.aboutSoftware,
+          children: [
             ValueRow(
-              title: l.aboutSystem,
-              trailing: _Value(unknown(info.osPrettyName)),
+              title: unknown(info.osName),
+              leading: const IconTile(
+                symbol: 'sparkles',
+                tint: Color(0xFF5E5CE6),
+                size: 28,
+              ),
+              trailing: RowValue(
+                info.osVersion.isEmpty
+                    ? l.aboutUnknown
+                    : l.aboutVersion(info.osVersion),
+              ),
             ),
             ValueRow(
               title: l.aboutKernel,
-              trailing: _Value(unknown(info.kernel)),
+              trailing: RowValue(unknown(info.kernel)),
             ),
           ],
         ),
@@ -200,7 +223,12 @@ class AboutPane extends StatelessWidget {
               for (final (i, d) in displays.indexed)
                 ValueRow(
                   title: l.aboutDisplayN(i + 1),
-                  trailing: _Value(
+                  leading: SettingsSymbol(
+                    'display',
+                    color: colors.secondary,
+                    size: 24,
+                  ),
+                  trailing: RowValue(
                     '${d.size.width.round()} × ${d.size.height.round()}'
                     '${d.refreshRate > 0 ? ' · ${d.refreshRate.round()} Hz' : ''}',
                   ),
@@ -211,23 +239,6 @@ class AboutPane extends StatelessWidget {
       ],
     );
   }
-}
-
-class _Value extends StatelessWidget {
-  const _Value(this.text);
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => ConstrainedBox(
-    constraints: const BoxConstraints(maxWidth: 300),
-    child: Text(
-      text,
-      textAlign: TextAlign.end,
-      maxLines: 2,
-      overflow: TextOverflow.ellipsis,
-      style: settingsText(13, SettingsColors.of(context).secondary),
-    ),
-  );
 }
 
 /// The system disk: a usage bar and the free space (df).
@@ -271,6 +282,11 @@ class _DiskGroupState extends State<_DiskGroup> {
                   formatBytes(disk.available),
                   formatBytes(disk.total),
                 ),
+                leading: SettingsSymbol(
+                  'drive',
+                  color: SettingsColors.of(context).secondary,
+                  size: 24,
+                ),
                 trailing: SilicaProgressBar(
                   value: disk.total == 0 ? 0 : disk.used / disk.total,
                   width: 200,
@@ -284,50 +300,232 @@ class _DiskGroupState extends State<_DiskGroup> {
   }
 }
 
-class StoragePane extends StatelessWidget {
+/// General › Storage: the disk, then what the home folders and the trash take, with Empty
+/// Trash.
+class StoragePane extends StatefulWidget {
   const StoragePane({super.key});
+
+  @override
+  State<StoragePane> createState() => _StoragePaneState();
+}
+
+class _StoragePaneState extends State<StoragePane> {
+  final Map<String, int?> _sizes = {};
+  bool _started = false;
+  String? _trashError;
+
+  List<(String, String, String)> _folders(AppLocalizations l) {
+    final env = ServicesScope.of(context).env;
+    final home = env['HOME'] ?? '';
+    final dirs = xdgUserDirs(env);
+    return [
+      (l.storageDocuments, 'doc-text', dirs['DOCUMENTS'] ?? '$home/Documents'),
+      (l.storageDownloads, 'download', dirs['DOWNLOAD'] ?? '$home/Downloads'),
+      (l.storagePictures, 'photo', dirs['PICTURES'] ?? '$home/Pictures'),
+      (l.storageMusic, 'music-note', dirs['MUSIC'] ?? '$home/Music'),
+      (l.storageVideos, 'film', dirs['VIDEOS'] ?? '$home/Videos'),
+      (l.storageTrash, 'trash', '${trashFolder(env)}/files'),
+    ];
+  }
+
+  Future<void> _measure() async {
+    final run = ServicesScope.of(context).host.run;
+    for (final (_, _, path) in _folders(AppLocalizations.of(context))) {
+      final size = await folderSize(run, path);
+      if (!mounted) return;
+      setState(() => _sizes[path] = size ?? 0);
+    }
+  }
+
+  Future<void> _emptyTrash(String path) async {
+    final l = AppLocalizations.of(context);
+    final env = ServicesScope.of(context).env;
+    final confirmed = await showConfirm(
+      context,
+      title: l.storageEmptyTrashTitle,
+      message: l.storageEmptyTrashMessage,
+      confirm: l.storageEmptyTrashButton,
+      cancel: l.cancel,
+    );
+    if (!confirmed || !mounted) return;
+    final ok = await emptyTrash(env);
+    if (!mounted) return;
+    setState(() {
+      _trashError = ok ? null : l.storageEmptyTrashFailed;
+      _sizes.remove(path);
+    });
+    final size = await folderSize(ServicesScope.of(context).host.run, path);
+    if (mounted) setState(() => _sizes[path] = size ?? 0);
+  }
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final colors = SettingsColors.of(context);
+    if (!_started) {
+      _started = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) => _measure());
+    }
+    final folders = _folders(l);
     return PanePage(
       children: [
         const _DiskGroup(),
         SettingsGroup(
-          heading: l.storageRecommendations,
-          unavailable: true,
-          children: [ButtonRow(title: l.storageEmptyTrash, label: l.empty)],
+          children: [
+            for (final (title, symbol, path) in folders)
+              ValueRow(
+                key: ValueKey('storage $symbol'),
+                title: title,
+                leading: IconTile(
+                  symbol: symbol,
+                  tint: const Color(0xFF8E8E93),
+                  size: 24,
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (!_sizes.containsKey(path))
+                      const SilicaSpinner(size: 12)
+                    else
+                      Text(
+                        formatBytes(_sizes[path] ?? 0),
+                        style: settingsText(13, colors.secondary),
+                      ),
+                    if (symbol == 'trash') ...[
+                      const SizedBox(width: 10),
+                      SilicaButton(
+                        key: const ValueKey('empty trash'),
+                        label: l.storageEmptyTrashButton,
+                        size: ControlSize.small,
+                        onPressed: (_sizes[path] ?? 0) > 0
+                            ? () => _emptyTrash(path)
+                            : null,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+          ],
         ),
+        if (_trashError case final error?) ErrorLine(error),
       ],
     );
   }
 }
 
-class _SharingPane extends StatelessWidget {
-  const _SharingPane();
+/// General › Sharing: the computer's name, editable; the sharing services wait for their
+/// backends (#77).
+class SharingPane extends StatefulWidget {
+  const SharingPane({super.key});
+
+  @override
+  State<SharingPane> createState() => _SharingPaneState();
+}
+
+class _SharingPaneState extends State<SharingPane> {
+  final TextEditingController _name = TextEditingController();
+  String _saved = '';
+  bool _loaded = false;
+  bool _busy = false;
+  String? _error;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_loaded) {
+      _loaded = true;
+      ServicesScope.of(context).tools.computerName().then((name) {
+        if (!mounted) return;
+        setState(() {
+          _saved = name;
+          _name.text = name;
+        });
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _name.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    final name = _name.text.trim();
+    if (name.isEmpty || name == _saved || _busy) return;
+    setState(() => _busy = true);
+    final error = await ServicesScope.of(context).tools.setComputerName(name);
+    if (!mounted) return;
+    setState(() {
+      _busy = false;
+      if (error == null) {
+        _saved = name;
+        _error = null;
+      } else {
+        _error = errorText(AppLocalizations.of(context), error);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final info = ServicesScope.of(context).info;
     return PanePage(
       children: [
         SettingsGroup(
+          heading: l.sharingServices,
           unavailable: true,
+          issue: Issues.general,
           children: [
-            SwitchRow(title: l.sharingFiles, value: false),
-            SwitchRow(title: l.sharingScreen, value: false),
-            SwitchRow(title: l.sharingRemoteLogin, value: false),
+            for (final (title, symbol, tint) in [
+              (l.sharingFiles, 'folder', const Color(0xFF32ADE6)),
+              (l.sharingScreen, 'screen-share', const Color(0xFF5E5CE6)),
+              (l.sharingRemoteLogin, 'terminal', const Color(0xFF1C1C1E)),
+            ])
+              ValueRow(
+                title: title,
+                height: 48,
+                leading: IconTile(symbol: symbol, tint: tint, size: 24),
+                trailing: const SilicaSwitch(
+                  value: false,
+                  onChanged: null,
+                  size: ControlSize.mini,
+                ),
+              ),
           ],
         ),
         SettingsGroup(
-          footer: l.sharingNameReadOnly,
+          footer: l.sharingNameHelp(HostSystemTools.hostnameFor(_saved)),
           children: [
             ValueRow(
               title: l.sharingComputerName,
-              trailing: _Value(
-                info.hostname.isEmpty ? l.aboutUnknown : info.hostname,
+              trailing: SizedBox(
+                width: 220,
+                child: SilicaTextField(
+                  key: const ValueKey('computer name'),
+                  controller: _name,
+                  semanticLabel: l.sharingComputerName,
+                  onSubmitted: (_) => _save(),
+                  onChanged: (_) => setState(() {}),
+                ),
               ),
+            ),
+          ],
+        ),
+        if (_error case final error?) ErrorLine(error),
+        ButtonBar(
+          leading: [if (_busy) const SilicaSpinner(size: 14)],
+          buttons: [
+            SilicaButton(
+              key: const ValueKey('rename computer'),
+              label: l.sharingRename,
+              size: ControlSize.small,
+              onPressed:
+                  _busy ||
+                      _name.text.trim().isEmpty ||
+                      _name.text.trim() == _saved
+                  ? null
+                  : _save,
             ),
           ],
         ),
@@ -336,70 +534,389 @@ class _SharingPane extends StatelessWidget {
   }
 }
 
-class _DateTimePane extends StatelessWidget {
-  const _DateTimePane();
+/// Picks one of many values (time zones, languages) with a search field.
+Future<String?> showChoiceSheet(
+  BuildContext context, {
+  required String title,
+  required List<String> values,
+  required String current,
+  String Function(String)? label,
+}) => showWindowSheet<String>(
+  context,
+  semanticLabel: title,
+  builder: (context, sheet) => _ChoiceSheet(
+    title: title,
+    values: values,
+    current: current,
+    label: label ?? (v) => v,
+    close: sheet.close,
+  ),
+);
+
+class _ChoiceSheet extends StatefulWidget {
+  const _ChoiceSheet({
+    required this.title,
+    required this.values,
+    required this.current,
+    required this.label,
+    required this.close,
+  });
+  final String title;
+  final List<String> values;
+  final String current;
+  final String Function(String) label;
+  final void Function([String?]) close;
+
+  @override
+  State<_ChoiceSheet> createState() => _ChoiceSheetState();
+}
+
+class _ChoiceSheetState extends State<_ChoiceSheet> {
+  final TextEditingController _query = TextEditingController();
+  late String _chosen = widget.current;
+
+  @override
+  void dispose() {
+    _query.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final info = ServicesScope.of(context).info;
+    final colors = SettingsColors.of(context);
+    final q = _query.text.trim().toLowerCase();
+    final shown = [
+      for (final v in widget.values)
+        if (q.isEmpty ||
+            v.toLowerCase().contains(q) ||
+            widget.label(v).toLowerCase().contains(q))
+          v,
+    ];
+    return SizedBox(
+      width: 460,
+      height: 420,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              widget.title,
+              style: settingsText(13, colors.text, weight: FontWeight.w600),
+            ),
+            const SizedBox(height: 10),
+            SilicaSearchField(
+              key: const ValueKey('choice search'),
+              labels: SearchFieldLabels(
+                placeholder: l.searchPlaceholder,
+                clear: l.searchClear,
+              ),
+              controller: _query,
+              autofocus: true,
+              onChanged: (_) => setState(() {}),
+              onCancel: () => setState(_query.clear),
+            ),
+            const SizedBox(height: 10),
+            Expanded(
+              child: GroupBox(
+                child: ListView.builder(
+                  itemCount: shown.length,
+                  itemExtent: 26,
+                  itemBuilder: (context, i) {
+                    final v = shown[i];
+                    final chosen = v == _chosen;
+                    return GestureDetector(
+                      key: ValueKey('choice $v'),
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () => setState(() => _chosen = v),
+                      onDoubleTap: () => widget.close(v),
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 5),
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        alignment: Alignment.centerLeft,
+                        decoration: BoxDecoration(
+                          color: chosen ? ControlAccent.of(context) : null,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Text(
+                          widget.label(v),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: settingsText(
+                            13,
+                            chosen ? const Color(0xFFFFFFFF) : colors.text,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(height: 14),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                SilicaButton(label: l.cancel, onPressed: widget.close),
+                const SizedBox(width: 8),
+                SilicaButton(
+                  key: const ValueKey('choice done'),
+                  label: l.choose,
+                  role: ButtonRole.primary,
+                  onPressed: () => widget.close(_chosen),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// General › Date & Time: automatic time, the date and time now, the time zone.
+class DateTimePane extends StatefulWidget {
+  const DateTimePane({super.key});
+
+  @override
+  State<DateTimePane> createState() => _DateTimePaneState();
+}
+
+class _DateTimePaneState extends State<DateTimePane> {
+  ClockState? _clock;
+  String? _error;
+  Timer? _tick;
+  DateTime _now = DateTime.now();
+
+  SystemTools get _tools => ServicesScope.of(context).tools;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_tick == null) {
+      _load();
+      _tick = Timer.periodic(const Duration(seconds: 1), (_) {
+        if (mounted) setState(() => _now = DateTime.now());
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _tick?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _load() async {
+    final clock = await _tools.clock();
+    if (mounted) setState(() => _clock = clock);
+  }
+
+  Future<void> _run(Future<ToolError?> change) async {
+    final error = await change;
+    if (!mounted) return;
+    setState(
+      () => _error = error == null
+          ? null
+          : errorText(AppLocalizations.of(context), error),
+    );
+    await _load();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final clock = _clock ?? const ClockState();
+    final zone = clock.timezone.isNotEmpty
+        ? clock.timezone
+        : ServicesScope.of(context).info.timezone;
+    String two(int n) => n.toString().padLeft(2, '0');
+    final now =
+        '${_now.year}-${two(_now.month)}-${two(_now.day)}, '
+        '${two(_now.hour)}:${two(_now.minute)}:${two(_now.second)}';
     return PanePage(
       children: [
         SettingsGroup(
           children: [
-            ValueRow(
-              title: l.dateTimeZone,
-              trailing: _Value(
-                info.timezone.isEmpty ? l.aboutUnknown : info.timezone,
-              ),
+            SwitchRow(
+              key: const ValueKey('automatic time'),
+              title: l.dateTimeAutomatic,
+              subtitle: clock.ntp && clock.synchronized
+                  ? l.dateTimeSynchronized
+                  : null,
+              value: clock.ntp,
+              onChanged: _clock == null || !clock.canNtp
+                  ? null
+                  : (v) => _run(_tools.setNtp(v)),
             ),
           ],
         ),
         SettingsGroup(
-          unavailable: true,
           children: [
-            SwitchRow(title: l.dateTimeAutomatic, value: true),
-            SwitchRow(title: l.dateTime24Hour, value: true),
+            ValueRow(
+              key: const ValueKey('date now'),
+              title: l.dateTimeNow,
+              trailing: RowValue(now),
+            ),
+            Unavailable(child: SwitchRow(title: l.dateTime24Hour, value: true)),
+          ],
+          footer: l.notAvailableIssue(Issues.clock),
+        ),
+        SettingsGroup(
+          children: [
+            ValueRow(
+              key: const ValueKey('time zone'),
+              title: l.dateTimeZone,
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RowValue(zone.isEmpty ? l.aboutUnknown : zone),
+                  const SizedBox(width: 10),
+                  SilicaButton(
+                    key: const ValueKey('change time zone'),
+                    label: l.changeButton,
+                    size: ControlSize.small,
+                    onPressed: () async {
+                      final zones = await _tools.timezones();
+                      if (!context.mounted || zones.isEmpty) return;
+                      final chosen = await showChoiceSheet(
+                        context,
+                        title: l.dateTimeChooseZone,
+                        values: zones,
+                        current: zone,
+                        label: (z) => z.replaceAll('_', ' '),
+                      );
+                      if (chosen != null && chosen != zone) {
+                        await _run(_tools.setTimezone(chosen));
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
+        if (_error case final error?) ErrorLine(error),
       ],
     );
   }
 }
 
-class _LanguagePane extends StatelessWidget {
-  const _LanguagePane();
+/// A locale's readable name: `it_IT.UTF-8` → `it_IT`.
+String localeLabel(String locale) => locale.split('.').first;
+
+/// General › Language & Region: the system language and the region's formats.
+class LanguagePane extends StatefulWidget {
+  const LanguagePane({super.key});
+
+  @override
+  State<LanguagePane> createState() => _LanguagePaneState();
+}
+
+class _LanguagePaneState extends State<LanguagePane> {
+  LocaleState? _locale;
+  String? _error;
+  bool _loaded = false;
+
+  SystemTools get _tools => ServicesScope.of(context).tools;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_loaded) {
+      _loaded = true;
+      _load();
+    }
+  }
+
+  Future<void> _load() async {
+    final locale = await _tools.locale();
+    if (mounted) setState(() => _locale = locale);
+  }
+
+  Future<void> _choose({required bool formats}) async {
+    final l = AppLocalizations.of(context);
+    final locale = _locale ?? const LocaleState();
+    final all = await _tools.locales();
+    if (!mounted || all.isEmpty) return;
+    final current = formats && locale.formats.isNotEmpty
+        ? locale.formats
+        : locale.language;
+    final chosen = await showChoiceSheet(
+      context,
+      title: formats ? l.languageChooseRegion : l.languageChooseLanguage,
+      values: all,
+      current: current,
+      label: localeLabel,
+    );
+    if (chosen == null || chosen == current) return;
+    final error = await _tools.setLocale(
+      language: formats ? locale.language : chosen,
+      formats: formats ? chosen : locale.formats,
+    );
+    if (!mounted) return;
+    setState(() => _error = error == null ? null : errorText(l, error));
+    await _load();
+  }
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final info = ServicesScope.of(context).info;
+    final locale = _locale ?? const LocaleState();
+    final language = locale.language.isNotEmpty
+        ? locale.language
+        : info.language;
+    final formats = locale.formats.isNotEmpty ? locale.formats : language;
     return PanePage(
       children: [
         SettingsGroup(
           heading: l.languagePreferred,
-          footer: l.languageReadOnly,
+          footer: l.languageNextLogin,
           children: [
             ValueRow(
-              title: info.language.isEmpty ? l.aboutUnknown : info.language,
+              key: const ValueKey('system language'),
+              title: l.languageSystem,
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RowValue(
+                    language.isEmpty ? l.aboutUnknown : localeLabel(language),
+                  ),
+                  const SizedBox(width: 10),
+                  SilicaButton(
+                    key: const ValueKey('change language'),
+                    label: l.changeButton,
+                    size: ControlSize.small,
+                    onPressed: () => _choose(formats: false),
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-        SettingsGroup(
-          unavailable: true,
-          children: [
-            PopUpRow<int>(
+            ValueRow(
+              key: const ValueKey('region formats'),
               title: l.languageRegion,
-              items: [PopUpItem(0, l.aboutUnknown)],
-              value: 0,
-            ),
-            PopUpRow<int>(
-              title: l.languageFirstDay,
-              items: [PopUpItem(0, l.languageMonday)],
-              value: 0,
+              subtitle: l.languageRegionHelp,
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RowValue(
+                    formats.isEmpty ? l.aboutUnknown : localeLabel(formats),
+                  ),
+                  const SizedBox(width: 10),
+                  SilicaButton(
+                    key: const ValueKey('change region'),
+                    label: l.changeButton,
+                    size: ControlSize.small,
+                    onPressed: () => _choose(formats: true),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
+        if (_error case final error?) ErrorLine(error),
       ],
     );
   }
@@ -418,7 +935,7 @@ class _SoftwareUpdatePane extends StatelessWidget {
           children: [
             ValueRow(
               title: l.updateInstalled,
-              trailing: _Value(
+              trailing: RowValue(
                 info.osPrettyName.isEmpty ? l.aboutUnknown : info.osPrettyName,
               ),
             ),
@@ -426,8 +943,13 @@ class _SoftwareUpdatePane extends StatelessWidget {
         ),
         SettingsGroup(
           unavailable: true,
+          issue: Issues.general,
           children: [
-            ButtonRow(title: l.updateCheck, label: l.updateCheckButton),
+            ButtonRow(
+              title: l.updateCheck,
+              label: l.updateCheckButton,
+              onPressed: () {},
+            ),
             SwitchRow(title: l.updateAutomatic, value: false),
           ],
         ),
@@ -445,7 +967,7 @@ class _UnavailableSubPane extends StatelessWidget {
       SettingsGroup(
         children: [
           EmptyState(
-            AppLocalizations.of(context).notAvailableYet,
+            AppLocalizations.of(context).notAvailableIssue(Issues.general),
             key: const ValueKey('unavailable'),
           ),
         ],

@@ -44,11 +44,13 @@ String subTitle(AppLocalizations l, SubPaneId sub) => switch (sub) {
   SubPaneId.languageRegion => l.subLanguageRegion,
   SubPaneId.backups => l.subBackups,
   SubPaneId.transferReset => l.subTransferReset,
+  SubPaneId.notificationApp => l.paneNotifications,
 };
 
 /// The title the toolbar shows for a place.
 String locationTitle(AppLocalizations l, Location at) {
   final sub = at.sub;
+  if (sub == SubPaneId.notificationApp) return appDetail(at.detail).$2;
   return sub == null ? paneTitle(l, at.pane) : subTitle(l, sub);
 }
 
@@ -74,7 +76,8 @@ List<SearchEntry> searchIndex(AppLocalizations l, Iterable<PaneId> panes) {
   final all = [
     for (final pane in shown) at(paneTitle(l, pane), pane),
     for (final sub in SubPaneId.values)
-      at(subTitle(l, sub), PaneId.general, sub),
+      if (sub != SubPaneId.notificationApp)
+        at(subTitle(l, sub), PaneId.general, sub),
     at(l.wifiKnownNetworks, PaneId.wifi),
     at(l.wifiOtherNetworks, PaneId.wifi),
     at(l.bluetoothMyDevices, PaneId.bluetooth),

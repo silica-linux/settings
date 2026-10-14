@@ -83,6 +83,9 @@ enum SubPaneId {
   languageRegion,
   backups,
   transferReset,
+
+  /// Notifications › one app ([Location.detail] is its key and name).
+  notificationApp,
 }
 
 /// Where the window is: a pane, optionally one of its sub-panes.
