@@ -26,13 +26,26 @@ own). App id `dev.frascella.Settings`, icon `settings` from silica-icons.
 
 ## What works
 
-Appearance (light and dark, accent colour), Wi-Fi (on/off, joining saved networks), Bluetooth
-(on/off, connecting paired devices), Network status, Sound (output volume, mute, output
-device), Focus (Do Not Disturb), Battery, Desktop and Dock (magnification, recent apps),
-Wallpaper, Keyboard (key repeat rate and delay), Lock Screen choices, General › About, Storage,
-Sharing, Date and Time, Language, Users and Printers (read-only where noted). Every other pane
-is laid out as measured and marked "Not available yet". The state of each pane is in
+Appearance (light and dark, accent colour, sidebar icon size, scroll bars), Wi-Fi (on/off,
+scanning, joining with a password or a hidden network, details, auto-join, forgetting),
+Bluetooth (on/off, scanning, pairing, connecting, forgetting), Network (services, addresses),
+VPN (connecting), Battery and Energy (level, time left, health, power mode, low power mode),
+Desktop & Dock (every Dock option the shell reads, default web browser), Menu Bar (status
+items), Displays (connected displays and their modes, read-only), Wallpaper, Sound (output
+and input devices and volumes, interface sounds), Notifications (per-app banners), Focus
+(Do Not Disturb), General › About, Storage (empty the trash), Sharing (computer name), Date
+& Time, Language & Region, Users & Groups (accounts), Keyboard (shortcuts) and Printers
+(default printer). Every control that waits for a backend is disabled and its group names
+the issue that tracks it. The state of each pane is in
 [`docs/spec/panes.md`](docs/spec/panes.md).
+
+Settings drives the system through silica-daemon (D-Bus), the configuration files the shell
+watches in `$XDG_CONFIG_HOME/silica`, and the system's own tools: NetworkManager (`nmcli`),
+PipeWire (`wpctl`), systemd (`timedatectl`, `hostnamectl`, `localectl`), BlueZ and
+power-profiles-daemon over the system bus, `xdg-settings` and CUPS (`lpoptions`). Changes
+polkit reserves to administrators need an authentication agent Silica does not have yet
+([#69](https://github.com/silica-linux/settings/issues/69)): Settings says so when the system
+refuses.
 
 ## Building
 

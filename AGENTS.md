@@ -16,12 +16,15 @@ never crash, everything is a command, measured parity, English everywhere). On t
 
 ## Never fake
 
-- A setting is wired to the system or it is shown disabled with "Not available yet" in its
-  group's footer. A setting saved for a component that does not read it yet says so (the lock
-  screen choices, the Dock options read at session start).
+- A setting is wired to the system or it is shown disabled, and its group's footer names the
+  silica-linux/settings issue that tracks the missing backend (`lib/src/model/issues.dart`).
+  Nothing is saved for a component that does not read it yet. A change applied only later (the
+  wallpaper at the next login) says so.
 - Where Settings changes the system: `lib/src/system/` — silica-daemon over the embedder's
-  `silica/dbus` channel (`system.dart`), the configuration files in
-  `$XDG_CONFIG_HOME/silica` (`config.dart`), the machine (`host.dart`).
+  `silica/dbus` channel (`system.dart`), the configuration files the shell watches in
+  `$XDG_CONFIG_HOME/silica` (`config.dart`), the system's tools and services (`tools.dart`,
+  `tools_host.dart`: nmcli, wpctl, timedatectl, hostnamectl, localectl, BlueZ, power profiles,
+  xdg-settings), the machine (`host.dart`). A refused change shows why (`ui/errors.dart`).
 
 ## Work
 
