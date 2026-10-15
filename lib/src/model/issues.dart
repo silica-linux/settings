@@ -1,4 +1,4 @@
-// The silica-linux/settings issues that track the backends a disabled control waits for. The
+// The silica-os/settings issues that track the backends a disabled control waits for. The
 // groups cite them in their footer, so nothing is disabled without saying why.
 
 abstract final class Issues {

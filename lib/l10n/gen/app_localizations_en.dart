@@ -1047,7 +1047,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String notAvailableIssue(int issue) {
-    return 'Not available yet in Silica (silica-linux/settings#$issue).';
+    return 'Not available yet in Silica (silica-os/settings#$issue).';
   }
 
   @override

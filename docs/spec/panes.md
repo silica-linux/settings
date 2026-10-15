@@ -66,7 +66,7 @@ Details: [window.md](window.md).
 | ID | Item | Measured | Silica |
 | --- | --- | --- | --- |
 | ST-APPSET-01..04 | File manager settings (general, tags, sidebar, advanced) | measured | belongs to the file manager |
-| ST-APPSET-05..07 | Terminal settings (general, profiles, window groups, encodings) | partial | belongs to Terminal (`silica-linux/terminal`, `docs/spec/settings.md`) |
+| ST-APPSET-05..07 | Terminal settings (general, profiles, window groups, encodings) | partial | belongs to Terminal (`silica-os/terminal`, `docs/spec/settings.md`) |
 
 ## Not measured yet
 

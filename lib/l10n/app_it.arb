@@ -331,7 +331,7 @@
   "lockMinutes": "{count, plural, =1{1 minuto} other{{count} minuti}}",
   "lockHours": "{count, plural, =1{1 ora} other{{count} ore}}",
   "lockSeconds": "{count} secondi",
-  "notAvailableIssue": "Non ancora disponibile in Silica (silica-linux/settings#{issue}).",
+  "notAvailableIssue": "Non ancora disponibile in Silica (silica-os/settings#{issue}).",
   "appearanceOtherApps": "Impostazioni lo usa subito; le altre app lo seguiranno quando lo leggeranno (#{issue}).",
   "appearanceSmall": "Piccole",
   "appearanceLarge": "Grandi",

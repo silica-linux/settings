@@ -2087,7 +2087,7 @@ abstract class AppLocalizations {
   /// No description provided for @notAvailableIssue.
   ///
   /// In en, this message translates to:
-  /// **'Not available yet in Silica (silica-linux/settings#{issue}).'**
+  /// **'Not available yet in Silica (silica-os/settings#{issue}).'**
   String notAvailableIssue(int issue);
 
   /// No description provided for @appearanceOtherApps.

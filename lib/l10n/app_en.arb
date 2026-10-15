@@ -379,7 +379,7 @@
       }
     }
   },
-  "notAvailableIssue": "Not available yet in Silica (silica-linux/settings#{issue}).",
+  "notAvailableIssue": "Not available yet in Silica (silica-os/settings#{issue}).",
   "@notAvailableIssue": {
     "placeholders": {
       "issue": {

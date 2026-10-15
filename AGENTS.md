@@ -17,7 +17,7 @@ never crash, everything is a command, measured parity, English everywhere). On t
 ## Never fake
 
 - A setting is wired to the system or it is shown disabled, and its group's footer names the
-  silica-linux/settings issue that tracks the missing backend (`lib/src/model/issues.dart`).
+  silica-os/settings issue that tracks the missing backend (`lib/src/model/issues.dart`).
   Nothing is saved for a component that does not read it yet. A change applied only later (the
   wallpaper at the next login) says so.
 - Where Settings changes the system: `lib/src/system/` — silica-daemon over the embedder's
@@ -38,4 +38,4 @@ never crash, everything is a command, measured parity, English everywhere). On t
   `silica-ui`, not here.
 - Never crash: no daemon, a broken configuration file or a missing tool (`df`, `lpstat`) are
   normal cases.
-- Issues and milestones: https://github.com/orgs/silica-linux/projects/1.
+- Issues and milestones: https://github.com/orgs/silica-os/projects/1.

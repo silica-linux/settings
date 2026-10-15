@@ -143,7 +143,7 @@ class SettingsGroup extends StatelessWidget {
   /// No backend yet: the rows are drawn disabled and the footer says so.
   final bool unavailable;
 
-  /// The silica-linux/settings issue that tracks the missing backend.
+  /// The silica-os/settings issue that tracks the missing backend.
   final int? issue;
 
   @override

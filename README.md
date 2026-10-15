@@ -18,8 +18,8 @@
   <img alt="status: alpha" src="https://img.shields.io/badge/status-alpha-e0a030?style=flat-square">
 </p>
 
-A Flutter app for the [Silica desktop](https://github.com/silica-linux/silica-desktop), built on
-[`silica_ui`](https://github.com/silica-linux/silica-ui). It drives the system through
+A Flutter app for the [Silica desktop](https://github.com/silica-os/silica-desktop), built on
+[`silica_ui`](https://github.com/silica-os/silica-ui). It drives the system through
 silica-daemon (D-Bus) and the commands of Ossido. Panes and behaviors come from the 1:1
 inventory measured in silica-reference (clean-room: nothing copied, texts and graphics are our
 own). App id `dev.frascella.Settings`, icon `settings` from silica-icons.

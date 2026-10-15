@@ -289,7 +289,7 @@ void main() {
     ) async {
       final h = await pumpSettings(tester, pane: pane, height: 1300);
       expect(find.byKey(const ValueKey('unavailable')), findsWidgets);
-      expect(find.textContaining('silica-linux/settings#'), findsWidgets);
+      expect(find.textContaining('silica-os/settings#'), findsWidgets);
       // Nothing reaches the system from these panes.
       for (final s in find.byType(SilicaSwitch).evaluate()) {
         await tester.tap(find.byWidget(s.widget), warnIfMissed: false);
