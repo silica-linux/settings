@@ -68,3 +68,18 @@ There is no transition: the sidebar selection moves about 100–150 ms after the
 content and the toolbar title are swapped together in one frame, 150–575 ms after it depending
 on the pane (the time the pane takes to load, not an animation). A sub-pane is pushed and popped
 the same way, without a slide.
+
+## Menus (silica-menu-v1)
+
+Settings publishes five menus to Silica's menu bar with `SilicaMenuBar`: the app menu, Edit,
+View, Window and Help. There is no File menu and the app menu has no Settings item.
+
+| Menu | Contents |
+| --- | --- |
+| Settings | About (opens General › About), Services, Hide, Hide Others, Show All, Quit (system items) |
+| Edit | Undo, Redo, Cut, Copy, Paste, Delete, Select All: enabled while the sidebar search field has the keyboard (Paste and Select All always then; the others once it holds text). Writing Tools, AutoFill, Start Dictation and Emoji & Symbols are shown disabled: not available yet |
+| View | Back ⌘[ and Forward ⌘] (enabled from the history), Search ⌘F (focuses the field), every pane of the sidebar in alphabetical order of its translated name with the current one checked, Enter Full Screen (disabled: the window has a fixed width) |
+| Window | Close ⌘W, then the bar's own items |
+| Help | the bar's Help (Settings has no help pages yet) |
+
+The ⌘ shortcuts are bound by the menu bar; items without an action are greyed.

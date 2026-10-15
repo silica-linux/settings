@@ -2,13 +2,13 @@
 // 52 pt toolbar with the back / forward capsule at x 269 and the title of the current pane.
 // Switching panes replaces the content in one frame, with no transition (ST-NAV-05).
 
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:silica_ui/silica_ui.dart';
 
 import '../../l10n/gen/app_localizations.dart';
 import '../model/navigation.dart';
 import '../model/panes.dart';
+import '../menus.dart';
 import '../model/titles.dart';
 import '../panes/panes.dart';
 import '../services.dart';
@@ -33,7 +33,17 @@ class _SettingsWindowState extends State<SettingsWindow> {
   Location? _shownLocation;
 
   @override
+  void initState() {
+    super.initState();
+    _searchFocus.addListener(_focusChanged);
+  }
+
+  // The text items of Edit follow the search field's focus.
+  void _focusChanged() => setState(() {});
+
+  @override
   void dispose() {
+    _searchFocus.removeListener(_focusChanged);
     _searchFocus.dispose();
     _scrolledPastHeader.dispose();
     super.dispose();
@@ -64,15 +74,16 @@ class _SettingsWindowState extends State<SettingsWindow> {
             (_) => navigation.openPane(shown.first),
           );
         }
-        return CallbackShortcuts(
-          bindings: {
-            const SingleActivator(LogicalKeyboardKey.bracketLeft, meta: true):
-                navigation.back,
-            const SingleActivator(LogicalKeyboardKey.bracketRight, meta: true):
-                navigation.forward,
-            const SingleActivator(LogicalKeyboardKey.keyF, meta: true):
-                _searchFocus.requestFocus,
-          },
+        // The menus bind the shortcuts: back and forward (⌘[ ⌘]), search (⌘F), the text items.
+        return SilicaMenuBar(
+          menus: settingsMenus(
+            AppLocalizations.of(context),
+            navigation: navigation,
+            panes: shown.toList(),
+            focusSearch: _searchFocus.requestFocus,
+            searchFocused: _searchFocus.hasFocus,
+            hasText: navigation.query.isNotEmpty,
+          ),
           child: Focus(
             autofocus: true,
             child: Row(

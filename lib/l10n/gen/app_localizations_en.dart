@@ -1782,4 +1782,37 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get displaysNoCompositor =>
       'The compositor didn’t report its displays, so they can’t be changed from here. This is what the machine lists.';
+
+  @override
+  String get menuEdit => 'Edit';
+
+  @override
+  String get menuView => 'View';
+
+  @override
+  String get menuWindow => 'Window';
+
+  @override
+  String get menuHelp => 'Help';
+
+  @override
+  String get menuBack => 'Back';
+
+  @override
+  String get menuForward => 'Forward';
+
+  @override
+  String get menuSearch => 'Search';
+
+  @override
+  String get menuWritingTools => 'Writing Tools';
+
+  @override
+  String get menuAutoFill => 'AutoFill';
+
+  @override
+  String get menuStartDictation => 'Start Dictation…';
+
+  @override
+  String get menuEmojiSymbols => 'Emoji & Symbols';
 }

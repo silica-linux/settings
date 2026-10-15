@@ -3337,6 +3337,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The compositor didn’t report its displays, so they can’t be changed from here. This is what the machine lists.'**
   String get displaysNoCompositor;
+
+  /// No description provided for @menuEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get menuEdit;
+
+  /// No description provided for @menuView.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get menuView;
+
+  /// No description provided for @menuWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Window'**
+  String get menuWindow;
+
+  /// No description provided for @menuHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Help'**
+  String get menuHelp;
+
+  /// No description provided for @menuBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get menuBack;
+
+  /// No description provided for @menuForward.
+  ///
+  /// In en, this message translates to:
+  /// **'Forward'**
+  String get menuForward;
+
+  /// No description provided for @menuSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get menuSearch;
+
+  /// No description provided for @menuWritingTools.
+  ///
+  /// In en, this message translates to:
+  /// **'Writing Tools'**
+  String get menuWritingTools;
+
+  /// No description provided for @menuAutoFill.
+  ///
+  /// In en, this message translates to:
+  /// **'AutoFill'**
+  String get menuAutoFill;
+
+  /// No description provided for @menuStartDictation.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Dictation…'**
+  String get menuStartDictation;
+
+  /// No description provided for @menuEmojiSymbols.
+  ///
+  /// In en, this message translates to:
+  /// **'Emoji & Symbols'**
+  String get menuEmojiSymbols;
 }
 
 class _AppLocalizationsDelegate

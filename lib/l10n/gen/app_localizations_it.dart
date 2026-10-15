@@ -1787,4 +1787,37 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get displaysNoCompositor =>
       'Il compositor non ha comunicato i suoi schermi, quindi non si possono cambiare da qui. Questo è ciò che elenca la macchina.';
+
+  @override
+  String get menuEdit => 'Modifica';
+
+  @override
+  String get menuView => 'Vista';
+
+  @override
+  String get menuWindow => 'Finestra';
+
+  @override
+  String get menuHelp => 'Aiuto';
+
+  @override
+  String get menuBack => 'Indietro';
+
+  @override
+  String get menuForward => 'Avanti';
+
+  @override
+  String get menuSearch => 'Cerca';
+
+  @override
+  String get menuWritingTools => 'Strumenti di scrittura';
+
+  @override
+  String get menuAutoFill => 'Inserimento automatico';
+
+  @override
+  String get menuStartDictation => 'Avvia dettatura…';
+
+  @override
+  String get menuEmojiSymbols => 'Emoji e simboli';
 }

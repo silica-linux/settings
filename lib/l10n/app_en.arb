@@ -813,5 +813,16 @@
         "type": "String"
       }
     }
-  }
+  },
+  "menuEdit": "Edit",
+  "menuView": "View",
+  "menuWindow": "Window",
+  "menuHelp": "Help",
+  "menuBack": "Back",
+  "menuForward": "Forward",
+  "menuSearch": "Search",
+  "menuWritingTools": "Writing Tools",
+  "menuAutoFill": "AutoFill",
+  "menuStartDictation": "Start Dictation…",
+  "menuEmojiSymbols": "Emoji & Symbols"
 }

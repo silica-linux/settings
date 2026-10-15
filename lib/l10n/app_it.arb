@@ -539,5 +539,16 @@
   "displaysNightOnCustom": "Dalle {from} alle {to}",
   "displaysNightBadTime": "Usa il formato a 24 ore, per esempio 21:30.",
   "displaysNightFailed": "La luce notturna non è stata modificata: {reason}",
-  "displaysNoCompositor": "Il compositor non ha comunicato i suoi schermi, quindi non si possono cambiare da qui. Questo è ciò che elenca la macchina."
+  "displaysNoCompositor": "Il compositor non ha comunicato i suoi schermi, quindi non si possono cambiare da qui. Questo è ciò che elenca la macchina.",
+  "menuEdit": "Modifica",
+  "menuView": "Vista",
+  "menuWindow": "Finestra",
+  "menuHelp": "Aiuto",
+  "menuBack": "Indietro",
+  "menuForward": "Avanti",
+  "menuSearch": "Cerca",
+  "menuWritingTools": "Strumenti di scrittura",
+  "menuAutoFill": "Inserimento automatico",
+  "menuStartDictation": "Avvia dettatura…",
+  "menuEmojiSymbols": "Emoji e simboli"
 }
