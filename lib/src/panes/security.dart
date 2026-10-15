@@ -32,7 +32,7 @@ class _LockScreenPaneState extends State<LockScreenPane> {
     return PanePage(
       children: [
         SettingsGroup(
-          footer: l.notAvailableIssue(Issues.lockScreen),
+          footer: l.notAvailableYet,
           children: [
             idleRow(
               context,

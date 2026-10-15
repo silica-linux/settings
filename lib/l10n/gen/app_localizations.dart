@@ -2084,17 +2084,11 @@ abstract class AppLocalizations {
   /// **'{count} seconds'**
   String lockSeconds(int count);
 
-  /// No description provided for @notAvailableIssue.
-  ///
-  /// In en, this message translates to:
-  /// **'Not available yet in Silica (silica-os/settings#{issue}).'**
-  String notAvailableIssue(int issue);
-
   /// No description provided for @appearanceOtherApps.
   ///
   /// In en, this message translates to:
-  /// **'Settings uses this at once; the other apps follow once they read it (#{issue}).'**
-  String appearanceOtherApps(int issue);
+  /// **'Settings uses this at once; the other apps follow once they read it.'**
+  String get appearanceOtherApps;
 
   /// No description provided for @appearanceSmall.
   ///
@@ -2165,8 +2159,8 @@ abstract class AppLocalizations {
   /// No description provided for @errorAuthentication.
   ///
   /// In en, this message translates to:
-  /// **'The system wants an administrator\'s password for this, and Silica can\'t ask for it yet (#{issue}).'**
-  String errorAuthentication(int issue);
+  /// **'The system wants an administrator\'s password for this, and Silica can\'t ask for it yet.'**
+  String get errorAuthentication;
 
   /// No description provided for @errorRefused.
   ///
@@ -2357,8 +2351,8 @@ abstract class AppLocalizations {
   /// No description provided for @bluetoothPinNote.
   ///
   /// In en, this message translates to:
-  /// **'Devices that ask for a PIN or a code can\'t be paired yet (#{issue}).'**
-  String bluetoothPinNote(int issue);
+  /// **'Devices that ask for a PIN or a code can\'t be paired yet.'**
+  String get bluetoothPinNote;
 
   /// No description provided for @notificationsCenterHelp.
   ///
@@ -2591,8 +2585,8 @@ abstract class AppLocalizations {
   /// No description provided for @dockLiveNote.
   ///
   /// In en, this message translates to:
-  /// **'The Dock changes at once. The side positions, the title bar double click and minimizing into the app icon wait for the shell (#{issue}).'**
-  String dockLiveNote(int issue);
+  /// **'The Dock changes at once. The side positions, the title bar double click and minimizing into the app icon wait for the shell.'**
+  String get dockLiveNote;
 
   /// No description provided for @dockLeft.
   ///
@@ -2627,8 +2621,8 @@ abstract class AppLocalizations {
   /// No description provided for @wallpaperNote.
   ///
   /// In en, this message translates to:
-  /// **'The desktop shows a new wallpaper from the next login (#{issue}).'**
-  String wallpaperNote(int issue);
+  /// **'The desktop shows a new wallpaper from the next login.'**
+  String get wallpaperNote;
 
   /// No description provided for @wallpaperShowAll.
   ///
@@ -2837,8 +2831,8 @@ abstract class AppLocalizations {
   /// No description provided for @powerNoProfiles.
   ///
   /// In en, this message translates to:
-  /// **'Power modes need power-profiles-daemon, which this system doesn\'t have (#{issue}).'**
-  String powerNoProfiles(int issue);
+  /// **'Power modes need power-profiles-daemon, which this system doesn\'t have.'**
+  String get powerNoProfiles;
 
   /// No description provided for @durationHoursMinutes.
   ///
@@ -3035,8 +3029,8 @@ abstract class AppLocalizations {
   /// No description provided for @soundEffectsPending.
   ///
   /// In en, this message translates to:
-  /// **'Playing effects through a chosen device and a startup sound aren’t available yet (#{issue}).'**
-  String soundEffectsPending(int issue);
+  /// **'Playing effects through a chosen device and a startup sound aren’t available yet.'**
+  String get soundEffectsPending;
 
   /// No description provided for @soundNoService.
   ///
@@ -3083,8 +3077,8 @@ abstract class AppLocalizations {
   /// No description provided for @focusModesNote.
   ///
   /// In en, this message translates to:
-  /// **'Every Focus silences banners and sounds like Do Not Disturb. Letting the allowed apps through needs the shell (#{issue}).'**
-  String focusModesNote(int issue);
+  /// **'Every Focus silences banners and sounds like Do Not Disturb. Letting the allowed apps through needs the shell.'**
+  String get focusModesNote;
 
   /// No description provided for @focusTurnOn.
   ///

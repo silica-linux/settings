@@ -513,7 +513,7 @@ class _SharingPaneState extends State<SharingPane> {
         SettingsGroup(
           footer: [
             l.sharingNameHelp(HostSystemTools.hostnameFor(_saved)),
-            if (registered == false) l.errorAuthentication(Issues.polkitAgent),
+            if (registered == false) l.errorAuthentication,
           ].join(' '),
           children: [
             ValueRow(
@@ -751,9 +751,7 @@ class _DateTimePaneState extends State<DateTimePane> {
   Widget _build(BuildContext context, bool? registered) {
     final l = AppLocalizations.of(context);
     final allowed = registered == true;
-    final needsAgent = registered == false
-        ? l.errorAuthentication(Issues.polkitAgent)
-        : null;
+    final needsAgent = registered == false ? l.errorAuthentication : null;
     final clock = _clock ?? const ClockState();
     final zone = clock.timezone.isNotEmpty
         ? clock.timezone
@@ -789,7 +787,7 @@ class _DateTimePaneState extends State<DateTimePane> {
             ),
             Unavailable(child: SwitchRow(title: l.dateTime24Hour, value: true)),
           ],
-          footer: l.notAvailableIssue(Issues.clock),
+          footer: l.notAvailableYet,
         ),
         SettingsGroup(
           footer: needsAgent,
@@ -909,7 +907,7 @@ class _LanguagePaneState extends State<LanguagePane> {
           heading: l.languagePreferred,
           footer: [
             l.languageNextLogin,
-            if (registered == false) l.errorAuthentication(Issues.polkitAgent),
+            if (registered == false) l.errorAuthentication,
           ].join(' '),
           children: [
             ValueRow(
@@ -1004,7 +1002,7 @@ class _UnavailableSubPane extends StatelessWidget {
       SettingsGroup(
         children: [
           EmptyState(
-            AppLocalizations.of(context).notAvailableIssue(Issues.general),
+            AppLocalizations.of(context).notAvailableYet,
             key: const ValueKey('unavailable'),
           ),
         ],

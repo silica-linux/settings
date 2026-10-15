@@ -157,7 +157,10 @@ void main() {
       final input = h.config.read('input')['mouse'] as Map;
       expect(input['scrollSpeed'], 0.1);
       // The double-click speed has no reader yet.
-      expect(find.textContaining('#74'), findsOneWidget);
+      expect(
+        find.textContaining('Not available yet in Silica'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('scroll speed is logarithmic with 1x in the middle', (_) async {
@@ -284,12 +287,12 @@ void main() {
     PaneId.accessibility,
     PaneId.search,
   ]) {
-    testWidgets('${pane.name}: waits for its backend and names the issue', (
+    testWidgets('${pane.name}: waits for its backend and says so', (
       tester,
     ) async {
       final h = await pumpSettings(tester, pane: pane, height: 1300);
       expect(find.byKey(const ValueKey('unavailable')), findsWidgets);
-      expect(find.textContaining('silica-os/settings#'), findsWidgets);
+      expect(find.textContaining('Not available yet in Silica'), findsWidgets);
       // Nothing reaches the system from these panes.
       for (final s in find.byType(SilicaSwitch).evaluate()) {
         await tester.tap(find.byWidget(s.widget), warnIfMissed: false);
@@ -300,6 +303,21 @@ void main() {
       expect(h.config.read('lockscreen'), isEmpty);
     });
   }
+
+  testWidgets('no visible text in any pane shows an issue number', (
+    tester,
+  ) async {
+    final h = await pumpSettings(tester, height: 1300);
+    final issue = RegExp(r'#\d{1,4}\b');
+    for (final pane in PaneId.values) {
+      h.navigation.openPane(pane);
+      await settle(tester);
+      for (final text in tester.widgetList<Text>(find.byType(Text))) {
+        final shown = text.data ?? text.textSpan?.toPlainText() ?? '';
+        expect(issue.hasMatch(shown), isFalse, reason: '${pane.name}: $shown');
+      }
+    }
+  });
 
   testWidgets('every pane builds in light and dark without errors', (
     tester,

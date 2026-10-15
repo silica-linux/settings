@@ -457,7 +457,7 @@ void main() {
       tester,
     ) async {
       await pumpSettings(tester, pane: PaneId.focus, height: 1000);
-      expect(find.textContaining('needs the shell (#72)'), findsOneWidget);
+      expect(find.textContaining('needs the shell.'), findsOneWidget);
     });
   });
 }

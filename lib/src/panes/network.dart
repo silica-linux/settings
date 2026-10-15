@@ -861,7 +861,7 @@ class _BluetoothPaneState extends State<BluetoothPane> {
       _error = error == null
           ? null
           : '${errorText(AppLocalizations.of(context), error)} '
-                '${AppLocalizations.of(context).bluetoothPinNote(Issues.bluetoothAgent)}';
+                '${AppLocalizations.of(context).bluetoothPinNote}';
     });
     await _load();
   }
@@ -1011,7 +1011,7 @@ class _BluetoothPaneState extends State<BluetoothPane> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(10, 6, 10, 0),
                     child: Text(
-                      l.bluetoothPinNote(Issues.bluetoothAgent),
+                      l.bluetoothPinNote,
                       style: settingsText(11, colors.secondary, height: 1.3),
                     ),
                   ),

@@ -63,7 +63,7 @@ void main() {
       await pumpSettings(tester, pane: PaneId.energy);
       await settle(tester);
       expect(find.byKey(const ValueKey('power mode')), findsNothing);
-      expect(find.textContaining('#68'), findsWidgets);
+      expect(find.textContaining('power-profiles-daemon'), findsWidgets);
     });
 
     testWidgets('Energy: display off, sleep and prevent sleep (#68)', (

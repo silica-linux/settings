@@ -92,10 +92,7 @@ class _KeyboardPaneState extends State<KeyboardPane> {
     return PanePage(
       children: [
         SettingsGroup(
-          footer: [
-            l.keyboardRepeatNote,
-            l.notAvailableIssue(Issues.keyboard),
-          ].join(' '),
+          footer: [l.keyboardRepeatNote, l.notAvailableYet].join(' '),
           children: [
             ValueRow(
               title: l.keyboardRepeatRate,
@@ -160,7 +157,7 @@ class _KeyboardPaneState extends State<KeyboardPane> {
         ),
         SettingsGroup(
           heading: l.keyboardTextInput,
-          footer: l.notAvailableIssue(Issues.keyboard),
+          footer: l.notAvailableYet,
           children: [
             ButtonRow(
               key: const ValueKey('input sources'),

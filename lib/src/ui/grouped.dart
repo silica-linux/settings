@@ -143,16 +143,14 @@ class SettingsGroup extends StatelessWidget {
   /// No backend yet: the rows are drawn disabled and the footer says so.
   final bool unavailable;
 
-  /// The silica-os/settings issue that tracks the missing backend.
+  /// The silica-os/settings issue that tracks the missing backend (for developers; never shown).
   final int? issue;
 
   @override
   Widget build(BuildContext context) {
     final colors = SettingsColors.of(context);
     final l = AppLocalizations.of(context);
-    final missing = unavailable
-        ? (issue == null ? l.notAvailableYet : l.notAvailableIssue(issue!))
-        : null;
+    final missing = unavailable ? l.notAvailableYet : null;
     final footerText = [?footer, ?missing].join(' ');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

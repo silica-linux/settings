@@ -438,7 +438,7 @@ class _SoundPaneState extends State<SoundPane> {
               heading: l.soundEffects,
               footer: _uiSounds == null
                   ? l.soundNoService
-                  : l.soundEffectsPending(Issues.sound),
+                  : l.soundEffectsPending,
               children: [
                 _alertRow(context),
                 Unavailable(

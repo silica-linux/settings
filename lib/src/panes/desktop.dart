@@ -299,7 +299,7 @@ class _DesktopDockPaneState extends State<DesktopDockPane> {
           ],
         ),
         SettingsGroup(
-          footer: l.dockLiveNote(Issues.dock),
+          footer: l.dockLiveNote,
           children: [
             PopUpRow<DockPosition>(
               key: const ValueKey('dock position'),
@@ -496,7 +496,7 @@ Future<void> showHotCorners(BuildContext context) {
                 children: [
                   Expanded(
                     child: Text(
-                      l.notAvailableIssue(Issues.hotCorners),
+                      l.notAvailableYet,
                       style: settingsText(11, colors.secondary),
                     ),
                   ),
@@ -671,7 +671,7 @@ class _WallpaperPaneState extends State<WallpaperPane> {
           children: [
             Expanded(
               child: Text(
-                l.wallpaperNote(Issues.wallpaper),
+                l.wallpaperNote,
                 style: settingsText(11, colors.secondary, height: 1.3),
               ),
             ),

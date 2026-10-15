@@ -179,7 +179,7 @@ class _EnergyPaneState extends State<EnergyPane> with _PowerState {
           Padding(
             padding: const EdgeInsets.only(left: 10),
             child: Text(
-              l.powerNoProfiles(Issues.power),
+              l.powerNoProfiles,
               style: settingsText(11, SettingsColors.of(context).secondary),
             ),
           ),
@@ -284,7 +284,7 @@ class _BatteryPaneState extends State<BatteryPane> with _PowerState {
                   ),
                 ),
               ],
-              footer: l.notAvailableIssue(Issues.power),
+              footer: l.notAvailableYet,
             ),
             if (error case final e?) ErrorLine(e),
           ],

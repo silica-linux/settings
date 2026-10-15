@@ -1046,14 +1046,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String notAvailableIssue(int issue) {
-    return 'Not available yet in Silica (silica-os/settings#$issue).';
-  }
-
-  @override
-  String appearanceOtherApps(int issue) {
-    return 'Settings uses this at once; the other apps follow once they read it (#$issue).';
-  }
+  String get appearanceOtherApps =>
+      'Settings uses this at once; the other apps follow once they read it.';
 
   @override
   String get appearanceSmall => 'Small';
@@ -1092,9 +1086,8 @@ class AppLocalizationsEn extends AppLocalizations {
       'The service this needs isn\'t installed on this system.';
 
   @override
-  String errorAuthentication(int issue) {
-    return 'The system wants an administrator\'s password for this, and Silica can\'t ask for it yet (#$issue).';
-  }
+  String get errorAuthentication =>
+      'The system wants an administrator\'s password for this, and Silica can\'t ask for it yet.';
 
   @override
   String errorRefused(String detail) {
@@ -1201,9 +1194,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bluetoothForget => 'Forget This Device…';
 
   @override
-  String bluetoothPinNote(int issue) {
-    return 'Devices that ask for a PIN or a code can\'t be paired yet (#$issue).';
-  }
+  String get bluetoothPinNote =>
+      'Devices that ask for a PIN or a code can\'t be paired yet.';
 
   @override
   String get notificationsCenterHelp =>
@@ -1327,9 +1319,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dockMagnificationSize => 'Magnification size';
 
   @override
-  String dockLiveNote(int issue) {
-    return 'The Dock changes at once. The side positions, the title bar double click and minimizing into the app icon wait for the shell (#$issue).';
-  }
+  String get dockLiveNote =>
+      'The Dock changes at once. The side positions, the title bar double click and minimizing into the app icon wait for the shell.';
 
   @override
   String get dockLeft => 'Left';
@@ -1347,9 +1338,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get wallpaperAllSpaces => 'Show on all spaces';
 
   @override
-  String wallpaperNote(int issue) {
-    return 'The desktop shows a new wallpaper from the next login (#$issue).';
-  }
+  String get wallpaperNote =>
+      'The desktop shows a new wallpaper from the next login.';
 
   @override
   String wallpaperShowAll(int count) {
@@ -1465,9 +1455,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get powerPerformance => 'High performance';
 
   @override
-  String powerNoProfiles(int issue) {
-    return 'Power modes need power-profiles-daemon, which this system doesn\'t have (#$issue).';
-  }
+  String get powerNoProfiles =>
+      'Power modes need power-profiles-daemon, which this system doesn\'t have.';
 
   @override
   String durationHoursMinutes(int hours, int minutes) {
@@ -1582,9 +1571,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get soundAlertPlay => 'Play';
 
   @override
-  String soundEffectsPending(int issue) {
-    return 'Playing effects through a chosen device and a startup sound aren’t available yet (#$issue).';
-  }
+  String get soundEffectsPending =>
+      'Playing effects through a chosen device and a startup sound aren’t available yet.';
 
   @override
   String get soundNoService =>
@@ -1610,9 +1598,8 @@ class AppLocalizationsEn extends AppLocalizations {
       'No Focus modes yet. Add one to choose which apps and people can still reach you.';
 
   @override
-  String focusModesNote(int issue) {
-    return 'Every Focus silences banners and sounds like Do Not Disturb. Letting the allowed apps through needs the shell (#$issue).';
-  }
+  String get focusModesNote =>
+      'Every Focus silences banners and sounds like Do Not Disturb. Letting the allowed apps through needs the shell.';
 
   @override
   String focusTurnOn(String name) {

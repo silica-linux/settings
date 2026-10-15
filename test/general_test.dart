@@ -88,11 +88,11 @@ void main() {
       await tapKey(tester, 'rename computer');
       await settle(tester);
       expect(h.tools.calls, contains('computerName Studio'));
-      expect(find.textContaining('#69'), findsOneWidget);
+      expect(find.textContaining('administrator'), findsOneWidget);
       tools.fail.clear();
       await tapKey(tester, 'rename computer');
       await settle(tester);
-      expect(find.textContaining('#69'), findsNothing);
+      expect(find.textContaining('administrator'), findsNothing);
     });
 
     testWidgets('Date & Time: automatic time and the time zone', (
@@ -174,7 +174,7 @@ void main() {
           tester.widget<SilicaSwitch>(switchIn('automatic time')).onChanged,
           isNull,
         );
-        expect(find.textContaining('#69'), findsWidgets);
+        expect(find.textContaining('administrator'), findsWidgets);
         system.emitAgent(true);
         await settle(tester);
         expect(enabled(tester, 'change time zone'), isTrue);
@@ -182,7 +182,7 @@ void main() {
           tester.widget<SilicaSwitch>(switchIn('automatic time')).onChanged,
           isNotNull,
         );
-        expect(find.textContaining('#69'), findsNothing);
+        expect(find.textContaining('administrator'), findsNothing);
       });
 
       testWidgets('the computer name waits for the agent', (tester) async {
@@ -195,7 +195,7 @@ void main() {
         h.navigation.openSub(SubPaneId.sharing);
         await settle(tester);
         expect(enabled(tester, 'rename computer'), isFalse);
-        expect(find.textContaining('#69'), findsOneWidget);
+        expect(find.textContaining('administrator'), findsOneWidget);
         system.emitAgent(true);
         await settle(tester);
         await tester.enterText(

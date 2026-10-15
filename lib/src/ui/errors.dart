@@ -1,12 +1,11 @@
 // What a refused change says (a [ToolError] from the system tools).
 
 import '../../l10n/gen/app_localizations.dart';
-import '../model/issues.dart';
 import '../system/tools.dart';
 
 String errorText(AppLocalizations l, ToolError error) => switch (error.kind) {
   ToolErrorKind.missing => l.errorMissing,
-  ToolErrorKind.authentication => l.errorAuthentication(Issues.polkitAgent),
+  ToolErrorKind.authentication => l.errorAuthentication,
   ToolErrorKind.refused => l.errorRefused(_short(error.detail)),
   ToolErrorKind.failed => l.errorFailed(_short(error.detail)),
 };

@@ -80,7 +80,7 @@ class AppearancePane extends StatelessWidget {
               ),
               SettingsGroup(
                 heading: l.appearanceTheme,
-                footer: l.appearanceOtherApps(Issues.systemLook),
+                footer: l.appearanceOtherApps,
                 children: [
                   ValueRow(
                     title: l.appearanceAccent,
@@ -141,7 +141,7 @@ class AppearancePane extends StatelessWidget {
                 ],
               ),
               SettingsGroup(
-                footer: l.appearanceOtherApps(Issues.systemLook),
+                footer: l.appearanceOtherApps,
                 children: [
                   _RadioRow<ScrollBarsMode>(
                     key: const ValueKey('scroll bars'),

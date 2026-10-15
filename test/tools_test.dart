@@ -203,7 +203,7 @@ Video
     final l = AppLocalizationsEn();
     expect(
       errorText(l, const ToolError(ToolErrorKind.authentication)),
-      contains('#69'),
+      contains('administrator'),
     );
     expect(
       errorText(

@@ -1049,14 +1049,8 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String notAvailableIssue(int issue) {
-    return 'Non ancora disponibile in Silica (silica-os/settings#$issue).';
-  }
-
-  @override
-  String appearanceOtherApps(int issue) {
-    return 'Impostazioni lo usa subito; le altre app lo seguiranno quando lo leggeranno (#$issue).';
-  }
+  String get appearanceOtherApps =>
+      'Impostazioni lo usa subito; le altre app lo seguiranno quando lo leggeranno.';
 
   @override
   String get appearanceSmall => 'Piccole';
@@ -1095,9 +1089,8 @@ class AppLocalizationsIt extends AppLocalizations {
       'Il servizio necessario non è installato su questo sistema.';
 
   @override
-  String errorAuthentication(int issue) {
-    return 'Il sistema chiede la password di un amministratore e Silica non può ancora chiederla (#$issue).';
-  }
+  String get errorAuthentication =>
+      'Il sistema chiede la password di un amministratore e Silica non può ancora chiederla.';
 
   @override
   String errorRefused(String detail) {
@@ -1204,9 +1197,8 @@ class AppLocalizationsIt extends AppLocalizations {
   String get bluetoothForget => 'Dimentica questo dispositivo…';
 
   @override
-  String bluetoothPinNote(int issue) {
-    return 'I dispositivi che chiedono un PIN o un codice non si possono ancora abbinare (#$issue).';
-  }
+  String get bluetoothPinNote =>
+      'I dispositivi che chiedono un PIN o un codice non si possono ancora abbinare.';
 
   @override
   String get notificationsCenterHelp =>
@@ -1330,9 +1322,8 @@ class AppLocalizationsIt extends AppLocalizations {
   String get dockMagnificationSize => 'Dimensione ingrandimento';
 
   @override
-  String dockLiveNote(int issue) {
-    return 'Il Dock cambia subito. Le posizioni laterali, il doppio clic sulla barra del titolo e la riduzione nell\'icona dell\'app aspettano la shell (#$issue).';
-  }
+  String get dockLiveNote =>
+      'Il Dock cambia subito. Le posizioni laterali, il doppio clic sulla barra del titolo e la riduzione nell\'icona dell\'app aspettano la shell.';
 
   @override
   String get dockLeft => 'A sinistra';
@@ -1350,9 +1341,8 @@ class AppLocalizationsIt extends AppLocalizations {
   String get wallpaperAllSpaces => 'Mostra su tutti gli spazi';
 
   @override
-  String wallpaperNote(int issue) {
-    return 'La scrivania mostra il nuovo sfondo dal prossimo accesso (#$issue).';
-  }
+  String get wallpaperNote =>
+      'La scrivania mostra il nuovo sfondo dal prossimo accesso.';
 
   @override
   String wallpaperShowAll(int count) {
@@ -1468,9 +1458,8 @@ class AppLocalizationsIt extends AppLocalizations {
   String get powerPerformance => 'Prestazioni elevate';
 
   @override
-  String powerNoProfiles(int issue) {
-    return 'Le modalità di alimentazione richiedono power-profiles-daemon, assente su questo sistema (#$issue).';
-  }
+  String get powerNoProfiles =>
+      'Le modalità di alimentazione richiedono power-profiles-daemon, assente su questo sistema.';
 
   @override
   String durationHoursMinutes(int hours, int minutes) {
@@ -1585,9 +1574,8 @@ class AppLocalizationsIt extends AppLocalizations {
   String get soundAlertPlay => 'Riproduci';
 
   @override
-  String soundEffectsPending(int issue) {
-    return 'La riproduzione degli effetti su un dispositivo scelto e il suono all’avvio non sono ancora disponibili (#$issue).';
-  }
+  String get soundEffectsPending =>
+      'La riproduzione degli effetti su un dispositivo scelto e il suono all’avvio non sono ancora disponibili.';
 
   @override
   String get soundNoService =>
@@ -1613,9 +1601,8 @@ class AppLocalizationsIt extends AppLocalizations {
       'Ancora nessuna modalità Focus. Aggiungine una per scegliere quali app e persone possono ancora raggiungerti.';
 
   @override
-  String focusModesNote(int issue) {
-    return 'Ogni Focus silenzia banner e suoni come Non disturbare. Lasciar passare le app consentite richiede la shell (#$issue).';
-  }
+  String get focusModesNote =>
+      'Ogni Focus silenzia banner e suoni come Non disturbare. Lasciar passare le app consentite richiede la shell.';
 
   @override
   String focusTurnOn(String name) {

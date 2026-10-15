@@ -142,7 +142,7 @@ class _FocusPaneState extends State<FocusPane> {
             SettingsGroup(
               heading: l.focusModesHeading,
               footer: [
-                l.focusModesNote(Issues.focus),
+                l.focusModesNote,
                 if (modes.length >= FocusMode.maxModes) l.focusTooMany,
               ].join(' '),
               children: [

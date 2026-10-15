@@ -379,22 +379,7 @@
       }
     }
   },
-  "notAvailableIssue": "Not available yet in Silica (silica-os/settings#{issue}).",
-  "@notAvailableIssue": {
-    "placeholders": {
-      "issue": {
-        "type": "int"
-      }
-    }
-  },
-  "appearanceOtherApps": "Settings uses this at once; the other apps follow once they read it (#{issue}).",
-  "@appearanceOtherApps": {
-    "placeholders": {
-      "issue": {
-        "type": "int"
-      }
-    }
-  },
+  "appearanceOtherApps": "Settings uses this at once; the other apps follow once they read it.",
   "appearanceSmall": "Small",
   "appearanceLarge": "Large",
   "appearanceScrollWhenScrolling": "While scrolling",
@@ -413,14 +398,7 @@
     }
   },
   "errorMissing": "The service this needs isn't installed on this system.",
-  "errorAuthentication": "The system wants an administrator's password for this, and Silica can't ask for it yet (#{issue}).",
-  "@errorAuthentication": {
-    "placeholders": {
-      "issue": {
-        "type": "int"
-      }
-    }
-  },
+  "errorAuthentication": "The system wants an administrator's password for this, and Silica can't ask for it yet.",
   "errorRefused": "The system refused the change: {detail}",
   "@errorRefused": {
     "placeholders": {
@@ -473,14 +451,7 @@
   "networkDisconnect": "Disconnect",
   "bluetoothDescription": "Use wireless headphones, keyboards, mice and other devices.",
   "bluetoothForget": "Forget This Device…",
-  "bluetoothPinNote": "Devices that ask for a PIN or a code can't be paired yet (#{issue}).",
-  "@bluetoothPinNote": {
-    "placeholders": {
-      "issue": {
-        "type": "int"
-      }
-    }
-  },
+  "bluetoothPinNote": "Devices that ask for a PIN or a code can't be paired yet.",
   "notificationsCenterHelp": "Notifications collect in the Notification Center at the top right of the screen. Click the clock in the menu bar to show or hide it.",
   "notificationsShowWhen": "Show notifications:",
   "notificationsAppsHelp": "Apps appear here once they send a notification.",
@@ -526,27 +497,13 @@
   "dockSmall": "Small",
   "dockLarge": "Large",
   "dockMagnificationSize": "Magnification size",
-  "dockLiveNote": "The Dock changes at once. The side positions, the title bar double click and minimizing into the app icon wait for the shell (#{issue}).",
-  "@dockLiveNote": {
-    "placeholders": {
-      "issue": {
-        "type": "int"
-      }
-    }
-  },
+  "dockLiveNote": "The Dock changes at once. The side positions, the title bar double click and minimizing into the app icon wait for the shell.",
   "dockLeft": "Left",
   "dockRight": "Right",
   "dockScale": "Scale effect",
   "desktopDefaultBrowser": "Default web browser",
   "wallpaperAllSpaces": "Show on all spaces",
-  "wallpaperNote": "The desktop shows a new wallpaper from the next login (#{issue}).",
-  "@wallpaperNote": {
-    "placeholders": {
-      "issue": {
-        "type": "int"
-      }
-    }
-  },
+  "wallpaperNote": "The desktop shows a new wallpaper from the next login.",
   "wallpaperShowAll": "Show all ({count})",
   "@wallpaperShowAll": {
     "placeholders": {
@@ -609,14 +566,7 @@
   "powerSaver": "Low power",
   "powerBalanced": "Automatic",
   "powerPerformance": "High performance",
-  "powerNoProfiles": "Power modes need power-profiles-daemon, which this system doesn't have (#{issue}).",
-  "@powerNoProfiles": {
-    "placeholders": {
-      "issue": {
-        "type": "int"
-      }
-    }
-  },
+  "powerNoProfiles": "Power modes need power-profiles-daemon, which this system doesn't have.",
   "durationHoursMinutes": "{hours} h {minutes} min",
   "@durationHoursMinutes": {
     "placeholders": {
@@ -680,22 +630,15 @@
   "trackpadDisableWhileTypingHelp": "Stops a palm resting on the trackpad from moving the pointer.",
   "appearanceAutoNote": "Automatic turns dark at sunset and back to light at sunrise, for the time zone's place.",
   "soundAlertPlay": "Play",
-  "soundEffectsPending": "Playing effects through a chosen device and a startup sound aren’t available yet (#{issue}).",
+  "soundEffectsPending": "Playing effects through a chosen device and a startup sound aren’t available yet.",
   "soundNoService": "The sound service isn’t running: these can’t be changed now.",
-  "@soundEffectsPending": {
-    "placeholders": {
-      "issue": {
-        "type": "int"
-      }
-    }
-  },
   "energyDisplayOff": "Turn the display off after",
   "energySleep": "Put the computer to sleep after",
   "energyInhibited": "The computer is being kept awake now.",
   "focusModesHeading": "Focus modes",
   "focusAdd": "Add Focus…",
   "focusNoModes": "No Focus modes yet. Add one to choose which apps and people can still reach you.",
-  "focusModesNote": "Every Focus silences banners and sounds like Do Not Disturb. Letting the allowed apps through needs the shell (#{issue}).",
+  "focusModesNote": "Every Focus silences banners and sounds like Do Not Disturb. Letting the allowed apps through needs the shell.",
   "focusTurnOn": "Turn on {name}",
   "focusEditTitle": "Edit Focus",
   "focusNewTitle": "New Focus",
@@ -711,13 +654,6 @@
   "focusDelete": "Delete Focus",
   "focusTooMany": "32 Focus modes is the most. Delete one to add another.",
   "focusSummary": "{apps, plural, =0{No apps} =1{1 app} other{{apps} apps}}, {people, plural, =0{no people} =1{1 person} other{{people} people}}",
-  "@focusModesNote": {
-    "placeholders": {
-      "issue": {
-        "type": "int"
-      }
-    }
-  },
   "@focusTurnOn": {
     "placeholders": {
       "name": {
