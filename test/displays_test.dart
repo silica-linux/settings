@@ -6,7 +6,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:silica_settings/src/model/panes.dart';
 import 'package:silica_settings/src/system/displays.dart';
 import 'package:silica_settings/src/system/system.dart';
-import 'package:silica_settings/src/ui/popup.dart';
 import 'package:silica_ui/silica_ui.dart';
 
 import 'fakes.dart';

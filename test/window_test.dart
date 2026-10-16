@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:silica_settings/src/model/panes.dart';
 import 'package:silica_settings/src/style.dart';
 import 'package:silica_settings/src/system/system.dart';
+import 'package:silica_settings/src/ui/symbol.dart';
 
 import 'fakes.dart';
 
@@ -61,6 +62,33 @@ void main() {
     expect(tester.getTopLeft(find.byKey(const ValueKey('title'))).dx, 348);
     // The window's content starts at x 260; the sidebar's edge is the 1 pt line there.
     expect(SettingsMetrics.sidebarWidth, 260);
+  });
+
+  testWidgets('the sidebar rows and the account cell match the kit masters', (
+    tester,
+  ) async {
+    await pumpSettings(tester);
+    // `Sidebar Row/Rest`: the 20 pt tile at x 8 of the row (the row at x 10), the label at
+    // x 36; `Sidebar Rows`: the blocks 12 apart on top of the 32 pt pitch.
+    final row = find.byKey(const ValueKey('pane wifi'));
+    final tile = find.descendant(of: row, matching: find.byType(IconTile));
+    expect(tester.getTopLeft(tile), const Offset(10 + 8, 156 + 6));
+    expect(tester.getSize(tile), const Size(20, 20));
+    expect(
+      tester
+          .getTopLeft(find.descendant(of: row, matching: find.text('Wi-Fi')))
+          .dx,
+      10 + 36,
+    );
+    final general = tester.getTopLeft(
+      find.byKey(const ValueKey('pane general')),
+    );
+    expect(general.dy, 156 + 5 * 32 + 12);
+    // `Account avatar`: 36 at (12, 100), the name at x 60.
+    final cell = find.byKey(const ValueKey('account cell'));
+    expect(tester.getTopLeft(cell).dy, 100);
+    expect(tester.getSize(cell).height, 36);
+    expect(tester.getTopLeft(find.text('Local account')).dx, 60);
   });
 
   testWidgets('the measured grouped list: inset 20, rows 52 (kit General)', (

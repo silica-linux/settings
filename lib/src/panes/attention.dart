@@ -509,16 +509,16 @@ class _SoundPaneState extends State<SoundPane> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(10),
-                        child: LayoutBuilder(
-                          builder: (context, c) => SegmentedControl(
+                        child: Center(
+                          child: AmalfiSegmentedControl(
                             key: const ValueKey('output input'),
                             segments: [
-                              Segment(label: l.soundOutput),
-                              Segment(label: l.soundInput),
+                              AmalfiSegment.text(l.soundOutput),
+                              AmalfiSegment.text(l.soundInput),
                             ],
                             selected: {_input ? 1 : 0},
-                            segmentWidth: (c.maxWidth - 4) / 2,
-                            onChanged: (i) => setState(() => _input = i == 1),
+                            onChanged: (s) =>
+                                setState(() => _input = s.contains(1)),
                           ),
                         ),
                       ),
@@ -706,15 +706,10 @@ class _DeviceTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = SettingsColors.of(context);
-    final header = colors.dark
-        ? const Color(0xFF353536)
-        : const Color(0xFFEFEFEF);
-    final stripe = colors.dark
-        ? const Color(0xFF303031)
-        : const Color(0xFFF2F2F2);
-    final chosen = colors.dark
-        ? const Color(0xFF464647)
-        : const Color(0xFFDCDCDC);
+    final tokens = AmalfiTheme.of(context).colors;
+    final header = tokens.surfaceSunken;
+    final stripe = tokens.surfaceWindow;
+    final chosen = tokens.accentAmalfiSoft;
     Widget row(String a, String b, TextStyle style) => Row(
       children: [
         Expanded(

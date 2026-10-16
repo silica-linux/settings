@@ -631,16 +631,15 @@ class _ChoiceSheetState extends State<_ChoiceSheet> {
               style: settingsText(13, colors.text, weight: FontWeight.w600),
             ),
             const SizedBox(height: 10),
-            SilicaSearchField(
+            AmalfiSearchField(
               key: const ValueKey('choice search'),
-              labels: SearchFieldLabels(
-                placeholder: l.searchPlaceholder,
-                clear: l.searchClear,
-              ),
+              placeholder: l.searchPlaceholder,
+              clearLabel: l.searchClear,
               controller: _query,
               autofocus: true,
+              width: double.infinity,
               onChanged: (_) => setState(() {}),
-              onCancel: () => setState(_query.clear),
+              onCleared: () => setState(_query.clear),
             ),
             const SizedBox(height: 10),
             Expanded(
