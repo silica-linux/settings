@@ -14,9 +14,9 @@ abstract final class DockSizes {
   static const double tileMax = 128;
   static const double tileDefault = 48;
 
-  /// The magnified icon is at most 132 / 63 times the resting one (the shell's
-  /// `maxMagnification`), and never smaller than it.
-  static const double maxRatio = 132 / 63;
+  /// The magnified icon grows up to 128 pt (Amalfi Dock, design decision 2026-10-16),
+  /// and never below the resting size.
+  static const double magnifiedMax = 128;
   static const double magnifiedDefault = 52;
 
   /// Whole points, inside [tileMin, tileMax].
@@ -24,9 +24,9 @@ abstract final class DockSizes {
       ? value.clamp(tileMin, tileMax).round()
       : tileDefault.round();
 
-  /// Whole points, from the resting size to [maxRatio] times it.
+  /// Whole points, from the resting size to [magnifiedMax].
   static int magnified(double value, int tile) => value.isFinite
-      ? value.clamp(tile.toDouble(), (tile * maxRatio).floorToDouble()).round()
+      ? value.clamp(tile.toDouble(), magnifiedMax).round()
       : tile;
 }
 

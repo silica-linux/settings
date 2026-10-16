@@ -30,7 +30,7 @@ void main() {
         c.writeDockSizes(tile: 500, magnified: 1);
         expect(file(c, 'dock'), {'tileSize': 128, 'magnifiedSize': 128});
         c.writeDockSizes(tile: 48, magnified: 1000);
-        expect((file(c, 'dock') as Map)['magnifiedSize'], 100);
+        expect((file(c, 'dock') as Map)['magnifiedSize'], 128);
       },
     );
 
@@ -126,7 +126,7 @@ void main() {
       }
       expect(file(h.config, 'dock'), {
         'minimizeEffect': 'scale',
-        'magnify': false,
+        'magnify': true,
         'autohide': true,
         'indicators': false,
       });

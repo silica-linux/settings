@@ -341,7 +341,7 @@ class _DesktopDockPaneState extends State<DesktopDockPane> {
             SwitchRow(
               key: const ValueKey('dock magnify'),
               title: l.dockMagnification,
-              value: flag('magnify', true),
+              value: flag('magnify', false),
               onChanged: (v) => set('magnify', v),
             ),
             SwitchRow(

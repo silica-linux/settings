@@ -14,7 +14,7 @@ void main() {
     testWidgets('the switches write dock.json', (tester) async {
       final h = await pumpSettings(tester, pane: PaneId.desktopDock);
       for (final (key, option, value) in [
-        ('dock magnify', 'magnify', false),
+        ('dock magnify', 'magnify', true),
         ('dock autohide', 'autohide', true),
         ('dock indicators', 'indicators', false),
         ('dock recents', 'recents', true),
