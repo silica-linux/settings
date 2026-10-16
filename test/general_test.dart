@@ -152,7 +152,9 @@ void main() {
 
     group('without the polkit agent (#69)', () {
       bool enabled(WidgetTester tester, String key) =>
-          tester.widget<SilicaButton>(find.byKey(ValueKey(key))).onPressed !=
+          tester
+              .widget<AmalfiPushButton>(find.byKey(ValueKey(key)))
+              .onPressed !=
           null;
 
       testWidgets('time zone and automatic time wait for the agent', (
@@ -171,7 +173,7 @@ void main() {
         await settle(tester);
         expect(enabled(tester, 'change time zone'), isFalse);
         expect(
-          tester.widget<SilicaSwitch>(switchIn('automatic time')).onChanged,
+          tester.widget<AmalfiSwitch>(switchIn('automatic time')).onChanged,
           isNull,
         );
         expect(find.textContaining('administrator'), findsWidgets);
@@ -179,7 +181,7 @@ void main() {
         await settle(tester);
         expect(enabled(tester, 'change time zone'), isTrue);
         expect(
-          tester.widget<SilicaSwitch>(switchIn('automatic time')).onChanged,
+          tester.widget<AmalfiSwitch>(switchIn('automatic time')).onChanged,
           isNotNull,
         );
         expect(find.textContaining('administrator'), findsNothing);

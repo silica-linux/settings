@@ -56,7 +56,8 @@ void main() {
       await tapKey(tester, 'audio 51');
       await settle(tester);
       expect(h.tools.calls, contains('defaultAudio 51'));
-      await tester.drag(
+      await dragSlider(
+        tester,
         find.byKey(const ValueKey('output volume')),
         const Offset(40, 0),
       );
@@ -75,7 +76,8 @@ void main() {
           tools: audioTools(),
         );
         await settle(tester);
-        await tester.drag(
+        await dragSlider(
+          tester,
           find.byKey(const ValueKey('output volume')),
           const Offset(40, 0),
         );
@@ -102,7 +104,8 @@ void main() {
       await settle(tester);
       expect(find.text('USB Microphone'), findsOneWidget);
       expect(find.text('USB'), findsOneWidget);
-      await tester.drag(
+      await dragSlider(
+        tester,
         find.byKey(const ValueKey('input volume')),
         const Offset(-40, 0),
       );
@@ -138,20 +141,20 @@ void main() {
       );
       expect(
         tester
-            .widget<SilicaButton>(find.byKey(const ValueKey('play alert')))
+            .widget<AmalfiPushButton>(find.byKey(const ValueKey('play alert')))
             .onPressed,
         isNull,
       );
       expect(
-        tester.widget<SilicaSwitch>(switchIn('volume feedback')).onChanged,
+        tester.widget<AmalfiSwitch>(switchIn('volume feedback')).onChanged,
         isNull,
       );
       expect(
         tester
-            .widget<SilicaSlider>(
+            .widget<AmalfiSlider>(
               find.descendant(
                 of: find.byKey(const ValueKey('alert volume')),
-                matching: find.byType(SilicaSlider),
+                matching: find.byType(AmalfiSlider),
               ),
             )
             .onChanged,
@@ -183,10 +186,11 @@ void main() {
       expect(system.calls.last, 'playAlert alert-woodblock');
       // The volume is saved and the alert plays at it once the slider is let go.
       system.calls.clear();
-      await tester.drag(
+      await dragSlider(
+        tester,
         find.descendant(
           of: find.byKey(const ValueKey('alert volume')),
-          matching: find.byType(SilicaSlider),
+          matching: find.byType(AmalfiSlider),
         ),
         const Offset(-400, 0),
       );
@@ -283,7 +287,7 @@ void main() {
       // Done waits for a name.
       expect(
         tester
-            .widget<SilicaButton>(find.byKey(const ValueKey('focus done')))
+            .widget<AmalfiPushButton>(find.byKey(const ValueKey('focus done')))
             .onPressed,
         isNull,
       );
@@ -293,7 +297,7 @@ void main() {
       await tester.tap(
         find.descendant(
           of: find.byKey(const ValueKey('focus app firefox')),
-          matching: find.byType(SilicaCheckbox),
+          matching: find.byType(AmalfiCheckbox),
         ),
       );
       await tester.pump();
@@ -381,7 +385,7 @@ void main() {
       await tester.tap(
         find.descendant(
           of: find.byKey(const ValueKey('focus app firefox')),
-          matching: find.byType(SilicaCheckbox),
+          matching: find.byType(AmalfiCheckbox),
         ),
       );
       await tester.pump();

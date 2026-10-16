@@ -5,77 +5,80 @@ import 'package:flutter/widgets.dart';
 import 'package:silica_ui/silica_ui.dart';
 
 abstract final class SettingsMetrics {
-  /// The window: 832 wide, fixed; 727 tall by default (ST-NAV-01).
+  /// The window: 832 wide, fixed; 780 tall by default (kit `Apps/Settings/<pane>`).
   static const double windowWidth = 832;
-  static const double windowHeight = 727;
+  static const double windowHeight = 780;
 
   /// The shortest window that still shows the toolbar and a few rows (provisional).
   static const double minHeight = 400;
 
-  /// Sidebar width: the content starts at x 261, with no line between them (ST-NAV-02).
-  static const double sidebarWidth = 261;
+  /// Sidebar width 260, its trailing 1 pt separator inside it: the content starts at x 261
+  /// (kit `Apps/Settings/*`: sidebar surface 260, separator at x 260).
+  static const double sidebarWidth = 260;
 
-  /// The search field: 242 × 28, 9 from the sidebar's left edge, its top 60 below the
-  /// window's (ST-NAV-02).
-  static const double searchWidth = 242;
+  /// The search field: 240 × 28 at (10, 60) (kit `Search`, Fields/Search Field/Regular).
+  static const double searchWidth = 240;
   static const double searchHeight = 28;
   static const double searchTop = 60;
-  static const double searchLeft = 9;
+  static const double searchLeft = 10;
 
-  /// The account cell under the search field: top at 98, 44 tall (ST-NAV-02).
-  static const double accountTop = 98;
-  static const double accountHeight = 44;
+  /// The account cell: avatar 36 at (12, 100), name at x 60 (kit `Account avatar`).
+  static const double accountTop = 100;
+  static const double accountHeight = 36;
+  static const double accountAvatar = 36;
 
-  /// The first pane row starts 157 below the window's top (ST-NAV-02).
-  static const double paneListTop = 157;
+  /// The first pane row starts 156 below the window's top (kit `Sidebar list`).
+  static const double paneListTop = 156;
 
-  /// Sidebar rows: pitch 32, the selection capsule as tall as the pitch, radius 8, 10 from
-  /// both sidebar edges; the icon 20 pt at x 19, the label 7 after it (ST-NAV-02).
+  /// Sidebar rows (kit `Sidebar Row/*`): 32 tall on a pitch of 32, the selection capsule
+  /// 240 wide (10 from both edges), radius 8; the 20 pt tile at x 8 inside the row (radius 5,
+  /// glyph 12), the label at x 36. Blocks are 12 apart on top of the pitch.
   static const double rowPitch = 32;
   static const double rowInset = 10;
   static const double selectionRadius = 8;
-  static const double rowIconLeft = 9;
-  static const double rowIconGap = 7;
-  static const double groupGap = 13;
+  static const double rowIconLeft = 8;
+  static const double rowIconGap = 8;
+  static const double groupGap = 12;
 
-  /// The icon square of a sidebar row: 20, radius 5 (radius provisional).
+  /// The icon tile of a sidebar row: 20, radius 5.
   static const double iconSize = 20;
   static const double iconRadius = 5;
 
-  /// The back / forward capsule: two 36 pt segments at x 269 (ST-NAV-01).
-  static const double navX = 269;
-  static const double navSegment = 36;
+  /// The back / forward capsule: two 32 pt segments (the Nav piece) at x 268 (kit
+  /// `Back and forward`).
+  static const double navX = 268;
+  static const double navSegment = 32;
 
-  /// Grouped lists (ST-NAV-04): inset 20 from the content's sides and 12 under the toolbar;
-  /// navigation rows 48 (pitch 49), value rows 37 (pitch 38), 10 between groups; a heading
-  /// leaves 32 above its text (22 more than a group gap) and 10 below.
+  /// Grouped lists (kit `Apps/Settings/Row/*`): inset 20 from the content's sides, 12 between
+  /// groups; navigation rows 52, value rows 40, text rows 52, check rows 36.
   static const double listInset = 20;
-  static const double pageTop = 12;
-  static const double navRowHeight = 48;
-  static const double valueRowHeight = 37;
-  static const double groupSpacing = 10;
-  static const double headingAbove = 22;
-  static const double headingBelow = 10;
+  static const double pageTop = 16;
+  static const double navRowHeight = 52;
+  static const double valueRowHeight = 44;
+  static const double checkRowHeight = 48;
+  static const double groupSpacing = 12;
+  static const double headingAbove = 11;
+  static const double headingBelow = 11;
 
-  /// Group corners: radius 10 (ST-NAV-04, from the corner's antialiasing).
-  static const double groupRadius = 10;
+  /// Group corners: radius 12 (kit `Group`).
+  static const double groupRadius = 12;
 
-  /// Row text starts 10 from the group's edge; separators are inset 10 on both sides;
-  /// switches end 10 from the trailing edge, pop-up chevron badges 12 (ST-NAV-04).
-  static const double rowTextInset = 10;
-  static const double trailingInset = 10;
-  static const double separatorInset = 10;
+  /// Row text starts 12 from the group's edge; separators are inset 12 on both sides;
+  /// controls end 12 from the trailing edge.
+  static const double rowTextInset = 12;
+  static const double trailingInset = 12;
+  static const double separatorInset = 12;
 
-  /// Navigation rows: a 24 pt icon square 12 from the edge, the title 12 after it (ST-NAV-04).
+  /// Navigation rows: a 24 pt tile (radius 6) 12 from the edge, the title at x 48.
   static const double navIconSize = 24;
   static const double navIconLeft = 12;
   static const double navIconGap = 12;
 
-  /// Section headings: bold 13 above their group.
+  /// Section headings: Body Emphasis 13.
   static const double headingSize = 13;
 }
 
-/// The colours of the window in one appearance.
+/// The colours of the window in one appearance, from the Amalfi tokens.
 @immutable
 class SettingsColors {
   const SettingsColors({
@@ -94,65 +97,56 @@ class SettingsColors {
 
   final bool dark;
 
-  /// Sidebar material: `#ececec` / `#2a2a2b` as measured over the reference desktop
-  /// (translucent there; solid here until the window can ask Ossido for glass behind it).
+  /// `Surface/Sidebar`.
   final Color sidebar;
 
-  /// Content background `#ffffff` / `#272728`.
+  /// `Surface/Window`.
   final Color content;
 
-  /// Group fill `#f7f7f7` / `#2d2d2e`.
+  /// The group fill: `Surface/Sidebar` (kit `Group`).
   final Color group;
 
-  /// Row separator `#ebebeb` / `#373738` (ST-NAV-04).
+  /// `Line/Separator`.
   final Color separator;
   final Color text;
 
-  /// Secondary text (provisional grays).
+  /// `Text/Secondary`.
   final Color secondary;
+
+  /// `Text/Tertiary`.
   final Color disabled;
 
-  /// The sidebar selection with the default accent: `#2565f1` / `#296ffb` (ST-NAV-02).
+  /// `Accent/Amalfi`, the default sidebar selection.
   final Color selection;
 
-  /// The chevron badge of a form pop-up: a 20 pt circle (provisional shade).
+  /// `Surface/Control`, the chevron badge.
   final Color badge;
 
-  /// The selected row of an inactive window (provisional, the list gray of the file manager).
+  /// The selected row of an inactive window: `Line/Separator`.
   final Color inactiveSelection;
 
-  static const light = SettingsColors(
-    dark: false,
-    sidebar: Color(0xFFECECEC),
-    content: Color(0xFFFFFFFF),
-    group: Color(0xFFF7F7F7),
-    separator: Color(0xFFEBEBEB),
-    text: Color(0xFF1D1D1F),
-    secondary: Color(0xFF808080),
-    disabled: Color(0xFFB0B0B0),
-    selection: Color(0xFF2565F1),
-    badge: Color(0xFFE6E6E6),
-    inactiveSelection: Color(0xFFDCDCDC),
-  );
+  static SettingsColors forBrightness(Brightness brightness) {
+    final c = AmalfiColors.of(brightness);
+    return SettingsColors(
+      dark: brightness == Brightness.dark,
+      sidebar: c.surfaceSidebar,
+      content: c.surfaceWindow,
+      group: c.surfaceSidebar,
+      separator: c.lineSeparator,
+      text: c.textPrimary,
+      secondary: c.textSecondary,
+      disabled: c.textTertiary,
+      selection: c.accentAmalfi,
+      badge: c.surfaceControl,
+      inactiveSelection: c.lineSeparator,
+    );
+  }
 
-  static const darkColors = SettingsColors(
-    dark: true,
-    sidebar: Color(0xFF2A2A2B),
-    content: Color(0xFF272728),
-    group: Color(0xFF2D2D2E),
-    separator: Color(0xFF373738),
-    text: Color(0xFFE5E5E7),
-    secondary: Color(0xFF9A9A9E),
-    disabled: Color(0xFF6A6A6D),
-    selection: Color(0xFF296FFB),
-    badge: Color(0xFF424243),
-    inactiveSelection: Color(0xFF464646),
-  );
+  static final light = forBrightness(Brightness.light);
+  static final darkColors = forBrightness(Brightness.dark);
 
   static SettingsColors of(BuildContext context) =>
-      MediaQuery.maybePlatformBrightnessOf(context) == Brightness.dark
-      ? darkColors
-      : light;
+      AmalfiTheme.of(context).isDark ? darkColors : light;
 }
 
 TextStyle settingsText(

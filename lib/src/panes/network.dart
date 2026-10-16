@@ -92,10 +92,10 @@ class _SwitchCard extends StatelessWidget {
                 child: RowTitles(title: title, subtitle: description),
               ),
               const SizedBox(width: 12),
-              SilicaSwitch(
+              AmalfiSwitch(
                 key: switchKey,
                 value: value,
-                size: ControlSize.small,
+                size: AmalfiControlSize.small,
                 semanticLabel: title,
                 onChanged: onChanged,
               ),
@@ -292,10 +292,10 @@ class _WifiPaneState extends State<WifiPane> {
                             strength: current.strength,
                           ),
                           const SizedBox(width: 10),
-                          SilicaButton(
+                          AmalfiPushButton(
                             key: const ValueKey('wifi details'),
                             label: l.detailsButton,
-                            size: ControlSize.small,
+                            size: AmalfiControlSize.small,
                             onPressed: () async {
                               await showWifiDetails(
                                 context,
@@ -334,7 +334,7 @@ class _WifiPaneState extends State<WifiPane> {
                       if (_scanning)
                         const Padding(
                           padding: EdgeInsets.only(right: 10, top: 12),
-                          child: SilicaSpinner(size: 14),
+                          child: AmalfiSpinner(size: AmalfiProgressSize.small),
                         ),
                     ],
                   ),
@@ -363,10 +363,10 @@ class _WifiPaneState extends State<WifiPane> {
                   const SizedBox(height: SettingsMetrics.groupSpacing),
                   ButtonBar(
                     buttons: [
-                      SilicaButton(
+                      AmalfiPushButton(
                         key: const ValueKey('wifi other'),
                         label: l.wifiOther,
-                        size: ControlSize.small,
+                        size: AmalfiControlSize.small,
                         onPressed: () async {
                           await showJoinSheet(
                             context,
@@ -555,7 +555,7 @@ class _JoinSheetState extends State<_JoinSheet> {
             if (widget.ssid == null)
               field(
                 l.wifiNetworkName,
-                SilicaTextField(
+                AmalfiTextField(
                   key: const ValueKey('join name'),
                   controller: _name,
                   autofocus: true,
@@ -565,10 +565,10 @@ class _JoinSheetState extends State<_JoinSheet> {
               ),
             field(
               l.wifiPassword,
-              SilicaTextField(
+              AmalfiTextField(
                 key: const ValueKey('join password'),
                 controller: _password,
-                secure: true,
+                obscureText: true,
                 autofocus: widget.ssid != null,
                 semanticLabel: l.wifiPassword,
                 onSubmitted: (_) => _join(),
@@ -586,14 +586,14 @@ class _JoinSheetState extends State<_JoinSheet> {
             const SizedBox(height: 18),
             Row(
               children: [
-                if (_busy) const SilicaSpinner(size: 16),
+                if (_busy) const AmalfiSpinner(size: AmalfiProgressSize.small),
                 const Spacer(),
-                SilicaButton(label: l.cancel, onPressed: widget.close),
+                AmalfiPushButton(label: l.cancel, onPressed: widget.close),
                 const SizedBox(width: 8),
-                SilicaButton(
+                AmalfiPushButton(
                   key: const ValueKey('join'),
                   label: l.wifiJoin,
-                  role: ButtonRole.primary,
+                  variant: AmalfiPushButtonVariant.primary,
                   onPressed: _busy || _ssid.isEmpty ? null : _join,
                 ),
               ],
@@ -765,7 +765,7 @@ class _WifiDetailsState extends State<_WifiDetails> {
             const SizedBox(height: 16),
             Row(
               children: [
-                SilicaButton(
+                AmalfiPushButton(
                   key: const ValueKey('forget network'),
                   label: l.wifiForget,
                   onPressed: saved == null
@@ -776,10 +776,10 @@ class _WifiDetailsState extends State<_WifiDetails> {
                         ),
                 ),
                 const Spacer(),
-                SilicaButton(
+                AmalfiPushButton(
                   key: const ValueKey('details ok'),
                   label: l.ok,
-                  role: ButtonRole.primary,
+                  variant: AmalfiPushButtonVariant.primary,
                   onPressed: widget.close,
                 ),
               ],
@@ -934,13 +934,15 @@ class _BluetoothPaneState extends State<BluetoothPane> {
                           if (_busy.contains(p.path))
                             const Padding(
                               padding: EdgeInsets.only(right: 8),
-                              child: SilicaSpinner(size: 14),
+                              child: AmalfiSpinner(
+                                size: AmalfiProgressSize.small,
+                              ),
                             ),
-                          SilicaButton(
+                          AmalfiPushButton(
                             label: p.connected
                                 ? l.bluetoothDisconnect
                                 : l.bluetoothConnect,
-                            size: ControlSize.small,
+                            size: AmalfiControlSize.small,
                             onPressed: _busy.contains(p.path)
                                 ? null
                                 : () => _run(
@@ -976,7 +978,7 @@ class _BluetoothPaneState extends State<BluetoothPane> {
                       Expanded(child: SectionHeading(l.bluetoothNearby)),
                       const Padding(
                         padding: EdgeInsets.only(right: 10, top: 12),
-                        child: SilicaSpinner(size: 14),
+                        child: AmalfiSpinner(size: AmalfiProgressSize.small),
                       ),
                     ],
                   ),
@@ -994,10 +996,12 @@ class _BluetoothPaneState extends State<BluetoothPane> {
                             leading: icon(p),
                             height: 44,
                             trailing: _busy.contains(p.path)
-                                ? const SilicaSpinner(size: 14)
-                                : SilicaButton(
+                                ? const AmalfiSpinner(
+                                    size: AmalfiProgressSize.small,
+                                  )
+                                : AmalfiPushButton(
                                     label: l.bluetoothConnect,
-                                    size: ControlSize.small,
+                                    size: AmalfiControlSize.small,
                                     onPressed: () => _run(
                                       p.path,
                                       tools.pairBluetooth(p.path),
@@ -1281,7 +1285,7 @@ class _ServiceDetailsState extends State<_ServiceDetails> {
             Row(
               children: [
                 if (d.connected)
-                  SilicaButton(
+                  AmalfiPushButton(
                     key: const ValueKey('service disconnect'),
                     label: l.networkDisconnect,
                     onPressed: () async {
@@ -1295,9 +1299,9 @@ class _ServiceDetailsState extends State<_ServiceDetails> {
                     },
                   ),
                 const Spacer(),
-                SilicaButton(
+                AmalfiPushButton(
                   label: l.ok,
-                  role: ButtonRole.primary,
+                  variant: AmalfiPushButtonVariant.primary,
                   onPressed: widget.close,
                 ),
               ],
@@ -1359,9 +1363,9 @@ class _VpnPaneState extends State<VpnPane> {
                       color: v.active ? StatusLine.green : StatusLine.gray,
                     ),
                     const SizedBox(width: 12),
-                    SilicaSwitch(
+                    AmalfiSwitch(
                       value: v.active,
-                      size: ControlSize.mini,
+                      size: AmalfiControlSize.mini,
                       semanticLabel: v.name,
                       onChanged: _busy.contains(v.name)
                           ? null

@@ -56,11 +56,7 @@ class _ControlRow extends StatelessWidget {
       padding: const EdgeInsets.only(left: 10, right: 10),
       child: Row(
         children: [
-          SilicaCheckbox(
-            value: checked,
-            size: ControlSize.small,
-            onChanged: onChecked,
-          ),
+          AmalfiCheckbox(value: checked, onChanged: onChecked),
           const SizedBox(width: 10),
           IconTile(symbol: symbol, tint: tint, size: 20),
           const SizedBox(width: 8),
@@ -144,7 +140,7 @@ class _MenuBarPaneState extends State<MenuBarPane> {
                 ),
                 trailing: sound == SoundItem.never
                     ? null
-                    : FormPopUp<SoundItem>(
+                    : SettingsPopUp<SoundItem>(
                         key: const ValueKey('menubar sound when'),
                         items: [
                           PopUpItem(SoundItem.always, l.menuBarAlways),
@@ -478,16 +474,16 @@ class _DesktopDockPaneState extends State<DesktopDockPane> {
         ),
         ButtonBar(
           buttons: [
-            SilicaButton(
+            AmalfiPushButton(
               key: const ValueKey('dock shortcuts'),
               label: l.dockShortcutsButton,
-              size: ControlSize.small,
+              size: AmalfiControlSize.small,
               onPressed: () => showShortcuts(context),
             ),
-            SilicaButton(
+            AmalfiPushButton(
               key: const ValueKey('hot corners'),
               label: l.dockHotCorners,
-              size: ControlSize.small,
+              size: AmalfiControlSize.small,
               onPressed: () => showHotCorners(context),
             ),
           ],
@@ -564,10 +560,10 @@ Future<void> showHotCorners(BuildContext context) {
                       style: settingsText(11, colors.secondary),
                     ),
                   ),
-                  SilicaButton(
+                  AmalfiPushButton(
                     key: const ValueKey('hot corners done'),
                     label: l.done,
-                    role: ButtonRole.primary,
+                    variant: AmalfiPushButtonVariant.primary,
                     onPressed: sheet.close,
                   ),
                 ],
@@ -716,7 +712,7 @@ class _WallpaperPaneState extends State<WallpaperPane> {
                   ValueRow(
                     title: _name(l, current),
                     trailing: Unavailable(
-                      child: FormPopUp<int>(
+                      child: SettingsPopUp<int>(
                         items: [PopUpItem(0, l.wallpaperFill)],
                         value: 0,
                         onChanged: (_) {},
@@ -741,9 +737,9 @@ class _WallpaperPaneState extends State<WallpaperPane> {
             ),
             const SizedBox(width: 10),
             Unavailable(
-              child: SilicaButton(
+              child: AmalfiPushButton(
                 label: l.wallpaperScreenSaver,
-                size: ControlSize.small,
+                size: AmalfiControlSize.small,
                 onPressed: () {},
               ),
             ),

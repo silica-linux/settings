@@ -229,10 +229,10 @@ class _NotificationAppPaneState extends State<NotificationAppPane> {
                 Expanded(
                   child: RowTitles(title: l.notificationsAllow, subtitle: name),
                 ),
-                SilicaSwitch(
+                AmalfiSwitch(
                   key: const ValueKey('allow notifications'),
                   value: style != BannerStyle.none,
-                  size: ControlSize.small,
+                  size: AmalfiControlSize.small,
                   semanticLabel: l.notificationsAllow,
                   onChanged: (on) => set(on ? _lastShown : BannerStyle.none),
                 ),
@@ -246,7 +246,7 @@ class _NotificationAppPaneState extends State<NotificationAppPane> {
             ValueRow(
               title: l.notificationsAlertStyle,
               alignTop: true,
-              trailing: SilicaRadioGroup<BannerStyle>(
+              trailing: SettingsRadioGroup<BannerStyle>(
                 key: const ValueKey('alert style'),
                 options: [
                   RadioOption(
@@ -376,16 +376,16 @@ class _SoundPaneState extends State<SoundPane> {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SilicaButton(
+          AmalfiPushButton(
             key: const ValueKey('play alert'),
             label: l.soundAlertPlay,
-            size: ControlSize.small,
+            size: AmalfiControlSize.small,
             onPressed: names.isEmpty
                 ? null
                 : () => services.system.playAlert(saved),
           ),
           const SizedBox(width: 10),
-          FormPopUp<String>(
+          SettingsPopUp<String>(
             items: [
               for (final name in names) PopUpItem(name, alertLabel(name)),
             ],
@@ -550,11 +550,11 @@ class _SoundPaneState extends State<SoundPane> {
                         value: state.volume,
                         enabled: state.audioAvailable,
                         onChanged: (v) => system.setVolume(v),
-                        mute: SilicaCheckbox(
+                        mute: AmalfiCheckbox(
                           key: const ValueKey('mute'),
                           value: state.muted,
                           label: l.soundMute,
-                          size: ControlSize.small,
+
                           onChanged: state.audioAvailable
                               ? (v) => system.setMuted(v)
                               : null,
@@ -573,11 +573,11 @@ class _SoundPaneState extends State<SoundPane> {
                           setState(() => _outputVolume = null);
                           _load();
                         },
-                        mute: SilicaCheckbox(
+                        mute: AmalfiCheckbox(
                           key: const ValueKey('mute'),
                           value: output.muted,
                           label: l.soundMute,
-                          size: ControlSize.small,
+
                           onChanged: (v) =>
                               _run(tools.setAudioMuted(output.id, v)),
                         ),
@@ -598,11 +598,11 @@ class _SoundPaneState extends State<SoundPane> {
                     setState(() => _inputVolume = null);
                     _load();
                   },
-                  mute: SilicaCheckbox(
+                  mute: AmalfiCheckbox(
                     key: const ValueKey('input mute'),
                     value: input?.muted ?? false,
                     label: l.soundMute,
-                    size: ControlSize.small,
+
                     onChanged: input == null
                         ? null
                         : (v) => _run(tools.setAudioMuted(input.id, v)),
@@ -662,7 +662,7 @@ class _VolumeRow extends StatelessWidget {
                 children: [
                   SettingsSymbol('volume-0', color: colors.secondary, size: 12),
                   const SizedBox(width: 6),
-                  SilicaSlider(
+                  LabelledSlider(
                     key: sliderKey,
                     value: value.clamp(0, 1),
                     width: 240,

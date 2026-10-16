@@ -137,7 +137,7 @@ void main() {
       await tester.tap(
         find.descendant(
           of: find.byKey(const ValueKey('menubar bluetooth')),
-          matching: find.byType(SilicaCheckbox),
+          matching: find.byType(AmalfiCheckbox),
         ),
       );
       await tester.pump();

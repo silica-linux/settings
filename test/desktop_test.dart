@@ -32,7 +32,7 @@ void main() {
       final h = await pumpSettings(tester, pane: PaneId.desktopDock);
       final slider = find.descendant(
         of: find.byKey(const ValueKey('dock size')),
-        matching: find.byType(SilicaSlider),
+        matching: find.byType(AmalfiSlider),
       );
       await tester.ensureVisible(slider);
       expect(h.config.number('dock', 'tileSize', fallback: -1), -1);
@@ -56,10 +56,10 @@ void main() {
 
     testWidgets('Magnification size needs Magnification', (tester) async {
       final h = await pumpSettings(tester, pane: PaneId.desktopDock);
-      SilicaSlider magnified() => tester.widget<SilicaSlider>(
+      AmalfiSlider magnified() => tester.widget<AmalfiSlider>(
         find.descendant(
           of: find.byKey(const ValueKey('dock magnification size')),
-          matching: find.byType(SilicaSlider),
+          matching: find.byType(AmalfiSlider),
         ),
       );
       await tester.ensureVisible(
@@ -77,10 +77,10 @@ void main() {
       tester,
     ) async {
       final h = await pumpSettings(tester, pane: PaneId.desktopDock);
-      SilicaSlider size() => tester.widget<SilicaSlider>(
+      AmalfiSlider size() => tester.widget<AmalfiSlider>(
         find.descendant(
           of: find.byKey(const ValueKey('dock size')),
-          matching: find.byType(SilicaSlider),
+          matching: find.byType(AmalfiSlider),
         ),
       );
       expect(size().value, 60);
@@ -134,7 +134,7 @@ void main() {
     final h = await pumpSettings(tester, pane: PaneId.menuBar);
     Finder check(String key) => find.descendant(
       of: find.byKey(ValueKey(key)),
-      matching: find.byType(SilicaCheckbox),
+      matching: find.byType(AmalfiCheckbox),
     );
     await tester.tap(check('menubar bluetooth'));
     await tester.pump();

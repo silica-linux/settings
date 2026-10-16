@@ -153,10 +153,10 @@ void main() {
       final system = daemonWith([panel(enabled: false)]);
       await open(tester, system);
       expect(find.textContaining('Only the display in use'), findsOneWidget);
-      final resolution = tester.widget<FormPopUp<String>>(
+      final resolution = tester.widget<AmalfiPopUpButton<String>>(
         find.descendant(
           of: find.byKey(const ValueKey('display resolution')),
-          matching: find.byType(FormPopUp<String>),
+          matching: find.byType(AmalfiPopUpButton<String>),
         ),
       );
       expect(resolution.onChanged, isNull);
@@ -237,10 +237,11 @@ void main() {
       await settle(tester);
       expect(system.calls.last, 'setNightLight schedule sunset');
       // Only the end of the drag is sent; fully to the warm end is 1900 K.
-      await tester.drag(
+      await dragSlider(
+        tester,
         find.descendant(
           of: find.byKey(const ValueKey('night temperature')),
-          matching: find.byType(SilicaSlider),
+          matching: find.byType(AmalfiSlider),
         ),
         const Offset(500, 0),
       );

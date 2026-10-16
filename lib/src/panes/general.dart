@@ -300,10 +300,12 @@ class _DiskGroupState extends State<_DiskGroup> {
                   color: SettingsColors.of(context).secondary,
                   size: 24,
                 ),
-                trailing: SilicaProgressBar(
-                  value: disk.total == 0 ? 0 : disk.used / disk.total,
+                trailing: SizedBox(
                   width: 200,
-                  semanticLabel: l.subStorage,
+                  child: AmalfiProgressBar(
+                    value: disk.total == 0 ? 0 : disk.used / disk.total,
+                    semanticLabel: l.subStorage,
+                  ),
                 ),
               ),
           ],
@@ -398,7 +400,7 @@ class _StoragePaneState extends State<StoragePane> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (!_sizes.containsKey(path))
-                      const SilicaSpinner(size: 12)
+                      const AmalfiSpinner(size: AmalfiProgressSize.small)
                     else
                       Text(
                         formatBytes(_sizes[path] ?? 0),
@@ -406,10 +408,10 @@ class _StoragePaneState extends State<StoragePane> {
                       ),
                     if (symbol == 'trash') ...[
                       const SizedBox(width: 10),
-                      SilicaButton(
+                      AmalfiPushButton(
                         key: const ValueKey('empty trash'),
                         label: l.storageEmptyTrashButton,
-                        size: ControlSize.small,
+                        size: AmalfiControlSize.small,
                         onPressed: (_sizes[path] ?? 0) > 0
                             ? () => _emptyTrash(path)
                             : null,
@@ -502,10 +504,10 @@ class _SharingPaneState extends State<SharingPane> {
                 title: title,
                 height: 48,
                 leading: IconTile(symbol: symbol, tint: tint, size: 24),
-                trailing: const SilicaSwitch(
+                trailing: const AmalfiSwitch(
                   value: false,
                   onChanged: null,
-                  size: ControlSize.mini,
+                  size: AmalfiControlSize.mini,
                 ),
               ),
           ],
@@ -520,7 +522,7 @@ class _SharingPaneState extends State<SharingPane> {
               title: l.sharingComputerName,
               trailing: SizedBox(
                 width: 220,
-                child: SilicaTextField(
+                child: AmalfiTextField(
                   key: const ValueKey('computer name'),
                   controller: _name,
                   enabled: allowed,
@@ -534,12 +536,14 @@ class _SharingPaneState extends State<SharingPane> {
         ),
         if (_error case final error?) ErrorLine(error),
         ButtonBar(
-          leading: [if (_busy) const SilicaSpinner(size: 14)],
+          leading: [
+            if (_busy) const AmalfiSpinner(size: AmalfiProgressSize.small),
+          ],
           buttons: [
-            SilicaButton(
+            AmalfiPushButton(
               key: const ValueKey('rename computer'),
               label: l.sharingRename,
-              size: ControlSize.small,
+              size: AmalfiControlSize.small,
               onPressed:
                   !allowed ||
                       _busy ||
@@ -679,12 +683,12 @@ class _ChoiceSheetState extends State<_ChoiceSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                SilicaButton(label: l.cancel, onPressed: widget.close),
+                AmalfiPushButton(label: l.cancel, onPressed: widget.close),
                 const SizedBox(width: 8),
-                SilicaButton(
+                AmalfiPushButton(
                   key: const ValueKey('choice done'),
                   label: l.choose,
-                  role: ButtonRole.primary,
+                  variant: AmalfiPushButtonVariant.primary,
                   onPressed: () => widget.close(_chosen),
                 ),
               ],
@@ -800,10 +804,10 @@ class _DateTimePaneState extends State<DateTimePane> {
                 children: [
                   RowValue(zone.isEmpty ? l.aboutUnknown : zone),
                   const SizedBox(width: 10),
-                  SilicaButton(
+                  AmalfiPushButton(
                     key: const ValueKey('change time zone'),
                     label: l.changeButton,
-                    size: ControlSize.small,
+                    size: AmalfiControlSize.small,
                     onPressed: !allowed
                         ? null
                         : () async {
@@ -920,10 +924,10 @@ class _LanguagePaneState extends State<LanguagePane> {
                     language.isEmpty ? l.aboutUnknown : localeLabel(language),
                   ),
                   const SizedBox(width: 10),
-                  SilicaButton(
+                  AmalfiPushButton(
                     key: const ValueKey('change language'),
                     label: l.changeButton,
-                    size: ControlSize.small,
+                    size: AmalfiControlSize.small,
                     onPressed: allowed ? () => _choose(formats: false) : null,
                   ),
                 ],
@@ -940,10 +944,10 @@ class _LanguagePaneState extends State<LanguagePane> {
                     formats.isEmpty ? l.aboutUnknown : localeLabel(formats),
                   ),
                   const SizedBox(width: 10),
-                  SilicaButton(
+                  AmalfiPushButton(
                     key: const ValueKey('change region'),
                     label: l.changeButton,
-                    size: ControlSize.small,
+                    size: AmalfiControlSize.small,
                     onPressed: allowed ? () => _choose(formats: true) : null,
                   ),
                 ],

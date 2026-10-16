@@ -38,11 +38,11 @@ void main() {
     tester,
   ) async {
     await pumpSettings(tester);
-    // The search field: 242 × 28, 9 from the edge, 60 below the top (ST-NAV-02).
+    // The search field: 240 × 28 at (10, 60) (kit `Search`).
     final search = find.byKey(const ValueKey('sidebar search'));
-    expect(tester.getTopLeft(search), const Offset(9, 60));
-    expect(tester.getSize(search), const Size(242, 28));
-    // The rows start at 157; the row spans the sidebar, the capsule is inset 10.
+    expect(tester.getTopLeft(search), const Offset(10, 60));
+    expect(tester.getSize(search), const Size(240, 28));
+    // The rows start at 156; the row spans the sidebar, the capsule is 240 wide at x 10.
     final wifi = find.byKey(const ValueKey('pane wifi'));
     expect(tester.getTopLeft(wifi).dy, SettingsMetrics.paneListTop);
     expect(tester.getSize(wifi).width, SettingsMetrics.sidebarWidth);
@@ -52,21 +52,26 @@ void main() {
           matching: find.byType(DecoratedBox),
         )
         .first;
-    expect(tester.getSize(capsule), const Size(241, 32));
+    expect(tester.getSize(capsule), const Size(240, 32));
     expect(tester.getTopLeft(capsule).dx, 10);
-    expect(
-      tester.getTopLeft(find.byKey(const ValueKey('back'))).dx,
-      greaterThanOrEqualTo(SettingsMetrics.navX),
-    );
+    // The back / forward capsule at (268, 10), 64 × 32; the title at x 348.
+    final nav = find.byKey(const ValueKey('nav'));
+    expect(tester.getTopLeft(nav), const Offset(268, 10));
+    expect(tester.getSize(nav).height, 32);
+    expect(tester.getTopLeft(find.byKey(const ValueKey('title'))).dx, 348);
+    // The window's content starts at x 260; the sidebar's edge is the 1 pt line there.
+    expect(SettingsMetrics.sidebarWidth, 260);
   });
 
-  testWidgets('the measured grouped list: inset 20, 12 under the toolbar', (
+  testWidgets('the measured grouped list: inset 20, rows 52 (kit General)', (
     tester,
   ) async {
     await pumpSettings(tester, pane: PaneId.general);
     final about = find.byKey(const ValueKey('general about'));
-    expect(tester.getSize(about), const Size(531, 48));
-    expect(tester.getTopLeft(about).dx, 261 + 20);
+    expect(tester.getSize(about), const Size(532, 52));
+    expect(tester.getTopLeft(about).dx, 280);
+    // The header under the toolbar: the 64 pt tile 16 below it, the first group at y 240.
+    expect(tester.getTopLeft(about).dy, 240);
   });
 
   testWidgets('a click switches the pane in one frame, and back and forward '
@@ -76,11 +81,12 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('pane wifi')));
     await tester.pump();
     expect(title(tester), 'Wi-Fi');
-    await tester.tap(find.byKey(const ValueKey('back')));
+    // The capsule's two 32 pt segments: back at x 268, forward at x 301.
+    await tester.tapAt(const Offset(268 + 16, 26));
     await tester.pump();
     expect(title(tester), 'Appearance');
     expect(h.navigation.canGoForward, isTrue);
-    await tester.tap(find.byKey(const ValueKey('forward')));
+    await tester.tapAt(const Offset(268 + 48, 26));
     await tester.pump();
     expect(title(tester), 'Wi-Fi');
   });

@@ -61,33 +61,35 @@ class IconTile extends StatelessWidget {
     required this.symbol,
     required this.tint,
     this.size = SettingsMetrics.iconSize,
+    this.radius,
   });
 
   final String symbol;
   final Color tint;
   final double size;
 
+  /// The corner radius; null: a quarter of the size (5 at 20, 6 at 24).
+  final double? radius;
+
   @override
   Widget build(BuildContext context) => Container(
     width: size,
     height: size,
     alignment: Alignment.center,
-    decoration: BoxDecoration(
-      // A slight vertical gradient, lighter at the top, as the reference's tiles (shade
-      // provisional).
-      gradient: LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [Color.lerp(tint, const Color(0xFFFFFFFF), 0.12)!, tint],
-      ),
-      borderRadius: BorderRadius.circular(
-        size * SettingsMetrics.iconRadius / SettingsMetrics.iconSize,
+    // A flat tile with smooth corners (kit `Tile`: radius 5 at 20 pt, 6 at 24).
+    decoration: ShapeDecoration(
+      color: tint,
+      shape: AmalfiSmoothBorder(
+        radius:
+            radius ??
+            size * SettingsMetrics.iconRadius / SettingsMetrics.iconSize,
       ),
     ),
     child: SettingsSymbol(
       symbol,
       color: const Color(0xFFFFFFFF),
-      size: size * 0.66,
+      // 12 in the 20 pt tile of the sidebar, 16 in the 24 pt tile of a row.
+      size: size <= 20 ? size * 0.6 : (size >= 56 ? size / 2 : size * 2 / 3),
     ),
   );
 }

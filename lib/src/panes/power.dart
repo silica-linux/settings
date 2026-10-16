@@ -235,10 +235,12 @@ class _BatteryPaneState extends State<BatteryPane> with _PowerState {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SilicaProgressBar(
-                        value: state.batteryPercent / 100,
+                      SizedBox(
                         width: 140,
-                        semanticLabel: l.batteryLevel,
+                        child: AmalfiProgressBar(
+                          value: state.batteryPercent / 100,
+                          semanticLabel: l.batteryLevel,
+                        ),
                       ),
                       const SizedBox(width: 8),
                       Text(

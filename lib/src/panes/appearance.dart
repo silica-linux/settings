@@ -217,7 +217,7 @@ class _RadioRow<T> extends StatelessWidget {
       children: [
         RowTitles(title: title),
         const SizedBox(height: 6),
-        SilicaRadioGroup<T>(
+        SettingsRadioGroup<T>(
           options: options,
           value: value,
           onChanged: onChanged,

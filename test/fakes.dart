@@ -463,7 +463,7 @@ Future<Harness> pumpSettings(
   Locale locale = const Locale('en'),
   Directory? root,
   CommandRunner? run,
-  double height = 727,
+  double height = 780,
   FakeTools? tools,
   Map<String, String> extraEnv = const {},
 }) async {

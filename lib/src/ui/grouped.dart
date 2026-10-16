@@ -1,8 +1,7 @@
-// The grouped list every pane is built from (ST-NAV-04): groups inset 20 from the content's
-// sides and 12 under the toolbar, radius 10, rows separated by 1 pt lines inset 10 on both
-// sides; navigation rows 48 tall with a 24 pt icon and a chevron; value rows 37 tall with a
-// trailing switch, pop-up or slider; bold 13 pt headings with 32 pt above and 10 below;
-// header cards. Rows without a backend take no input and their group's footer says why, with
+// The grouped list every pane is built from (kit `Apps/Settings/Row/*`): groups inset 20 from
+// the content's sides, 16 under the toolbar and 12 apart, radius 12, rows separated by 1 pt
+// lines inset 12 on both sides; navigation rows 52 tall with a 24 pt tile and a chevron; value
+// rows 44 tall with a trailing switch, pop-up or slider; Headline headings; header cards. Rows without a backend take no input and their group's footer says why, with
 // the issue that tracks the missing piece: nothing pretends to work.
 
 import 'package:flutter/widgets.dart';
@@ -59,28 +58,21 @@ class SectionHeading extends StatelessWidget {
     final colors = SettingsColors.of(context);
     return Padding(
       padding: EdgeInsets.fromLTRB(
-        SettingsMetrics.rowTextInset,
+        0,
         _FirstOnPage.of(context) ? 0 : SettingsMetrics.headingAbove,
-        SettingsMetrics.rowTextInset,
+        0,
         SettingsMetrics.headingBelow,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            text,
-            style: settingsText(
-              SettingsMetrics.headingSize,
-              colors.text,
-              weight: FontWeight.w600,
-            ),
-          ),
+          Text(text, style: AmalfiType.headline(color: colors.text)),
           if (description case final description?)
             Padding(
               padding: const EdgeInsets.only(top: 2),
               child: Text(
                 description,
-                style: settingsText(11, colors.secondary, height: 1.3),
+                style: AmalfiType.callout(color: colors.secondary),
               ),
             ),
         ],
@@ -96,9 +88,9 @@ class GroupBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => DecoratedBox(
-    decoration: BoxDecoration(
+    decoration: ShapeDecoration(
       color: SettingsColors.of(context).group,
-      borderRadius: BorderRadius.circular(SettingsMetrics.groupRadius),
+      shape: AmalfiSmoothBorder(radius: SettingsMetrics.groupRadius),
     ),
     child: child,
   );
@@ -175,14 +167,14 @@ class SettingsGroup extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(
               SettingsMetrics.rowTextInset,
-              6,
+              8,
               SettingsMetrics.rowTextInset,
               0,
             ),
             child: Text(
               footerText,
               key: unavailable ? const ValueKey('unavailable') : null,
-              style: settingsText(11, colors.secondary, height: 1.3),
+              style: AmalfiType.caption(color: colors.disabled),
             ),
           ),
       ],
@@ -229,7 +221,9 @@ class RowTitles extends StatelessWidget {
           title,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: settingsText(13, colors.text, weight: weight),
+          style: AmalfiType.body(
+            color: colors.text,
+          ).copyWith(fontWeight: weight),
         ),
         if (subtitle case final subtitle? when subtitle.isNotEmpty)
           Padding(
@@ -238,7 +232,7 @@ class RowTitles extends StatelessWidget {
               subtitle,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
-              style: settingsText(11, colors.secondary, height: 1.3),
+              style: AmalfiType.callout(color: colors.secondary),
             ),
           ),
       ],
@@ -251,13 +245,10 @@ class RowChevron extends StatelessWidget {
   const RowChevron({super.key});
 
   @override
-  Widget build(BuildContext context) => CustomPaint(
-    size: const Size(5, 9),
-    painter: ChevronPainter(
-      ChevronDirection.right,
-      SettingsColors.of(context).secondary.withValues(alpha: 0.7),
-      stroke: 1.4,
-    ),
+  Widget build(BuildContext context) => AmalfiGlyph(
+    AmalfiGlyphs.chevronRight,
+    size: 12,
+    color: SettingsColors.of(context).disabled,
   );
 }
 
@@ -317,9 +308,7 @@ class _NavRowState extends State<NavRow> {
           ),
           // The pressed row darkens (ST-NAV-05; the shade is provisional).
           color: _pressed
-              ? (colors.dark
-                    ? const Color(0x14FFFFFF)
-                    : const Color(0x0F000000))
+              ? AmalfiTheme.of(context).colors.statePressOverlay
               : null,
           padding: EdgeInsets.only(
             left: hasIcon
@@ -355,7 +344,10 @@ class _NavRowState extends State<NavRow> {
               if (widget.value case final value?)
                 Padding(
                   padding: const EdgeInsets.only(left: 8, right: 8),
-                  child: Text(value, style: settingsText(13, colors.secondary)),
+                  child: Text(
+                    value,
+                    style: AmalfiType.body(color: colors.secondary),
+                  ),
                 ),
               const RowChevron(),
             ],
@@ -399,7 +391,7 @@ class ValueRow extends StatelessWidget {
     child: Padding(
       padding: EdgeInsets.fromLTRB(
         SettingsMetrics.rowTextInset + indent,
-        alignTop ? 10 : 8,
+        alignTop ? 12 : 8,
         SettingsMetrics.trailingInset,
         8,
       ),
@@ -447,10 +439,9 @@ class SwitchRow extends StatelessWidget {
     title: title,
     subtitle: subtitle,
     indent: indent,
-    trailing: SilicaSwitch(
+    trailing: AmalfiSwitch(
       value: value,
       onChanged: onChanged,
-      size: ControlSize.mini,
       semanticLabel: title,
     ),
   );
@@ -484,14 +475,80 @@ class PopUpRow<T> extends StatelessWidget {
     title: title,
     subtitle: subtitle,
     indent: indent,
-    trailing: FormPopUp<T>(
-      items: items,
-      value: value,
-      onChanged: onChanged,
-      leading: leading,
-      semanticLabel: title,
-    ),
+    trailing: leading == null
+        ? SettingsPopUp<T>(
+            items: items,
+            value: value,
+            onChanged: onChanged,
+            semanticLabel: title,
+          )
+        : FormPopUp<T>(
+            items: items,
+            value: value,
+            onChanged: onChanged,
+            leading: leading,
+            semanticLabel: title,
+          ),
   );
+}
+
+/// The small pop-up button of a settings row (kit `Buttons/Pop-up/Small`, 108 wide, wider when
+/// a label needs it).
+class SettingsPopUp<T> extends StatelessWidget {
+  const SettingsPopUp({
+    super.key,
+    required this.items,
+    required this.value,
+    required this.onChanged,
+    this.semanticLabel,
+    this.placeholder = '',
+  });
+
+  final List<PopUpItem<T>> items;
+  final T? value;
+  final ValueChanged<T>? onChanged;
+  final String? semanticLabel;
+  final String placeholder;
+
+  @override
+  Widget build(BuildContext context) => AmalfiPopUpButton<T>(
+    items: [
+      for (final item in items)
+        AmalfiPopUpItem<T>(
+          value: item.value,
+          label: item.label,
+          enabled: item.enabled,
+        ),
+    ],
+    value: value,
+    onChanged: onChanged,
+    size: AmalfiControlSize.small,
+    width: popUpWidth(items.map((i) => i.label)),
+    placeholder: placeholder,
+    semanticLabel: semanticLabel,
+  );
+}
+
+/// The width of a small pop-up for [labels]: the kit's 108, wider when a label needs it
+/// (8 before, 4 after the chevron, 4 between, the 14 pt chevron).
+double popUpWidth(Iterable<String> labels) {
+  var widest = 0.0;
+  for (final label in labels) {
+    final painter = TextPainter(
+      text: TextSpan(
+        text: label,
+        style: AmalfiPopUpButtonMetrics.labelStyle(
+          AmalfiControlSize.small,
+          const Color(0xFF000000),
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+      maxLines: 1,
+    )..layout();
+    if (painter.width > widest) widest = painter.width;
+    painter.dispose();
+  }
+  return (widest + 8 + 4 + 4 + 14).ceilToDouble().clamp(108, 280);
 }
 
 /// A value row with a slider between two labels.
@@ -506,7 +563,7 @@ class SliderRow extends StatelessWidget {
     this.max = 1,
     this.divisions,
     this.labels,
-    this.width = 220,
+    this.width = 200,
   });
 
   final String title;
@@ -522,15 +579,14 @@ class SliderRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ValueRow(
     title: title,
-    height: labels == null ? SettingsMetrics.valueRowHeight : 52,
-    trailing: SilicaSlider(
-      value: value.clamp(min, max),
+    height: labels == null ? SettingsMetrics.valueRowHeight : 56,
+    trailing: LabelledSlider(
+      value: value,
       onChanged: onChanged,
       onChangeEnd: onChangeEnd,
       min: min,
       max: max,
       divisions: divisions,
-      ticks: divisions != null,
       labels: labels,
       width: width,
       enabled: onChanged != null,
@@ -558,10 +614,10 @@ class ButtonRow extends StatelessWidget {
   Widget build(BuildContext context) => ValueRow(
     title: title,
     subtitle: subtitle,
-    trailing: SilicaButton(
+    trailing: AmalfiPushButton(
       label: label,
       onPressed: onPressed,
-      size: ControlSize.small,
+      size: AmalfiControlSize.small,
     ),
   );
 }
@@ -612,54 +668,48 @@ class HeaderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = SettingsColors.of(context);
+    final theme = AmalfiTheme.of(context).colors;
     if (centered) {
-      return GroupBox(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 26, 24, 18),
-          child: Column(
-            children: [
-              IconTile(symbol: symbol, tint: tint, size: 48),
-              const SizedBox(height: 14),
-              Text(
-                title,
-                style: settingsText(22, colors.text, weight: FontWeight.w700),
-              ),
-              const SizedBox(height: 4),
-              Text(
+      // The pane's own header (kit `General tile`, `General title`, `General text`): a 64 pt
+      // tile, Title 2 and a Callout text under it, no group around them.
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 13),
+        child: Column(
+          children: [
+            IconTile(symbol: symbol, tint: tint, size: 64, radius: 16),
+            const SizedBox(height: 19),
+            Text(title, style: AmalfiType.title2(color: colors.text)),
+            const SizedBox(height: 6),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 412),
+              child: Text(
                 description,
                 textAlign: TextAlign.center,
-                style: settingsText(12, colors.secondary, height: 1.35),
+                style: AmalfiType.callout(color: theme.textSecondary),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       );
     }
     return GroupBox(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(10, 12, 10, 12),
+        padding: const EdgeInsets.fromLTRB(16, 20, 16, 20),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            IconTile(symbol: symbol, tint: tint, size: 28),
-            const SizedBox(width: 10),
+            IconTile(symbol: symbol, tint: tint, size: 56, radius: 14),
+            const SizedBox(width: 20),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    title,
-                    style: settingsText(
-                      13,
-                      colors.text,
-                      weight: FontWeight.w600,
-                    ),
-                  ),
+                  Text(title, style: AmalfiType.title3(color: colors.text)),
                   const SizedBox(height: 2),
                   Text(
                     description,
-                    style: settingsText(11, colors.secondary, height: 1.3),
+                    style: AmalfiType.callout(color: colors.secondary),
                   ),
                 ],
               ),
@@ -686,7 +736,7 @@ class EmptyState extends StatelessWidget {
     child: Text(
       text,
       textAlign: TextAlign.center,
-      style: settingsText(13, SettingsColors.of(context).secondary),
+      style: AmalfiType.body(color: SettingsColors.of(context).secondary),
     ),
   );
 }
@@ -705,7 +755,7 @@ class RowValue extends StatelessWidget {
       textAlign: TextAlign.end,
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
-      style: settingsText(13, SettingsColors.of(context).secondary),
+      style: AmalfiType.body(color: SettingsColors.of(context).secondary),
     ),
   );
 }
@@ -720,14 +770,16 @@ class ErrorLine extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.fromLTRB(
       SettingsMetrics.rowTextInset,
-      6,
+      8,
       SettingsMetrics.rowTextInset,
       0,
     ),
     child: Text(
       text,
       key: const ValueKey('error'),
-      style: settingsText(11, const Color(0xFFE0393E), height: 1.3),
+      style: AmalfiType.caption(
+        color: AmalfiTheme.of(context).colors.paletteTerracotta,
+      ),
     ),
   );
 }
@@ -740,4 +792,109 @@ class Unavailable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _Disabled(disabled: true, child: child);
+}
+
+/// A slider with optional tick labels under it (kit `Sliders/Horizontal/Ticks`); [width]
+/// 200 by default (kit `Row/Slider`).
+class LabelledSlider extends StatelessWidget {
+  /// [key] goes to the slider itself, so a finder by key reaches the control.
+  const LabelledSlider({
+    Key? key,
+    required this.value,
+    required this.onChanged,
+    this.onChangeEnd,
+    this.min = 0,
+    this.max = 1,
+    this.divisions,
+    this.ticks,
+    this.labels,
+    this.width = 200,
+    this.enabled = true,
+    this.semanticLabel,
+  }) : _sliderKey = key;
+
+  final Key? _sliderKey;
+  final double value;
+  final ValueChanged<double>? onChanged;
+  final ValueChanged<double>? onChangeEnd;
+  final double min;
+  final double max;
+  final int? divisions;
+
+  /// Whether to draw tick marks; null: when there are [divisions].
+  final bool? ticks;
+  final List<String>? labels;
+  final double width;
+  final bool enabled;
+  final String? semanticLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = SettingsColors.of(context);
+    final slider = SizedBox(
+      width: width,
+      child: AmalfiSlider(
+        key: _sliderKey,
+        value: value.clamp(min, max),
+        onChanged: enabled ? onChanged : null,
+        onChangeEnd: onChangeEnd,
+        min: min,
+        max: max,
+        divisions: divisions,
+        tickMarks: ticks ?? divisions != null,
+        semanticLabel: semanticLabel,
+      ),
+    );
+    final labels = this.labels;
+    if (labels == null) return slider;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        slider,
+        SizedBox(
+          width: width,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              for (final label in labels)
+                Text(label, style: AmalfiType.caption(color: colors.secondary)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Radio buttons stacked, one per option (kit `Toggles/Radio`).
+class SettingsRadioGroup<T> extends StatelessWidget {
+  const SettingsRadioGroup({
+    super.key,
+    required this.options,
+    required this.value,
+    required this.onChanged,
+    this.spacing = 8,
+  });
+
+  final List<RadioOption<T>> options;
+  final T? value;
+  final ValueChanged<T>? onChanged;
+  final double spacing;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    mainAxisSize: MainAxisSize.min,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    spacing: spacing,
+    children: [
+      for (final option in options)
+        AmalfiRadio(
+          selected: option.value == value,
+          label: option.label,
+          onSelected: onChanged == null || !option.enabled
+              ? null
+              : () => onChanged!(option.value),
+        ),
+    ],
+  );
 }

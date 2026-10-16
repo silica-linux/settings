@@ -1,5 +1,6 @@
-// The Settings window (ST-NAV-01): the sidebar on the left, the content on the right under a
-// 52 pt toolbar with the back / forward capsule at x 269 and the title of the current pane.
+// The Settings window (kit `Apps/Settings/*`): the 260 pt sidebar on the left with its 1 pt
+// edge at x 260, the content on the right under a 52 pt toolbar with the back / forward
+// capsule at x 268 and the title of the current pane at x 348.
 // Switching panes replaces the content in one frame, with no transition (ST-NAV-05).
 
 import 'package:flutter/widgets.dart';
@@ -86,54 +87,76 @@ class _SettingsWindowState extends State<SettingsWindow> {
           ),
           child: Focus(
             autofocus: true,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SizedBox(
-                  width: SettingsMetrics.sidebarWidth,
-                  child: SettingsSidebar(
-                    navigation: navigation,
-                    groups: groups,
-                    searchFocus: _searchFocus,
-                  ),
-                ),
-                Expanded(
-                  child: ColoredBox(
-                    color: colors.content,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        ValueListenableBuilder<bool>(
-                          valueListenable: _scrolledPastHeader,
-                          builder: (context, scrolled, _) => _Toolbar(
-                            navigation: navigation,
-                            showTitle: !header || scrolled,
-                          ),
+            child: ColoredBox(
+              color: colors.content,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // The content starts at x 260; the group inset is measured from there.
+                  Positioned(
+                    left: SettingsMetrics.sidebarWidth,
+                    right: 0,
+                    top: toolbarHeight,
+                    bottom: 0,
+                    child: NotificationListener<ScrollUpdateNotification>(
+                      onNotification: (n) {
+                        if (header && n.metrics.axis == Axis.vertical) {
+                          _scrolledPastHeader.value =
+                              n.metrics.pixels > headerCardScroll;
+                        }
+                        return false;
+                      },
+                      child: KeyedSubtree(
+                        key: ValueKey(navigation.location),
+                        child: paneBody(
+                          context,
+                          navigation.location,
+                          open: navigation.openSub,
                         ),
-                        Expanded(
-                          child: NotificationListener<ScrollUpdateNotification>(
-                            onNotification: (n) {
-                              if (header && n.metrics.axis == Axis.vertical) {
-                                _scrolledPastHeader.value =
-                                    n.metrics.pixels > headerCardScroll;
-                              }
-                              return false;
-                            },
-                            child: KeyedSubtree(
-                              key: ValueKey(navigation.location),
-                              child: paneBody(
-                                context,
-                                navigation.location,
-                                open: navigation.openSub,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                  Positioned(
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
+                    width: SettingsMetrics.sidebarWidth,
+                    child: SettingsSidebar(
+                      navigation: navigation,
+                      groups: groups,
+                      searchFocus: _searchFocus,
+                    ),
+                  ),
+                  // The sidebar's 1 pt edge, full height (kit `Separator` at x 260).
+                  Positioned(
+                    left: SettingsMetrics.sidebarWidth,
+                    top: 0,
+                    bottom: 0,
+                    width: 1,
+                    child: ColoredBox(color: colors.separator),
+                  ),
+                  Positioned(
+                    left: SettingsMetrics.sidebarWidth + 1,
+                    right: 0,
+                    top: 0,
+                    height: toolbarHeight,
+                    child: ColoredBox(color: colors.content),
+                  ),
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    height: toolbarHeight,
+                    child: ValueListenableBuilder<bool>(
+                      valueListenable: _scrolledPastHeader,
+                      builder: (context, scrolled, _) => _Toolbar(
+                        navigation: navigation,
+                        showTitle: !header || scrolled,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -154,52 +177,53 @@ class _Toolbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final colors = SettingsColors.of(context);
-    return SizedBox(
-      height: toolbarHeight,
-      child: WindowDragArea(
-        child: Row(
-          children: [
-            const SizedBox(
-              width: SettingsMetrics.navX - SettingsMetrics.sidebarWidth,
-            ),
-            ToolbarCapsule(
-              separators: true,
-              children: [
-                ToolbarSegment(
-                  key: const ValueKey('back'),
-                  width: SettingsMetrics.navSegment,
+    final colors = AmalfiTheme.of(context).colors;
+    final active = WindowActiveScope.of(context);
+    // The bar is transparent over the sidebar (the window buttons, drawn by Ossido, sit on
+    // its surface): the nav capsule at x 268, the title at x 348 (kit `Back and forward`,
+    // `Title`).
+    return WindowDragArea(
+      child: AmalfiToolbar(
+        surface: AmalfiToolbarSurface.none,
+        children: [
+          const SizedBox(width: SettingsMetrics.navX - 4),
+          AmalfiToolbarPiece(
+            child: AmalfiActionSegments(
+              key: const ValueKey('nav'),
+              segments: [
+                AmalfiSegment.icon(
+                  const AmalfiGlyph(AmalfiGlyphs.chevronLeft),
+                  semanticLabel: l.menuBack,
                   enabled: navigation.canGoBack,
-                  onTap: navigation.back,
-                  icon: (color) => CustomPaint(
-                    size: const Size(7, 12),
-                    painter: ChevronPainter(ChevronDirection.left, color),
-                  ),
                 ),
-                ToolbarSegment(
-                  key: const ValueKey('forward'),
-                  width: SettingsMetrics.navSegment,
+                AmalfiSegment.icon(
+                  const AmalfiGlyph(AmalfiGlyphs.chevronRight),
+                  semanticLabel: l.menuForward,
                   enabled: navigation.canGoForward,
-                  onTap: navigation.forward,
-                  icon: (color) => CustomPaint(
-                    size: const Size(7, 12),
-                    painter: ChevronPainter(ChevronDirection.right, color),
-                  ),
                 ),
               ],
+              onPressed: (i) =>
+                  i == 0 ? navigation.back() : navigation.forward(),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                showTitle ? locationTitle(l, navigation.location) : '',
-                key: const ValueKey('title'),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: settingsText(15, colors.text, weight: FontWeight.w600),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 12),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  showTitle ? locationTitle(l, navigation.location) : '',
+                  key: const ValueKey('title'),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AmalfiType.headline(
+                    color: active ? colors.textPrimary : colors.textTertiary,
+                  ),
+                ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

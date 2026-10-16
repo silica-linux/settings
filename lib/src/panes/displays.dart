@@ -498,16 +498,16 @@ class _KeepSheetState extends State<_KeepSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                SilicaButton(
+                AmalfiPushButton(
                   key: const ValueKey('revert display'),
                   label: l.displaysRevert,
                   onPressed: () => widget.close(false),
                 ),
                 const SizedBox(width: 8),
-                SilicaButton(
+                AmalfiPushButton(
                   key: const ValueKey('keep display'),
                   label: l.displaysKeep,
-                  role: ButtonRole.primary,
+                  variant: AmalfiPushButtonVariant.primary,
                   onPressed: () => widget.close(true),
                 ),
               ],
@@ -656,7 +656,7 @@ class _NightLightSheetState extends State<_NightLightSheet> {
                           title: l.displaysNightFrom,
                           trailing: SizedBox(
                             width: 90,
-                            child: SilicaTextField(
+                            child: AmalfiTextField(
                               key: const ValueKey('night from'),
                               controller: _from,
                               semanticLabel: l.displaysNightFrom,
@@ -672,7 +672,7 @@ class _NightLightSheetState extends State<_NightLightSheet> {
                           title: l.displaysNightTo,
                           trailing: SizedBox(
                             width: 90,
-                            child: SilicaTextField(
+                            child: AmalfiTextField(
                               key: const ValueKey('night to'),
                               controller: _to,
                               semanticLabel: l.displaysNightTo,
@@ -726,10 +726,10 @@ class _NightLightSheetState extends State<_NightLightSheet> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    SilicaButton(
+                    AmalfiPushButton(
                       key: const ValueKey('night done'),
                       label: l.done,
-                      role: ButtonRole.primary,
+                      variant: AmalfiPushButtonVariant.primary,
                       onPressed: widget.close,
                     ),
                   ],

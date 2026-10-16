@@ -4,7 +4,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:silica_settings/src/system/system.dart';
 import 'package:silica_settings/src/system/tools.dart';
-import 'package:silica_settings/src/ui/popup.dart';
 import 'package:silica_ui/silica_ui.dart';
 
 import 'fakes.dart';
@@ -21,7 +20,7 @@ Future<void> tapRowButton(WidgetTester tester, String key) async {
   await tester.tap(
     find.descendant(
       of: find.byKey(ValueKey(key)),
-      matching: find.byType(SilicaButton),
+      matching: find.byType(AmalfiPushButton),
     ),
   );
   await tester.pump();
@@ -31,7 +30,7 @@ Future<void> tapRowButton(WidgetTester tester, String key) async {
 /// The switch of the row with [key] (or of the widget itself when it is a switch).
 Finder switchIn(String key) => find.descendant(
   of: find.byKey(ValueKey(key)),
-  matching: find.byType(SilicaSwitch),
+  matching: find.byType(AmalfiSwitch),
   matchRoot: true,
 );
 
@@ -41,16 +40,22 @@ Future<void> choose(WidgetTester tester, String key, String item) async {
     find
         .descendant(
           of: find.byKey(ValueKey(key)),
-          matching: find.byWidgetPredicate((w) => w is FormPopUp),
+          matching: find.byWidgetPredicate((w) => w is AmalfiPopUpButton),
           matchRoot: true,
         )
         .first,
   );
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 300));
-  await tester.tap(find.text(item).last);
+  await tester.tap(
+    find
+        .descendant(of: find.byType(AmalfiMenu), matching: find.text(item))
+        .last,
+  );
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 300));
+  // The menu fades out over the pane for a moment.
+  await tester.pump(const Duration(milliseconds: 500));
 }
 
 /// Fills the window and waits for the tools' futures.
@@ -108,3 +113,21 @@ FakeTools networkTools() => FakeTools()
       dns: ['192.168.1.1'],
     ),
   };
+
+/// Drags a slider the way a pointer does: from its centre in small steps (a single large
+/// move only starts the pan).
+Future<void> dragSlider(WidgetTester tester, Finder slider, Offset by) async {
+  final gesture = await tester.startGesture(tester.getCenter(slider));
+  final steps = (by.distance / 10).ceil().clamp(1, 200);
+  for (var i = 0; i < steps; i++) {
+    await gesture.moveBy(by / steps.toDouble());
+    await tester.pump();
+  }
+  // The pan starts after the touch slop; the extra moves are updates.
+  for (var i = 0; i < 2; i++) {
+    await gesture.moveBy(by / by.distance);
+    await tester.pump();
+  }
+  await gesture.up();
+  await tester.pump();
+}

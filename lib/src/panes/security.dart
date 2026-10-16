@@ -68,7 +68,7 @@ class _LockScreenPaneState extends State<LockScreenPane> {
             ValueRow(
               title: l.lockLoginWindowShows,
               alignTop: true,
-              trailing: SilicaRadioGroup<String>(
+              trailing: SettingsRadioGroup<String>(
                 options: [
                   RadioOption('list', l.lockListOfUsers),
                   RadioOption('fields', l.lockNameAndPassword),

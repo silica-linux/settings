@@ -146,23 +146,18 @@ class _SettingsSidebarState extends State<SettingsSidebar> {
   }
 }
 
-/// The local user: initials, full name, "Local account"; opens Users & Groups.
+/// The local user: the person glyph on a soft accent disc, full name, "Local account"; opens
+/// Users & Groups (kit `Account avatar`, `Account name`, `Account kind`).
 class _AccountCell extends StatelessWidget {
   const _AccountCell({required this.onTap});
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final colors = SettingsColors.of(context);
+    final colors = AmalfiTheme.of(context).colors;
     final l = AppLocalizations.of(context);
     final info = HostInfoScope.of(context);
     final name = info.userName.isEmpty ? l.accountLocalUser : info.userName;
-    final initials = name
-        .split(RegExp(r'\s+'))
-        .where((w) => w.isNotEmpty)
-        .take(2)
-        .map((w) => w.characters.first.toUpperCase())
-        .join();
     return Semantics(
       button: true,
       label: name,
@@ -173,34 +168,24 @@ class _AccountCell extends StatelessWidget {
         child: SizedBox(
           height: SettingsMetrics.accountHeight,
           child: Padding(
-            padding: const EdgeInsets.only(
-              left: SettingsMetrics.rowInset + SettingsMetrics.rowIconLeft - 2,
-              right: SettingsMetrics.rowInset,
-            ),
+            padding: const EdgeInsets.only(left: 12, right: 12),
             child: Row(
               children: [
                 Container(
-                  width: 34,
-                  height: 34,
+                  width: SettingsMetrics.accountAvatar,
+                  height: SettingsMetrics.accountAvatar,
                   alignment: Alignment.center,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Color(0xFFA5A5AA), Color(0xFF85858B)],
-                    ),
+                    color: colors.accentAmalfiSoft,
                   ),
-                  child: Text(
-                    initials,
-                    style: settingsText(
-                      13,
-                      const Color(0xFFFFFFFF),
-                      weight: FontWeight.w600,
-                    ),
+                  child: SettingsSymbol(
+                    'person',
+                    color: colors.accentAmalfi,
+                    size: 20,
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -210,17 +195,13 @@ class _AccountCell extends StatelessWidget {
                         name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: settingsText(
-                          13,
-                          colors.text,
-                          weight: FontWeight.w600,
-                        ),
+                        style: AmalfiType.headline(color: colors.textPrimary),
                       ),
                       Text(
                         l.accountLocal,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: settingsText(11, colors.secondary),
+                        style: AmalfiType.callout(color: colors.textSecondary),
                       ),
                     ],
                   ),
@@ -301,8 +282,9 @@ class _SidebarRow extends StatelessWidget {
     );
     final fill = selected ? sidebarSelection(context, active: active) : null;
     final white = selected && active;
-    final textColor = white ? const Color(0xFFFFFFFF) : colors.text;
-    final secondaryColor = white ? const Color(0xCCFFFFFF) : colors.secondary;
+    final theme = AmalfiTheme.of(context).colors;
+    final textColor = white ? theme.textOnAccent : colors.text;
+    final secondaryColor = white ? theme.textOnAccent : colors.secondary;
     final two = subtitle != null;
     return Semantics(
       button: true,
@@ -321,11 +303,9 @@ class _SidebarRow extends StatelessWidget {
             left: SettingsMetrics.rowIconLeft,
             right: 8,
           ),
-          decoration: BoxDecoration(
+          decoration: ShapeDecoration(
             color: fill,
-            borderRadius: BorderRadius.circular(
-              SettingsMetrics.selectionRadius,
-            ),
+            shape: AmalfiSmoothBorder(radius: SettingsMetrics.selectionRadius),
           ),
           child: Row(
             children: [
@@ -338,11 +318,7 @@ class _SidebarRow extends StatelessWidget {
                   children: [
                     _highlighted(
                       title,
-                      settingsText(
-                        size.text,
-                        textColor,
-                        weight: selected ? FontWeight.w600 : null,
-                      ),
+                      settingsText(size.text, textColor),
                       highlight,
                     ),
                     if (subtitle case final subtitle?)
@@ -350,7 +326,7 @@ class _SidebarRow extends StatelessWidget {
                         subtitle,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: settingsText(11, secondaryColor),
+                        style: AmalfiType.callout(color: secondaryColor),
                       ),
                   ],
                 ),

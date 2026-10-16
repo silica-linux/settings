@@ -21,20 +21,22 @@ void main() {
         pane: PaneId.keyboard,
         extraEnv: const {'OSSIDO_KEY_REPEAT': '250,30'},
       );
-      SilicaSlider slider(String key) =>
-          tester.widget<SilicaSlider>(find.byKey(ValueKey(key)));
+      AmalfiSlider slider(String key) =>
+          tester.widget<AmalfiSlider>(find.byKey(ValueKey(key)));
       // 30 per second and 250 ms are the steps 6 and 5 of the sliders.
       expect(slider('repeat rate').value, 6);
       expect(slider('repeat delay').value, 5);
       expect(slider('repeat rate').onChanged, isNotNull);
       expect(h.config.read('keyboard'), isEmpty);
-      await tester.drag(
+      await dragSlider(
+        tester,
         find.byKey(const ValueKey('repeat rate')),
         const Offset(-400, 0),
       );
       await tester.pump();
       expect(h.config.read('keyboard')['repeatRate'], 0);
-      await tester.drag(
+      await dragSlider(
+        tester,
         find.byKey(const ValueKey('repeat delay')),
         const Offset(-400, 0),
       );
@@ -43,7 +45,8 @@ void main() {
       expect(slider('repeat delay').value, 0);
       // The other keys of the file are kept.
       h.config.write('keyboard', 'options', 'caps:escape');
-      await tester.drag(
+      await dragSlider(
+        tester,
         find.byKey(const ValueKey('repeat rate')),
         const Offset(400, 0),
       );
@@ -102,7 +105,7 @@ void main() {
       ]);
       expect(
         tester
-            .widget<SilicaButton>(find.byKey(const ValueKey('add source')))
+            .widget<AmalfiPushButton>(find.byKey(const ValueKey('add source')))
             .onPressed,
         isNull,
       );
@@ -126,15 +129,15 @@ void main() {
   group('Mouse and Trackpad (#74)', () {
     Finder sliderIn(String key) => find.descendant(
       of: find.byKey(ValueKey(key)),
-      matching: find.byType(SilicaSlider),
+      matching: find.byType(AmalfiSlider),
     );
-    SilicaSlider slider(WidgetTester tester, String key) =>
-        tester.widget<SilicaSlider>(sliderIn(key));
+    AmalfiSlider slider(WidgetTester tester, String key) =>
+        tester.widget<AmalfiSlider>(sliderIn(key));
 
     testWidgets('Mouse writes the mouse object of input.json', (tester) async {
       final h = await pumpSettings(tester, pane: PaneId.mouse, height: 900);
       expect(slider(tester, 'mouse speed').value, 0);
-      await tester.drag(sliderIn('mouse speed'), const Offset(400, 0));
+      await dragSlider(tester, sliderIn('mouse speed'), const Offset(400, 0));
       await tester.pump();
       expect(h.config.read('input'), {
         'mouse': {'speed': 1.0},
@@ -142,7 +145,11 @@ void main() {
       await tester.tap(switchIn('mouse natural scrolling'));
       await tester.pump();
       await choose(tester, 'mouse secondary click', 'Left button');
-      await tester.drag(sliderIn('mouse scroll speed'), const Offset(400, 0));
+      await dragSlider(
+        tester,
+        sliderIn('mouse scroll speed'),
+        const Offset(400, 0),
+      );
       await tester.pump();
       expect(h.config.read('input'), {
         'mouse': {
@@ -152,7 +159,11 @@ void main() {
           'scrollSpeed': 10.0,
         },
       });
-      await tester.drag(sliderIn('mouse scroll speed'), const Offset(-800, 0));
+      await dragSlider(
+        tester,
+        sliderIn('mouse scroll speed'),
+        const Offset(-800, 0),
+      );
       await tester.pump();
       final input = h.config.read('input')['mouse'] as Map;
       expect(input['scrollSpeed'], 0.1);
@@ -222,7 +233,11 @@ void main() {
         'touchpad secondary click',
         'Click in the bottom right corner',
       );
-      await tester.drag(sliderIn('touchpad speed'), const Offset(-400, 0));
+      await dragSlider(
+        tester,
+        sliderIn('touchpad speed'),
+        const Offset(-400, 0),
+      );
       await tester.pump();
       expect(h.config.read('input'), {
         'mouse': {'speed': 0.5},
@@ -294,7 +309,7 @@ void main() {
       expect(find.byKey(const ValueKey('unavailable')), findsWidgets);
       expect(find.textContaining('Not available yet in Silica'), findsWidgets);
       // Nothing reaches the system from these panes.
-      for (final s in find.byType(SilicaSwitch).evaluate()) {
+      for (final s in find.byType(AmalfiSwitch).evaluate()) {
         await tester.tap(find.byWidget(s.widget), warnIfMissed: false);
       }
       await tester.pump();

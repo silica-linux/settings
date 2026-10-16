@@ -97,7 +97,7 @@ class _KeyboardPaneState extends State<KeyboardPane> {
             ValueRow(
               title: l.keyboardRepeatRate,
               height: 56,
-              trailing: SilicaSlider(
+              trailing: LabelledSlider(
                 key: const ValueKey('repeat rate'),
                 value: nearestStep(repeatRateSteps, rate).toDouble(),
                 min: 0,
@@ -116,7 +116,7 @@ class _KeyboardPaneState extends State<KeyboardPane> {
             ValueRow(
               title: l.keyboardRepeatDelay,
               height: 56,
-              trailing: SilicaSlider(
+              trailing: LabelledSlider(
                 key: const ValueKey('repeat delay'),
                 value: nearestStep(repeatDelaySteps, delay).toDouble(),
                 min: 0,
@@ -147,10 +147,10 @@ class _KeyboardPaneState extends State<KeyboardPane> {
         ),
         ButtonBar(
           buttons: [
-            SilicaButton(
+            AmalfiPushButton(
               key: const ValueKey('shortcuts'),
               label: l.keyboardShortcutsButton,
-              size: ControlSize.small,
+              size: AmalfiControlSize.small,
               onPressed: () => showShortcuts(context),
             ),
           ],
@@ -300,10 +300,10 @@ class _SourcesSheetState extends State<_SourcesSheet> {
                         key: ValueKey('source $id'),
                         title: _layoutName(widget.names, id),
                         subtitle: i == 0 ? l.keyboardSourceFirst : null,
-                        trailing: SilicaButton(
+                        trailing: AmalfiPushButton(
                           key: ValueKey('remove source $id'),
                           label: l.keyboardSourceRemove,
-                          size: ControlSize.small,
+                          size: AmalfiControlSize.small,
                           onPressed: () => _remove(id),
                         ),
                       ),
@@ -319,17 +319,17 @@ class _SourcesSheetState extends State<_SourcesSheet> {
             const SizedBox(height: 14),
             Row(
               children: [
-                SilicaButton(
+                AmalfiPushButton(
                   key: const ValueKey('add source'),
                   label: l.addButton,
-                  size: ControlSize.small,
+                  size: AmalfiControlSize.small,
                   onPressed: full ? null : _add,
                 ),
                 const Spacer(),
-                SilicaButton(
+                AmalfiPushButton(
                   key: const ValueKey('sources done'),
                   label: l.done,
-                  role: ButtonRole.primary,
+                  variant: AmalfiPushButtonVariant.primary,
                   onPressed: widget.close,
                 ),
               ],
@@ -497,10 +497,10 @@ class _ShortcutsSheetState extends State<_ShortcutsSheet> {
                     style: settingsText(11, colors.secondary),
                   ),
                 ),
-                SilicaButton(
+                AmalfiPushButton(
                   key: const ValueKey('shortcuts done'),
                   label: l.done,
-                  role: ButtonRole.primary,
+                  variant: AmalfiPushButtonVariant.primary,
                   onPressed: widget.close,
                 ),
               ],

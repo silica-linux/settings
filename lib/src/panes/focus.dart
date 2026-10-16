@@ -127,10 +127,10 @@ class _FocusPaneState extends State<FocusPane> {
                     tint: _focusTint,
                     size: 28,
                   ),
-                  trailing: SilicaSwitch(
+                  trailing: AmalfiSwitch(
                     key: const ValueKey('dnd switch'),
                     value: state.doNotDisturb,
-                    size: ControlSize.mini,
+                    size: AmalfiControlSize.mini,
                     semanticLabel: l.focusDoNotDisturb,
                     onChanged: state.reachable
                         ? (on) => system.setDoNotDisturb(on)
@@ -166,15 +166,15 @@ class _FocusPaneState extends State<FocusPane> {
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        SilicaButton(
+                        AmalfiPushButton(
                           label: l.edit,
-                          size: ControlSize.small,
+                          size: AmalfiControlSize.small,
                           onPressed: () => _edit(mode, state.focus),
                         ),
                         const SizedBox(width: 12),
-                        SilicaSwitch(
+                        AmalfiSwitch(
                           value: state.focus == mode.id,
-                          size: ControlSize.mini,
+                          size: AmalfiControlSize.mini,
                           semanticLabel: l.focusTurnOn(mode.name),
                           onChanged: state.reachable
                               ? (on) => system.setFocus(on ? mode.id : '')
@@ -187,10 +187,10 @@ class _FocusPaneState extends State<FocusPane> {
             ),
             ButtonBar(
               buttons: [
-                SilicaButton(
+                AmalfiPushButton(
                   key: const ValueKey('add focus'),
                   label: l.focusAdd,
-                  size: ControlSize.small,
+                  size: AmalfiControlSize.small,
                   onPressed: modes.length >= FocusMode.maxModes
                       ? null
                       : () => _edit(null, state.focus),
@@ -314,7 +314,7 @@ class _FocusSheetState extends State<_FocusSheet> {
                       title: l.focusName,
                       trailing: SizedBox(
                         width: 240,
-                        child: SilicaTextField(
+                        child: AmalfiTextField(
                           key: const ValueKey('focus name'),
                           controller: _name,
                           semanticLabel: l.focusName,
@@ -376,9 +376,9 @@ class _FocusSheetState extends State<_FocusSheet> {
                                 ValueRow(
                                   key: ValueKey('focus app $key'),
                                   title: known[key] ?? key,
-                                  trailing: SilicaCheckbox(
+                                  trailing: AmalfiCheckbox(
                                     value: _apps.contains(key),
-                                    size: ControlSize.small,
+
                                     onChanged: (on) => setState(() {
                                       if (on) {
                                         _apps.add(key);
@@ -404,10 +404,10 @@ class _FocusSheetState extends State<_FocusSheet> {
                           ValueRow(
                             key: ValueKey('focus person $person'),
                             title: person,
-                            trailing: SilicaButton(
+                            trailing: AmalfiPushButton(
                               key: ValueKey('remove person $person'),
                               label: l.keyboardSourceRemove,
-                              size: ControlSize.small,
+                              size: AmalfiControlSize.small,
                               onPressed: () =>
                                   setState(() => _people.remove(person)),
                             ),
@@ -421,7 +421,7 @@ class _FocusSheetState extends State<_FocusSheet> {
                             children: [
                               SizedBox(
                                 width: 180,
-                                child: SilicaTextField(
+                                child: AmalfiTextField(
                                   key: const ValueKey('focus person'),
                                   controller: _person,
                                   placeholder: l.focusPersonPlaceholder,
@@ -430,10 +430,10 @@ class _FocusSheetState extends State<_FocusSheet> {
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              SilicaButton(
+                              AmalfiPushButton(
                                 key: const ValueKey('add person'),
                                 label: l.addButton,
-                                size: ControlSize.small,
+                                size: AmalfiControlSize.small,
                                 onPressed: _addPerson,
                               ),
                             ],
@@ -449,19 +449,19 @@ class _FocusSheetState extends State<_FocusSheet> {
             Row(
               children: [
                 if (widget.mode != null)
-                  SilicaButton(
+                  AmalfiPushButton(
                     key: const ValueKey('delete focus'),
                     label: l.focusDelete,
-                    size: ControlSize.small,
+                    size: AmalfiControlSize.small,
                     onPressed: () => widget.close(const _Edit.delete()),
                   ),
                 const Spacer(),
-                SilicaButton(label: l.cancel, onPressed: widget.close),
+                AmalfiPushButton(label: l.cancel, onPressed: widget.close),
                 const SizedBox(width: 8),
-                SilicaButton(
+                AmalfiPushButton(
                   key: const ValueKey('focus done'),
                   label: l.done,
-                  role: ButtonRole.primary,
+                  variant: AmalfiPushButtonVariant.primary,
                   onPressed: _name.text.trim().isEmpty ? null : _save,
                 ),
               ],
