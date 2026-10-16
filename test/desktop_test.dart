@@ -69,7 +69,7 @@ void main() {
       h.config.write('dock', 'magnify', true);
       await tester.pump(const Duration(seconds: 1));
       expect(magnified().enabled, isTrue);
-      expect(magnified().min, 48);
+      expect(magnified().min, 60);
       expect(magnified().max, 128);
     });
 
@@ -83,7 +83,7 @@ void main() {
           matching: find.byType(SilicaSlider),
         ),
       );
-      expect(size().value, 48);
+      expect(size().value, 60);
       // The shell writes tileSize when the Dock separator is dragged.
       h.config.write('dock', 'tileSize', 96);
       await tester.pump(const Duration(seconds: 1));

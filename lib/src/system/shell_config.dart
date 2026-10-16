@@ -12,12 +12,12 @@ import 'config.dart';
 abstract final class DockSizes {
   static const double tileMin = 16;
   static const double tileMax = 128;
-  static const double tileDefault = 48;
+  static const double tileDefault = 60;
 
   /// The magnified icon grows up to 128 pt (Amalfi Dock, design decision 2026-10-16),
   /// and never below the resting size.
   static const double magnifiedMax = 128;
-  static const double magnifiedDefault = 52;
+  static const double magnifiedDefault = 64;
 
   /// Whole points, inside [tileMin, tileMax].
   static int tile(double value) => value.isFinite
