@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -563,6 +564,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dockZoom => 'Zoom';
+
+  @override
+  String get dockMinimiseAction => 'Minimise';
+
+  @override
+  String get dockDoubleClickNothing => 'Do nothing';
 
   @override
   String get dockMinimizeIntoIcon => 'Minimise windows into the app icon';
@@ -1320,7 +1327,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dockLiveNote =>
-      'The Dock changes at once. The side positions, the title bar double click and minimizing into the app icon wait for the shell.';
+      'The Dock changes at once. The side positions and minimizing into the app icon wait for the shell.';
 
   @override
   String get dockLeft => 'Left';

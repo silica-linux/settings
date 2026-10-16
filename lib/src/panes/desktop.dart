@@ -206,6 +206,10 @@ enum DockPosition { left, bottom, right }
 /// The effect that takes a window into the Dock (dock.json `minimizeEffect`).
 enum MinimizeEffect { genie, scale }
 
+/// What a double click on a title bar does (dock.json `titleBarDoubleClick`, read by
+/// silica_ui's `WindowDragArea`).
+enum TitleBarAction { zoom, minimize, none }
+
 class DesktopDockPane extends StatefulWidget {
   const DesktopDockPane({super.key});
 
@@ -306,6 +310,12 @@ class _DesktopDockPaneState extends State<DesktopDockPane> {
       MinimizeEffect.values,
       MinimizeEffect.genie,
     );
+    final doubleClick = _named(
+      config,
+      'titleBarDoubleClick',
+      TitleBarAction.values,
+      TitleBarAction.zoom,
+    );
     final browsers = [
       ..._browsers,
       if (_browser.isNotEmpty && !_browsers.any((b) => b.id == _browser))
@@ -382,13 +392,16 @@ class _DesktopDockPaneState extends State<DesktopDockPane> {
               value: effect,
               onChanged: (v) => set('minimizeEffect', v.name),
             ),
-            Unavailable(
-              child: PopUpRow<int>(
-                title: l.dockDoubleClick,
-                items: [PopUpItem(0, l.dockZoom)],
-                value: 0,
-                onChanged: (_) {},
-              ),
+            PopUpRow<TitleBarAction>(
+              key: const ValueKey('dock double click'),
+              title: l.dockDoubleClick,
+              items: [
+                PopUpItem(TitleBarAction.zoom, l.dockZoom),
+                PopUpItem(TitleBarAction.minimize, l.dockMinimiseAction),
+                PopUpItem(TitleBarAction.none, l.dockDoubleClickNothing),
+              ],
+              value: doubleClick,
+              onChanged: (v) => set('titleBarDoubleClick', v.name),
             ),
             Unavailable(
               child: SwitchRow(title: l.dockMinimizeIntoIcon, value: false),

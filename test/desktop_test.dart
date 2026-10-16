@@ -90,6 +90,17 @@ void main() {
       expect(size().value, 96);
     });
 
+    testWidgets('the title bar double click is written for the windows', (
+      tester,
+    ) async {
+      final h = await pumpSettings(tester, pane: PaneId.desktopDock);
+      await choose(tester, 'dock double click', 'Minimise');
+      expect(
+        h.config.text('dock', 'titleBarDoubleClick', fallback: ''),
+        'minimize',
+      );
+    });
+
     testWidgets('the minimize effect and the position', (tester) async {
       final h = await pumpSettings(tester, pane: PaneId.desktopDock);
       await choose(tester, 'dock minimize effect', 'Scale effect');

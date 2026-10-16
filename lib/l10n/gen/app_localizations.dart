@@ -1190,6 +1190,18 @@ abstract class AppLocalizations {
   /// **'Zoom'**
   String get dockZoom;
 
+  /// No description provided for @dockMinimiseAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimise'**
+  String get dockMinimiseAction;
+
+  /// No description provided for @dockDoubleClickNothing.
+  ///
+  /// In en, this message translates to:
+  /// **'Do nothing'**
+  String get dockDoubleClickNothing;
+
   /// No description provided for @dockMinimizeIntoIcon.
   ///
   /// In en, this message translates to:
@@ -2585,7 +2597,7 @@ abstract class AppLocalizations {
   /// No description provided for @dockLiveNote.
   ///
   /// In en, this message translates to:
-  /// **'The Dock changes at once. The side positions, the title bar double click and minimizing into the app icon wait for the shell.'**
+  /// **'The Dock changes at once. The side positions and minimizing into the app icon wait for the shell.'**
   String get dockLiveNote;
 
   /// No description provided for @dockLeft.
