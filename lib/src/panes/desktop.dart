@@ -18,6 +18,7 @@ import '../model/issues.dart';
 import '../model/panes.dart';
 import '../services.dart';
 import '../style.dart';
+import '../system/amalfi_wallpapers.dart';
 import '../system/config.dart';
 import '../system/shell_config.dart';
 import '../system/tools.dart';
@@ -600,6 +601,14 @@ class DefaultWallpaper extends WallpaperOption {
   Map<String, Object?> get json => const {};
 }
 
+/// A wallpaper of the Amalfi set (silica-wallpapers): written as `{"wallpaper": "<id>"}`.
+class AmalfiWallpaperOption extends WallpaperOption {
+  const AmalfiWallpaperOption(this.info);
+  final AmalfiWallpaperInfo info;
+  @override
+  Map<String, Object?> get json => {'wallpaper': info.id};
+}
+
 class ColorWallpaper extends WallpaperOption {
   const ColorWallpaper(this.color);
   final Color color;
@@ -619,13 +628,28 @@ class ImageWallpaper extends WallpaperOption {
 }
 
 /// The current choice, as the shell reads it.
-WallpaperOption readWallpaper(Map<String, Object?> json) {
+///
+/// With the Amalfi set installed ([amalfi]) the choice is one of it: the `wallpaper` id, else
+/// the default (Ravello) when nothing else is chosen, as the shell does.
+WallpaperOption readWallpaper(
+  Map<String, Object?> json, {
+  List<AmalfiWallpaperInfo> amalfi = const [],
+}) {
   if (json['image'] case final String path) return ImageWallpaper(path);
   if (json['color'] case final String hex) {
     final value = int.tryParse(hex.replaceFirst('#', ''), radix: 16);
     if (value != null && hex.replaceFirst('#', '').length == 6) {
       return ColorWallpaper(Color(0xFF000000 | value));
     }
+  }
+  if (amalfi.isNotEmpty) {
+    final id = json['wallpaper'];
+    for (final wanted in [id, defaultWallpaperId]) {
+      for (final w in amalfi) {
+        if (w.id == wanted) return AmalfiWallpaperOption(w);
+      }
+    }
+    return AmalfiWallpaperOption(amalfi.first);
   }
   return const DefaultWallpaper();
 }
@@ -652,11 +676,14 @@ class WallpaperPane extends StatefulWidget {
 
 class _WallpaperPaneState extends State<WallpaperPane> {
   List<String>? _pictures;
+  List<AmalfiWallpaperInfo>? _amalfi;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _pictures ??= _findPictures(ServicesScope.of(context).env);
+    final env = ServicesScope.of(context).env;
+    _pictures ??= _findPictures(env);
+    _amalfi ??= loadAmalfiWallpapers(env: env);
   }
 
   /// Images in the user's pictures folder and the system's backgrounds (first level, at most
@@ -695,7 +722,8 @@ class _WallpaperPaneState extends State<WallpaperPane> {
     final l = AppLocalizations.of(context);
     final colors = SettingsColors.of(context);
     final config = ServicesScope.of(context).config;
-    final current = readWallpaper(config.read('wallpaper'));
+    final amalfi = _amalfi ?? const <AmalfiWallpaperInfo>[];
+    final current = readWallpaper(config.read('wallpaper'), amalfi: amalfi);
     void choose(WallpaperOption option) => setState(
       () => config.replace('wallpaper', {
         // The fit is a separate choice; a new picture keeps it.
@@ -758,13 +786,22 @@ class _WallpaperPaneState extends State<WallpaperPane> {
           ],
         ),
         Container(height: 1, color: colors.separator),
-        _Category(
-          title: l.wallpaperSilica,
-          options: const [DefaultWallpaper()],
-          current: current,
-          onChoose: choose,
-          name: (o) => _name(l, o),
-        ),
+        if (amalfi.isNotEmpty)
+          _Category(
+            title: l.wallpaperAmalfi,
+            options: [for (final w in amalfi) AmalfiWallpaperOption(w)],
+            current: current,
+            onChoose: choose,
+            name: (o) => _name(l, o),
+          )
+        else
+          _Category(
+            title: l.wallpaperSilica,
+            options: const [DefaultWallpaper()],
+            current: current,
+            onChoose: choose,
+            name: (o) => _name(l, o),
+          ),
         _Category(
           title: l.wallpaperColors,
           options: [for (final c in wallpaperColors) ColorWallpaper(c)],
@@ -786,6 +823,7 @@ class _WallpaperPaneState extends State<WallpaperPane> {
 
   static String _name(AppLocalizations l, WallpaperOption o) => switch (o) {
     DefaultWallpaper() => l.wallpaperSilicaName,
+    AmalfiWallpaperOption(:final info) => info.title,
     ColorWallpaper(:final hex) => hex,
     ImageWallpaper(:final path) => path.split('/').last,
   };
@@ -817,6 +855,8 @@ class _CategoryState extends State<_Category> {
 
   bool _same(WallpaperOption a, WallpaperOption b) => switch ((a, b)) {
     (DefaultWallpaper(), DefaultWallpaper()) => true,
+    (AmalfiWallpaperOption(:final info), final AmalfiWallpaperOption other) =>
+      info.id == other.info.id,
     (ColorWallpaper(:final hex), final ColorWallpaper other) =>
       hex == other.hex,
     (ImageWallpaper(:final path), final ImageWallpaper other) =>
@@ -940,6 +980,17 @@ class _Thumb extends StatelessWidget {
                       ],
               ),
             ),
+          ),
+          // The 640 px preview of the appearance's variant.
+          AmalfiWallpaperOption(:final info) => Image.file(
+            File(
+              (dark ? info.darkPreview : info.lightPreview) ??
+                  info.image(dark: dark),
+            ),
+            fit: BoxFit.cover,
+            cacheWidth: (width * 2).round(),
+            errorBuilder: (context, error, stack) =>
+                const ColoredBox(color: Color(0xFF7A7B80)),
           ),
           ColorWallpaper(:final color) => ColoredBox(color: color),
           ImageWallpaper(:final path) => Image.file(

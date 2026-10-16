@@ -1,3 +1,5 @@
+import 'dart:io';
+
 // Desktop & Dock, Menu Bar, Displays and Wallpaper: the shell's files and the tools.
 
 import 'package:flutter/widgets.dart';
@@ -187,5 +189,33 @@ void main() {
     expect(h.config.read('wallpaper'), {'color': '#1f2a44'});
     await tapKey(tester, 'wallpaper {}');
     expect(h.config.read('wallpaper'), isEmpty);
+  });
+
+  testWidgets('Wallpaper: the Amalfi set with titles; the choice is its id', (
+    tester,
+  ) async {
+    final root = Directory.systemTemp.createTempSync('silica-wallpapers');
+    addTearDown(() => root.deleteSync(recursive: true));
+    final set = Directory('${root.path}/amalfi')..createSync();
+    for (final id in ['positano-1', 'ravello']) {
+      Directory('${set.path}/$id').createSync();
+      File('${set.path}/$id/light.png').writeAsBytesSync([1]);
+      File('${set.path}/$id/dark.png').writeAsBytesSync([2]);
+    }
+    File('${set.path}/wallpapers.json').writeAsStringSync(
+      '{"wallpapers":['
+      '{"id":"positano-1","title":"Positano 1","variants":{"light":{"file":"positano-1/light.png"},"dark":{"file":"positano-1/dark.png"}}},'
+      '{"id":"ravello","title":"Ravello","variants":{"light":{"file":"ravello/light.png"},"dark":{"file":"ravello/dark.png"}}}]}',
+    );
+    final h = await pumpSettings(
+      tester,
+      pane: PaneId.wallpaper,
+      extraEnv: {'SILICA_WALLPAPERS': root.path},
+    );
+    expect(find.text('Positano 1'), findsOneWidget);
+    // Ravello is the default: the current wallpaper's name beside its preview.
+    expect(find.text('Ravello'), findsWidgets);
+    await tapKey(tester, 'wallpaper {wallpaper: positano-1}');
+    expect(h.config.read('wallpaper'), {'wallpaper': 'positano-1'});
   });
 }

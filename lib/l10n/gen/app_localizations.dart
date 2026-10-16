@@ -1316,6 +1316,12 @@ abstract class AppLocalizations {
   /// **'Silica'**
   String get wallpaperSilica;
 
+  /// No description provided for @wallpaperAmalfi.
+  ///
+  /// In en, this message translates to:
+  /// **'Amalfi'**
+  String get wallpaperAmalfi;
+
   /// No description provided for @wallpaperSilicaName.
   ///
   /// In en, this message translates to:
