@@ -26,6 +26,70 @@ void main() {
       }
     });
 
+    testWidgets('the Size slider writes tileSize while dragging', (
+      tester,
+    ) async {
+      final h = await pumpSettings(tester, pane: PaneId.desktopDock);
+      final slider = find.descendant(
+        of: find.byKey(const ValueKey('dock size')),
+        matching: find.byType(SilicaSlider),
+      );
+      await tester.ensureVisible(slider);
+      expect(h.config.number('dock', 'tileSize', fallback: -1), -1);
+      final gesture = await tester.startGesture(tester.getCenter(slider));
+      await gesture.moveBy(const Offset(40, 0));
+      await tester.pump();
+      final mid = h.config.number('dock', 'tileSize', fallback: -1);
+      expect(mid, greaterThan(48));
+      expect(mid, mid.roundToDouble());
+      await gesture.moveBy(const Offset(400, 0));
+      await tester.pump();
+      await gesture.up();
+      await tester.pump();
+      expect(h.config.number('dock', 'tileSize', fallback: -1), 128);
+      // The magnified size never falls below the resting size.
+      expect(
+        h.config.number('dock', 'magnifiedSize', fallback: -1),
+        greaterThanOrEqualTo(128),
+      );
+    });
+
+    testWidgets('Magnification size needs Magnification', (tester) async {
+      final h = await pumpSettings(tester, pane: PaneId.desktopDock);
+      SilicaSlider magnified() => tester.widget<SilicaSlider>(
+        find.descendant(
+          of: find.byKey(const ValueKey('dock magnification size')),
+          matching: find.byType(SilicaSlider),
+        ),
+      );
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('dock magnification size')),
+      );
+      expect(magnified().enabled, isFalse);
+      h.config.write('dock', 'magnify', true);
+      await tester.pump(const Duration(seconds: 1));
+      expect(magnified().enabled, isTrue);
+      expect(magnified().min, 48);
+      expect(magnified().max, 128);
+    });
+
+    testWidgets('an external dock.json change moves the Size slider', (
+      tester,
+    ) async {
+      final h = await pumpSettings(tester, pane: PaneId.desktopDock);
+      SilicaSlider size() => tester.widget<SilicaSlider>(
+        find.descendant(
+          of: find.byKey(const ValueKey('dock size')),
+          matching: find.byType(SilicaSlider),
+        ),
+      );
+      expect(size().value, 48);
+      // The shell writes tileSize when the Dock separator is dragged.
+      h.config.write('dock', 'tileSize', 96);
+      await tester.pump(const Duration(seconds: 1));
+      expect(size().value, 96);
+    });
+
     testWidgets('the minimize effect and the position', (tester) async {
       final h = await pumpSettings(tester, pane: PaneId.desktopDock);
       await choose(tester, 'dock minimize effect', 'Scale effect');

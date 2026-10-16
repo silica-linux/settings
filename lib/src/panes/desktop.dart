@@ -5,8 +5,11 @@
 // and the wallpaper (wallpaper.json, read by the shell when the session starts). The rest
 // waits for Ossido and the shell: each group's footer names the issue.
 
+import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart' show mapEquals;
 import 'package:flutter/widgets.dart';
 import 'package:silica_ui/silica_ui.dart';
 
@@ -16,6 +19,7 @@ import '../model/panes.dart';
 import '../services.dart';
 import '../style.dart';
 import '../system/config.dart';
+import '../system/shell_config.dart';
 import '../system/tools.dart';
 import '../ui/errors.dart';
 import '../ui/grouped.dart';
@@ -219,12 +223,34 @@ class _DesktopDockPaneState extends State<DesktopDockPane> {
   String _browser = '';
   String? _error;
   bool _loaded = false;
+  Timer? _watch;
+  Map<String, Object?>? _seen;
+
+  // The shell writes dock.json too (dragging the Dock separator changes `tileSize`); the
+  // pane re-reads it twice a second and redraws when the file's content changed.
+  void _startWatching(ConfigStore config) {
+    _seen = config.read('dock');
+    _watch = Timer.periodic(const Duration(milliseconds: 500), (_) {
+      final now = config.read('dock');
+      if (!mapEquals(now, _seen)) {
+        _seen = now;
+        if (mounted) setState(() {});
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _watch?.cancel();
+    super.dispose();
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_loaded) {
       _loaded = true;
+      _startWatching(ServicesScope.of(context).config);
       _loadBrowsers();
     }
   }
@@ -262,6 +288,17 @@ class _DesktopDockPaneState extends State<DesktopDockPane> {
         config.flag('dock', key, fallback: fallback);
     void set(String key, Object value) =>
         setState(() => config.write('dock', key, value));
+    final tile = DockSizes.tile(
+      config.number('dock', 'tileSize', fallback: DockSizes.tileDefault),
+    );
+    final magnified = DockSizes.magnified(
+      config.number(
+        'dock',
+        'magnifiedSize',
+        fallback: DockSizes.magnifiedDefault,
+      ),
+      tile,
+    );
     final position = _named(
       config,
       'position',
@@ -283,18 +320,45 @@ class _DesktopDockPaneState extends State<DesktopDockPane> {
       children: [
         SettingsGroup(
           heading: l.dockSection,
-          unavailable: true,
-          issue: Issues.dock,
           children: [
             SliderRow(
+              key: const ValueKey('dock size'),
               title: l.dockSize,
-              value: 0.38,
+              value: tile.toDouble(),
+              min: DockSizes.tileMin,
+              max: DockSizes.tileMax,
               labels: [l.dockSmall, l.dockLarge],
+              onChanged: (v) {
+                final next = DockSizes.tile(v);
+                if (next == tile) return;
+                setState(
+                  () => config.writeDockSizes(
+                    tile: next.toDouble(),
+                    magnified: magnified.toDouble(),
+                  ),
+                );
+              },
             ),
             SliderRow(
+              key: const ValueKey('dock magnification size'),
               title: l.dockMagnificationSize,
-              value: 0.5,
+              value: magnified.toDouble(),
+              // A non-empty range even at the largest size (the slider divides by it).
+              min: math.min(tile.toDouble(), DockSizes.magnifiedMax - 1),
+              max: DockSizes.magnifiedMax,
               labels: [l.dockSmall, l.dockLarge],
+              onChanged: flag('magnify', false)
+                  ? (v) {
+                      final next = DockSizes.magnified(v, tile);
+                      if (next == magnified) return;
+                      setState(
+                        () => config.writeDockSizes(
+                          tile: tile.toDouble(),
+                          magnified: next.toDouble(),
+                        ),
+                      );
+                    }
+                  : null,
             ),
           ],
         ),

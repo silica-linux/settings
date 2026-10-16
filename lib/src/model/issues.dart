@@ -4,7 +4,6 @@
 abstract final class Issues {
   static const int systemLook = 59;
   static const int appearanceExtras = 60;
-  static const int dock = 61;
   static const int menuBar = 62;
   static const int displays = 63;
   static const int sound = 64;
