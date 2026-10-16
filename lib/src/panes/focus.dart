@@ -32,7 +32,7 @@ const List<String> focusSymbols = [
   'airplane',
 ];
 
-const Color _focusTint = Color(0xFF5E5CE6);
+const Color _focusTint = Color(0xFF8B5CF6);
 
 class FocusPane extends StatefulWidget {
   const FocusPane({super.key});

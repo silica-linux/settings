@@ -36,9 +36,9 @@ class StatusLine extends StatelessWidget {
   final String text;
   final Color color;
 
-  static const Color green = Color(0xFF34C759);
-  static const Color red = Color(0xFFFF3B30);
-  static const Color gray = Color(0xFF8E8E93);
+  static const Color green = Color(0xFF34A853);
+  static const Color red = Color(0xFFF0562E);
+  static const Color gray = Color(0xFF9A9EA6);
 
   @override
   Widget build(BuildContext context) => Row(
@@ -76,35 +76,37 @@ class _SwitchCard extends StatelessWidget {
   final ValueChanged<bool>? onChanged;
   final Widget? below;
 
+  // The kit's Wi-Fi and Bluetooth panes: the header card (tile 56, Title 3, description),
+  // then the on / off switch in a group of its own.
   @override
-  Widget build(BuildContext context) => GroupBox(
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(10, 12, 10, 12),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              IconTile(symbol: pane.symbol, tint: pane.tint, size: 28),
-              const SizedBox(width: 10),
-              Expanded(
-                child: RowTitles(title: title, subtitle: description),
-              ),
-              const SizedBox(width: 12),
-              AmalfiSwitch(
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      HeaderCard(
+        symbol: pane.symbol,
+        tint: pane.tint,
+        title: title,
+        description: description,
+      ),
+      const SizedBox(height: SettingsMetrics.groupSpacing),
+      GroupBox(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ValueRow(
+              title: title,
+              trailing: AmalfiSwitch(
                 key: switchKey,
                 value: value,
-                size: AmalfiControlSize.small,
                 semanticLabel: title,
                 onChanged: onChanged,
               ),
-            ],
-          ),
+            ),
+            if (below case final below?) ...[const RowSeparator(), below],
+          ],
         ),
-        if (below case final below?) ...[const RowSeparator(), below],
-      ],
-    ),
+      ),
+    ],
   );
 }
 
@@ -203,11 +205,11 @@ class _WifiPaneState extends State<WifiPane> {
     if (mounted) await _load();
   }
 
-  List<MenuEntry> _networkMenu(AppLocalizations l, AccessPoint ap) {
+  List<AmalfiMenuEntry> _networkMenu(AppLocalizations l, AccessPoint ap) {
     final saved = _savedNamed(ap.ssid);
     return [
       if (ap.inUse)
-        MenuAction(
+        AmalfiMenuAction(
           l.wifiDisconnect,
           onSelected: () async {
             final devices = await _tools.networkDevices();
@@ -216,16 +218,16 @@ class _WifiPaneState extends State<WifiPane> {
           },
         )
       else
-        MenuAction(l.wifiConnect, onSelected: () => _join(ap)),
+        AmalfiMenuAction(l.wifiConnect, onSelected: () => _join(ap)),
       if (saved != null) ...[
-        const MenuDivider(),
-        MenuAction(
+        const AmalfiMenuDivider(),
+        AmalfiMenuAction(
           l.wifiAutoJoin,
           checked: saved.autoconnect,
           onSelected: () =>
               _run(_tools.setAutoconnect(saved.name, !saved.autoconnect)),
         ),
-        MenuAction(
+        AmalfiMenuAction(
           l.wifiForget,
           onSelected: () => _run(_tools.forgetConnection(saved.name)),
         ),
@@ -418,7 +420,7 @@ class _NetworkRow extends StatelessWidget {
 
   final AccessPoint ap;
   final VoidCallback onTap;
-  final List<MenuEntry> Function() menu;
+  final List<AmalfiMenuEntry> Function() menu;
 
   @override
   Widget build(BuildContext context) => GestureDetector(
@@ -957,7 +959,7 @@ class _BluetoothPaneState extends State<BluetoothPane> {
                           MoreButton(
                             semanticLabel: l.moreFor(p.name),
                             entries: () => [
-                              MenuAction(
+                              AmalfiMenuAction(
                                 l.bluetoothForget,
                                 onSelected: () =>
                                     _run(p.path, tools.forgetBluetooth(p.path)),

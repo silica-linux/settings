@@ -78,7 +78,7 @@ class IconTile extends StatelessWidget {
     alignment: Alignment.center,
     // A flat tile with smooth corners (kit `Tile`: radius 5 at 20 pt, 6 at 24).
     decoration: ShapeDecoration(
-      color: tint,
+      color: tileTint(tint, dark: AmalfiTheme.of(context).isDark),
       shape: AmalfiSmoothBorder(
         radius:
             radius ??
@@ -92,4 +92,21 @@ class IconTile extends StatelessWidget {
       size: size <= 20 ? size * 0.6 : (size >= 56 ? size / 2 : size * 2 / 3),
     ),
   );
+}
+
+/// The dark appearance's colour of a tile tinted with a light Amalfi token (the kit's tiles
+/// in the dark pages): accent, palette and the two grays.
+Color tileTint(Color light, {required bool dark}) {
+  if (!dark) return light;
+  const pairs = {
+    0xFF0E77E6: 0xFF3D95FF,
+    0xFF34A853: 0xFF4CC75A,
+    0xFF9A9EA6: 0xFF7C808A,
+    0xFF5F636B: 0xFFB0B4BC,
+    0xFF00AFAA: 0xFF19C8C4,
+    0xFFF0562E: 0xFFFF6A43,
+    0xFF8B5CF6: 0xFFA07CFF,
+  };
+  final pair = pairs[light.toARGB32()];
+  return pair == null ? light : Color(pair);
 }

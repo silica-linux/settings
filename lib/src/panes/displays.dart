@@ -171,7 +171,7 @@ class _DisplaysPaneState extends State<DisplaysPane> {
                                   border: Border.all(
                                     color: connector == chosenName
                                         ? ControlAccent.of(context)
-                                        : const Color(0xFF1C1C1E),
+                                        : const Color(0xFF1B1C1F),
                                     width: 3,
                                   ),
                                   gradient: const LinearGradient(

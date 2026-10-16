@@ -9,7 +9,6 @@ import 'package:silica_ui/silica_ui.dart';
 
 import '../../l10n/gen/app_localizations.dart';
 import '../style.dart';
-import 'popup.dart';
 import 'symbol.dart';
 
 /// Marks the first child of a page: its heading has no space above.
@@ -259,7 +258,7 @@ class NavRow extends StatefulWidget {
     required this.title,
     this.subtitle,
     this.symbol,
-    this.tint = const Color(0xFF8E8E93),
+    this.tint = const Color(0xFF9A9EA6),
     this.leading,
     this.value,
     this.onTap,
@@ -475,20 +474,18 @@ class PopUpRow<T> extends StatelessWidget {
     title: title,
     subtitle: subtitle,
     indent: indent,
-    trailing: leading == null
-        ? SettingsPopUp<T>(
-            items: items,
-            value: value,
-            onChanged: onChanged,
-            semanticLabel: title,
-          )
-        : FormPopUp<T>(
-            items: items,
-            value: value,
-            onChanged: onChanged,
-            leading: leading,
-            semanticLabel: title,
-          ),
+    trailing: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (leading case final leading?) ...[leading, const SizedBox(width: 8)],
+        SettingsPopUp<T>(
+          items: items,
+          value: value,
+          onChanged: onChanged,
+          semanticLabel: title,
+        ),
+      ],
+    ),
   );
 }
 
@@ -896,5 +893,38 @@ class SettingsRadioGroup<T> extends StatelessWidget {
               : () => onChanged!(option.value),
         ),
     ],
+  );
+}
+
+/// A row with a radio button and its label (kit `Row/Radio Off`, `Row/Radio On`): 48 tall,
+/// the radio at x 12, the label at x 40.
+class RadioRow extends StatelessWidget {
+  const RadioRow({
+    super.key,
+    required this.label,
+    required this.selected,
+    required this.onSelected,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback? onSelected;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    height: SettingsMetrics.checkRowHeight,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: SettingsMetrics.rowTextInset,
+      ),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: AmalfiRadio(
+          selected: selected,
+          label: label,
+          onSelected: onSelected,
+        ),
+      ),
+    ),
   );
 }

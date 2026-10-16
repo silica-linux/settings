@@ -58,8 +58,8 @@ class GeneralPane extends StatelessWidget {
           tint: tint,
           onTap: () => open(sub),
         );
-    const gray = Color(0xFF8E8E93);
-    const blue = Color(0xFF0A84FF);
+    const gray = Color(0xFF9A9EA6);
+    const blue = Color(0xFF0E77E6);
     return PanePage(
       children: [
         HeaderCard(
@@ -212,7 +212,7 @@ class _AboutPaneState extends State<AboutPane> {
               title: unknown(info.osName),
               leading: const IconTile(
                 symbol: 'sparkles',
-                tint: Color(0xFF5E5CE6),
+                tint: Color(0xFF8B5CF6),
                 size: 28,
               ),
               trailing: RowValue(
@@ -393,7 +393,7 @@ class _StoragePaneState extends State<StoragePane> {
                 title: title,
                 leading: IconTile(
                   symbol: symbol,
-                  tint: const Color(0xFF8E8E93),
+                  tint: const Color(0xFF9A9EA6),
                   size: 24,
                 ),
                 trailing: Row(
@@ -496,9 +496,9 @@ class _SharingPaneState extends State<SharingPane> {
           issue: Issues.general,
           children: [
             for (final (title, symbol, tint) in [
-              (l.sharingFiles, 'folder', const Color(0xFF32ADE6)),
-              (l.sharingScreen, 'screen-share', const Color(0xFF5E5CE6)),
-              (l.sharingRemoteLogin, 'terminal', const Color(0xFF1C1C1E)),
+              (l.sharingFiles, 'folder', const Color(0xFF00AFAA)),
+              (l.sharingScreen, 'screen-share', const Color(0xFF8B5CF6)),
+              (l.sharingRemoteLogin, 'terminal', const Color(0xFF5F636B)),
             ])
               ValueRow(
                 title: title,

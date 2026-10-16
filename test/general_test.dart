@@ -13,17 +13,21 @@ import 'pane_helpers.dart';
 
 void main() {
   group('General', () {
-    testWidgets('the toolbar leaves the title to the header card', (
-      tester,
-    ) async {
-      await pumpSettings(tester, pane: PaneId.general);
-      expect(tester.widget<Text>(find.byKey(const ValueKey('title'))).data, '');
-      await tapKey(tester, 'general about');
-      expect(
-        tester.widget<Text>(find.byKey(const ValueKey('title'))).data,
-        'About',
-      );
-    });
+    testWidgets(
+      'the toolbar names the pane over the header card (kit General)',
+      (tester) async {
+        await pumpSettings(tester, pane: PaneId.general);
+        expect(
+          tester.widget<Text>(find.byKey(const ValueKey('title'))).data,
+          'General',
+        );
+        await tapKey(tester, 'general about');
+        expect(
+          tester.widget<Text>(find.byKey(const ValueKey('title'))).data,
+          'About',
+        );
+      },
+    );
 
     testWidgets('About shows the machine', (tester) async {
       final h = await pumpSettings(tester, pane: PaneId.general);

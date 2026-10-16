@@ -28,11 +28,6 @@ class SettingsWindow extends StatefulWidget {
 class _SettingsWindowState extends State<SettingsWindow> {
   final FocusNode _searchFocus = FocusNode(debugLabel: 'sidebar search');
 
-  /// Panes that open with a header card leave the toolbar title out until the card scrolls
-  /// away (ST-NAV-01: the card already names the pane).
-  final ValueNotifier<bool> _scrolledPastHeader = ValueNotifier(false);
-  Location? _shownLocation;
-
   @override
   void initState() {
     super.initState();
@@ -46,7 +41,6 @@ class _SettingsWindowState extends State<SettingsWindow> {
   void dispose() {
     _searchFocus.removeListener(_focusChanged);
     _searchFocus.dispose();
-    _scrolledPastHeader.dispose();
     super.dispose();
   }
 
@@ -54,11 +48,6 @@ class _SettingsWindowState extends State<SettingsWindow> {
   Widget build(BuildContext context) {
     final navigation = widget.navigation;
     final colors = SettingsColors.of(context);
-    if (_shownLocation != navigation.location) {
-      _shownLocation = navigation.location;
-      _scrolledPastHeader.value = false;
-    }
-    final header = hasHeaderCard(navigation.location);
     return SystemStateBuilder(
       builder: (context, state) {
         final groups = paneGroups(
@@ -98,21 +87,12 @@ class _SettingsWindowState extends State<SettingsWindow> {
                     right: 0,
                     top: toolbarHeight,
                     bottom: 0,
-                    child: NotificationListener<ScrollUpdateNotification>(
-                      onNotification: (n) {
-                        if (header && n.metrics.axis == Axis.vertical) {
-                          _scrolledPastHeader.value =
-                              n.metrics.pixels > headerCardScroll;
-                        }
-                        return false;
-                      },
-                      child: KeyedSubtree(
-                        key: ValueKey(navigation.location),
-                        child: paneBody(
-                          context,
-                          navigation.location,
-                          open: navigation.openSub,
-                        ),
+                    child: KeyedSubtree(
+                      key: ValueKey(navigation.location),
+                      child: paneBody(
+                        context,
+                        navigation.location,
+                        open: navigation.openSub,
                       ),
                     ),
                   ),
@@ -147,13 +127,7 @@ class _SettingsWindowState extends State<SettingsWindow> {
                     right: 0,
                     top: 0,
                     height: toolbarHeight,
-                    child: ValueListenableBuilder<bool>(
-                      valueListenable: _scrolledPastHeader,
-                      builder: (context, scrolled, _) => _Toolbar(
-                        navigation: navigation,
-                        showTitle: !header || scrolled,
-                      ),
-                    ),
+                    child: _Toolbar(navigation: navigation),
                   ),
                 ],
               ),
@@ -165,14 +139,9 @@ class _SettingsWindowState extends State<SettingsWindow> {
   }
 }
 
-/// How far a header card scrolls before the toolbar shows the title (provisional: about
-/// the card's height).
-const double headerCardScroll = 120;
-
 class _Toolbar extends StatelessWidget {
-  const _Toolbar({required this.navigation, required this.showTitle});
+  const _Toolbar({required this.navigation});
   final Navigation navigation;
-  final bool showTitle;
 
   @override
   Widget build(BuildContext context) {
@@ -212,7 +181,7 @@ class _Toolbar extends StatelessWidget {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  showTitle ? locationTitle(l, navigation.location) : '',
+                  locationTitle(l, navigation.location),
                   key: const ValueKey('title'),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

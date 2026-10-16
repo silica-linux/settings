@@ -38,45 +38,38 @@ class AppearancePane extends StatelessWidget {
           listenable: services.look,
           builder: (context, _) => PanePage(
             children: [
-              SettingsGroup(
-                footer: state.reachable
+              _ModeSection(
+                note: state.reachable
                     ? l.appearanceAutoNote
                     : l.appearanceNoDaemon,
                 children: [
-                  ValueRow(
-                    title: l.appearanceMode,
-                    alignTop: true,
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        for (final mode in AppearanceMode.values) ...[
-                          if (mode != AppearanceMode.light)
-                            const SizedBox(width: 10),
-                          _ModePreview(
-                            key: ValueKey('mode ${mode.name}'),
-                            mode: mode,
-                            label: switch (mode) {
-                              AppearanceMode.light => l.appearanceLight,
-                              AppearanceMode.dark => l.appearanceDark,
-                              AppearanceMode.automatic => l.appearanceAuto,
-                            },
-                            selected: mode == chosen,
-                            onTap: state.reachable
-                                ? () => services.system.setAppearanceMode(
-                                    switch (mode) {
-                                      AppearanceMode.light => 'light',
-                                      AppearanceMode.dark => 'dark',
-                                      AppearanceMode.automatic => 'auto',
-                                    },
-                                  )
-                                : null,
-                          ),
-                        ],
-                      ],
+                  for (final mode in AppearanceMode.values)
+                    _ModePreview(
+                      key: ValueKey('mode ${mode.name}'),
+                      mode: mode,
+                      label: switch (mode) {
+                        AppearanceMode.light => l.appearanceLight,
+                        AppearanceMode.dark => l.appearanceDark,
+                        AppearanceMode.automatic => l.appearanceAuto,
+                      },
+                      selected: mode == chosen,
+                      onTap: state.reachable
+                          ? () => services.system.setAppearanceMode(
+                              switch (mode) {
+                                AppearanceMode.light => 'light',
+                                AppearanceMode.dark => 'dark',
+                                AppearanceMode.automatic => 'auto',
+                              },
+                            )
+                          : null,
                     ),
-                  ),
                 ],
+              ),
+              SettingsGroup(
+                heading: l.appearanceGlass,
+                unavailable: true,
+                issue: Issues.appearanceExtras,
+                children: [SliderRow(title: l.appearanceGlass, value: 0.5)],
               ),
               SettingsGroup(
                 heading: l.appearanceTheme,
@@ -90,42 +83,34 @@ class AppearancePane extends StatelessWidget {
                       onChanged: services.setAccent,
                     ),
                   ),
-                ],
-              ),
-              SettingsGroup(
-                unavailable: true,
-                issue: Issues.appearanceExtras,
-                children: [
-                  PopUpRow<HighlightColor>(
-                    title: l.appearanceHighlight,
-                    items: [
-                      PopUpItem(
-                        HighlightColor.automatic,
-                        l.appearanceAutomaticChoice,
-                      ),
-                    ],
-                    value: HighlightColor.automatic,
-                    onChanged: (_) {},
-                    leading: const _Swatch(gradient: true),
+                  Unavailable(
+                    child: PopUpRow<HighlightColor>(
+                      title: l.appearanceHighlight,
+                      items: [
+                        PopUpItem(
+                          HighlightColor.automatic,
+                          l.appearanceAutomaticChoice,
+                        ),
+                      ],
+                      value: HighlightColor.automatic,
+                      onChanged: (_) {},
+                      leading: const _Swatch(gradient: true),
+                    ),
                   ),
-                  PopUpRow<int>(
-                    title: l.appearanceIconStyle,
-                    items: [PopUpItem(0, l.appearanceDefaultChoice)],
-                    value: 0,
-                    onChanged: (_) {},
+                  Unavailable(
+                    child: PopUpRow<int>(
+                      title: l.appearanceFolderColor,
+                      items: [PopUpItem(0, l.appearanceAutomaticChoice)],
+                      value: 0,
+                      onChanged: (_) {},
+                      leading: _Swatch(color: Accent.blue.plain(dark: false)),
+                    ),
                   ),
-                  PopUpRow<int>(
-                    title: l.appearanceFolderColor,
-                    items: [PopUpItem(0, l.appearanceAutomaticChoice)],
-                    value: 0,
-                    onChanged: (_) {},
-                    leading: _Swatch(color: Accent.blue.plain(dark: false)),
-                  ),
-                  SliderRow(title: l.appearanceGlass, value: 0.5),
                 ],
               ),
               SettingsGroup(
                 heading: l.appearanceWindows,
+                footer: l.notAvailableYet,
                 children: [
                   PopUpRow<SidebarIconSize>(
                     key: const ValueKey('sidebar icon size'),
@@ -138,46 +123,45 @@ class AppearancePane extends StatelessWidget {
                     value: services.sidebarIconSize.value,
                     onChanged: services.setSidebarIconSize,
                   ),
-                ],
-              ),
-              SettingsGroup(
-                footer: l.appearanceOtherApps,
-                children: [
-                  _RadioRow<ScrollBarsMode>(
-                    key: const ValueKey('scroll bars'),
-                    title: l.appearanceScrollBars,
-                    options: [
-                      RadioOption(
-                        ScrollBarsMode.automatic,
-                        l.appearanceScrollAuto,
-                      ),
-                      RadioOption(
-                        ScrollBarsMode.whenScrolling,
-                        l.appearanceScrollWhenScrolling,
-                      ),
-                      RadioOption(
-                        ScrollBarsMode.always,
-                        l.appearanceScrollAlways,
-                      ),
-                    ],
-                    value: services.scrollBars.value,
-                    onChanged: services.setScrollBars,
+                  Unavailable(
+                    child: SwitchRow(title: l.appearanceTint, value: false),
                   ),
                 ],
               ),
               SettingsGroup(
+                heading: l.appearanceScrollBars,
+                footer: l.appearanceOtherApps,
+                children: [
+                  for (final (mode, label) in [
+                    (ScrollBarsMode.automatic, l.appearanceScrollAuto),
+                    (
+                      ScrollBarsMode.whenScrolling,
+                      l.appearanceScrollWhenScrolling,
+                    ),
+                    (ScrollBarsMode.always, l.appearanceScrollAlways),
+                  ])
+                    RadioRow(
+                      key: ValueKey('scroll bars ${mode.name}'),
+                      label: label,
+                      selected: services.scrollBars.value == mode,
+                      onSelected: () => services.setScrollBars(mode),
+                    ),
+                ],
+              ),
+              SettingsGroup(
+                heading: l.appearanceScrollClick,
                 unavailable: true,
                 issue: Issues.appearanceExtras,
                 children: [
-                  SwitchRow(title: l.appearanceTint, value: false),
-                  _RadioRow<int>(
-                    title: l.appearanceScrollClick,
-                    options: [
-                      RadioOption(0, l.appearanceScrollNextPage),
-                      RadioOption(1, l.appearanceScrollSpot),
-                    ],
-                    value: 0,
-                    onChanged: (_) {},
+                  RadioRow(
+                    label: l.appearanceScrollNextPage,
+                    selected: true,
+                    onSelected: () {},
+                  ),
+                  RadioRow(
+                    label: l.appearanceScrollSpot,
+                    selected: false,
+                    onSelected: () {},
                   ),
                 ],
               ),
@@ -189,43 +173,33 @@ class AppearancePane extends StatelessWidget {
   }
 }
 
-/// A title with radio buttons under it (the scroll bar choices).
-class _RadioRow<T> extends StatelessWidget {
-  const _RadioRow({
-    super.key,
-    required this.title,
-    required this.options,
-    required this.value,
-    required this.onChanged,
-  });
-
-  final String title;
-  final List<RadioOption<T>> options;
-  final T value;
-  final ValueChanged<T>? onChanged;
+/// The mode previews under a heading, with the note below (kit `Mode Light`, `Mode Dark`,
+/// `Mode Automatic`: cards 76 × 88, 24 apart).
+class _ModeSection extends StatelessWidget {
+  const _ModeSection({required this.children, required this.note});
+  final List<Widget> children;
+  final String note;
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.fromLTRB(
-      SettingsMetrics.rowTextInset,
-      10,
-      SettingsMetrics.trailingInset,
-      10,
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final colors = SettingsColors.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        RowTitles(title: title),
-        const SizedBox(height: 6),
-        SettingsRadioGroup<T>(
-          options: options,
-          value: value,
-          onChanged: onChanged,
-          spacing: 4,
+        SectionHeading(l.appearanceMode),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 24,
+          children: children,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: Text(note, style: AmalfiType.caption(color: colors.disabled)),
         ),
       ],
-    ),
-  );
+    );
+  }
 }
 
 /// The colour dot before a pop-up's value (the highlight and folder colours).
@@ -307,7 +281,7 @@ class _ModePreview extends StatelessWidget {
               width: 42,
               height: 22,
               decoration: BoxDecoration(
-                color: dark ? const Color(0xFF1C1C1E) : const Color(0xFFFFFFFF),
+                color: dark ? const Color(0xFF1B1C1F) : const Color(0xFFFFFFFF),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(4),
                 ),
@@ -431,12 +405,12 @@ class _AccentPicker extends StatelessWidget {
 
   static const Gradient _multicolour = SweepGradient(
     colors: [
-      Color(0xFFFF3B30),
+      Color(0xFFF0562E),
       Color(0xFFFFCC00),
-      Color(0xFF34C759),
-      Color(0xFF0A84FF),
+      Color(0xFF34A853),
+      Color(0xFF0E77E6),
       Color(0xFFAF52DE),
-      Color(0xFFFF3B30),
+      Color(0xFFF0562E),
     ],
   );
 

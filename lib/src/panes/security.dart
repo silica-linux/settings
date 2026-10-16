@@ -293,7 +293,7 @@ class AccessibilityPane extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    const blue = Color(0xFF0A84FF);
+    const blue = Color(0xFF0E77E6);
     Widget group(String heading, List<(String, String)> rows) => SettingsGroup(
       heading: heading,
       unavailable: true,

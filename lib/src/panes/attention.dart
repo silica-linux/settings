@@ -22,7 +22,6 @@ import '../system/settings_files.dart';
 import '../system/tools.dart';
 import '../ui/errors.dart';
 import '../ui/grouped.dart';
-import '../ui/popup.dart';
 import '../ui/symbol.dart';
 
 /// How an app's notifications appear (the shell's notifications.json `style`).
@@ -804,13 +803,13 @@ class ScreenTimePane extends StatelessWidget {
             NavRow(
               title: l.screenTimeAppUsage,
               symbol: 'hourglass',
-              tint: const Color(0xFF5E5CE6),
+              tint: const Color(0xFF8B5CF6),
               onTap: () {},
             ),
             NavRow(
               title: l.screenTimeNotifications,
               symbol: 'bell',
-              tint: const Color(0xFFFF3B30),
+              tint: const Color(0xFFF0562E),
               onTap: () {},
             ),
           ],
@@ -823,7 +822,7 @@ class ScreenTimePane extends StatelessWidget {
             NavRow(
               title: l.screenTimeDowntime,
               symbol: 'moon',
-              tint: const Color(0xFF5E5CE6),
+              tint: const Color(0xFF8B5CF6),
               onTap: () {},
             ),
             NavRow(

@@ -23,7 +23,6 @@ import '../system/shell_config.dart';
 import '../system/tools.dart';
 import '../ui/errors.dart';
 import '../ui/grouped.dart';
-import '../ui/popup.dart';
 import '../ui/symbol.dart';
 import 'input.dart' show showShortcuts;
 
