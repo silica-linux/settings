@@ -3230,18 +3230,6 @@ abstract class AppLocalizations {
   /// **'{rate} Hz'**
   String displaysHz(String rate);
 
-  /// No description provided for @displaysLooksLike.
-  ///
-  /// In en, this message translates to:
-  /// **'Looks like'**
-  String get displaysLooksLike;
-
-  /// No description provided for @displaysLooksDefault.
-  ///
-  /// In en, this message translates to:
-  /// **'{mode} (Default)'**
-  String displaysLooksDefault(String mode);
-
   /// No description provided for @displaysScaleValue.
   ///
   /// In en, this message translates to:

@@ -81,8 +81,6 @@ class _DisplaysPaneState extends State<DisplaysPane> {
     OutputMode? mode,
     double? scale,
     String? transform,
-    LookSize? logical,
-    bool nativeLooks = false,
   }) async {
     final system = ServicesScope.of(context).system;
     final l = AppLocalizations.of(context);
@@ -96,8 +94,6 @@ class _DisplaysPaneState extends State<DisplaysPane> {
       mode: mode,
       scale: scale,
       transform: transform,
-      logical: logical,
-      nativeLooks: nativeLooks,
     );
     if (!mounted) return;
     if (error != null) {
@@ -119,9 +115,7 @@ class _DisplaysPaneState extends State<DisplaysPane> {
     final back = await system.configureOutput(
       display.connector,
       mode: before,
-      // The scaled size and the scale exclude each other: put back the one that was on.
-      scale: display.scaledMode ? null : display.scale,
-      logical: display.scaledMode ? display.logical : null,
+      scale: display.scale,
       transform: display.transform,
     );
     if (mounted && back != null) {
@@ -247,8 +241,6 @@ class _DisplaysPaneState extends State<DisplaysPane> {
                 ? a
                 : b,
           );
-    final looks = display.looksLike;
-    final looksNow = display.looksNow;
     final scales = {...scaleSteps, display.scale}.toList()..sort();
     final rotationItems = {...rotations, display.transform}.toList();
     String rotationLabel(String t) => switch (t) {
@@ -324,36 +316,6 @@ class _DisplaysPaneState extends State<DisplaysPane> {
                   }
                 : null,
           ),
-          // "Looks like" (HiDPI scaled modes): the native size is the Default; a scaled size
-          // and a fractional scale exclude each other, so the row waits while a scale is set.
-          if (looks.length > 1)
-            PopUpRow<String>(
-              key: const ValueKey('display looks like'),
-              title: l.displaysLooksLike,
-              items: [
-                for (final (i, look) in looks.indexed)
-                  PopUpItem(
-                    look.size,
-                    i == 0
-                        ? l.displaysLooksDefault(modeLabel(look.size))
-                        : modeLabel(look.size),
-                  ),
-              ],
-              value: looksNow?.size,
-              onChanged: canChange && display.scale == 1
-                  ? (size) {
-                      if (size == looksNow?.size) return;
-                      if (size == looks.first.size) {
-                        _change(display, nativeLooks: true);
-                      } else {
-                        _change(
-                          display,
-                          logical: looks.firstWhere((l) => l.size == size),
-                        );
-                      }
-                    }
-                  : null,
-            ),
           PopUpRow<double>(
             key: const ValueKey('display scale'),
             title: l.displaysScale,
@@ -362,7 +324,7 @@ class _DisplaysPaneState extends State<DisplaysPane> {
                 PopUpItem(s, l.displaysScaleValue(trimmed(s))),
             ],
             value: display.scale,
-            onChanged: canChange && !display.scaledMode
+            onChanged: canChange
                 ? (scale) {
                     if (scale != display.scale) _change(display, scale: scale);
                   }

@@ -688,15 +688,6 @@
   "displaysKeep": "Keep",
   "displaysRevert": "Revert",
   "displaysHz": "{rate} Hz",
-  "displaysLooksLike": "Looks like",
-  "displaysLooksDefault": "{mode} (Default)",
-  "@displaysLooksDefault": {
-    "placeholders": {
-      "mode": {
-        "type": "String"
-      }
-    }
-  },
   "displaysScaleValue": "{scale}×",
   "displaysRotate90": "90°",
   "displaysRotate180": "180°",

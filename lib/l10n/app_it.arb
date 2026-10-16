@@ -522,8 +522,6 @@
   "displaysKeep": "Mantieni",
   "displaysRevert": "Ripristina",
   "displaysHz": "{rate} Hz",
-  "displaysLooksLike": "Aspetto",
-  "displaysLooksDefault": "{mode} (Predefinita)",
   "displaysScaleValue": "{scale}×",
   "displaysRotate90": "90°",
   "displaysRotate180": "180°",

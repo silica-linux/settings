@@ -49,50 +49,6 @@ class OutputMode {
   }
 }
 
-/// A size a display can look like (HiDPI scaled modes, silica-desktop docs/displays.md):
-/// `scaled` is false for the native size, which is listed first.
-@immutable
-class LookSize {
-  const LookSize(this.width, this.height, {this.scaled = false});
-
-  final int width;
-  final int height;
-  final bool scaled;
-
-  /// `1536x960`, the key of a size.
-  String get size => '${width}x$height';
-
-  Map<String, Object?> toJson() => {
-    'width': width,
-    'height': height,
-    'scaled': scaled,
-  };
-
-  static LookSize? fromJson(Object? json) {
-    if (json is! Map) return null;
-    final width = json['width'];
-    final height = json['height'];
-    if (width is! num || height is! num || width <= 0 || height <= 0) {
-      return null;
-    }
-    return LookSize(
-      width.toInt(),
-      height.toInt(),
-      scaled: json['scaled'] == true,
-    );
-  }
-
-  @override
-  bool operator ==(Object other) =>
-      other is LookSize &&
-      other.width == width &&
-      other.height == height &&
-      other.scaled == scaled;
-
-  @override
-  int get hashCode => Object.hash(width, height, scaled);
-}
-
 /// A display (Ossido's `output.list`).
 @immutable
 class OutputInfo {
@@ -107,9 +63,6 @@ class OutputInfo {
     this.transform = 'normal',
     this.enabled = true,
     this.primary = false,
-    this.logical,
-    this.hidpi = false,
-    this.looksLike = const [],
   });
 
   final String connector;
@@ -129,25 +82,6 @@ class OutputInfo {
   final bool enabled;
   final bool primary;
 
-  /// The size the display looks like in a scaled mode; null at the native size.
-  final LookSize? logical;
-
-  /// Whether a scaled (HiDPI) mode is on.
-  final bool hidpi;
-
-  /// The sizes it can look like, the native one first; empty when the compositor does not
-  /// say (an older Ossido): the choice is then not offered.
-  final List<LookSize> looksLike;
-
-  /// Whether the display is in a scaled mode now.
-  bool get scaledMode =>
-      hidpi ||
-      (logical != null && looksLike.isNotEmpty && logical != looksLike.first);
-
-  /// The size it looks like now: the scaled size, or the native one.
-  LookSize? get looksNow =>
-      scaledMode ? logical : (looksLike.isEmpty ? null : looksLike.first);
-
   /// The model's name when the display has one, otherwise the connector.
   String get name => model.isNotEmpty ? model : connector;
 
@@ -162,9 +96,6 @@ class OutputInfo {
     'transform': transform,
     'enabled': enabled,
     'primary': primary,
-    if (logical != null) 'logical': logical!.toJson(),
-    'hidpi': hidpi,
-    'looksLike': [for (final l in looksLike) l.toJson()],
   };
 
   static OutputInfo? fromJson(Object? json) {
@@ -190,14 +121,6 @@ class OutputInfo {
       transform: text('transform').isEmpty ? 'normal' : text('transform'),
       enabled: json['enabled'] != false,
       primary: json['primary'] == true,
-      logical: LookSize.fromJson(json['logical']),
-      hidpi: json['hidpi'] == true,
-      looksLike: json['looksLike'] is List
-          ? [
-              for (final l in json['looksLike'] as List)
-                if (LookSize.fromJson(l) case final look?) look,
-            ]
-          : const [],
     );
   }
 
