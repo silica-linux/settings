@@ -111,12 +111,16 @@ class FakeSystem implements SystemBackend {
     OutputMode? mode,
     double? scale,
     String? transform,
+    LookSize? logical,
+    bool nativeLooks = false,
   }) async {
     calls.add(
       'configureOutput $connector'
       '${mode == null ? '' : ' ${mode.size}${mode.refresh > 0 ? '@${mode.refresh}' : ''}'}'
       '${scale == null ? '' : ' scale $scale'}'
-      '${transform == null ? '' : ' $transform'}',
+      '${transform == null ? '' : ' $transform'}'
+      '${logical == null ? '' : ' logical ${logical.size}'}'
+      '${nativeLooks ? ' logical native' : ''}',
     );
     if (displayError != null) return displayError;
     displays = [
@@ -142,10 +146,16 @@ class FakeSystem implements SystemBackend {
                           )
                           .firstOrNull ??
                       mode,
-            scale: scale ?? d.scale,
+            // A fractional scale clears the scaled mode, and the other way round.
+            scale: logical != null ? 1 : scale ?? d.scale,
             transform: transform ?? d.transform,
             enabled: d.enabled,
             primary: d.primary,
+            logical: scale != null || nativeLooks ? null : logical ?? d.logical,
+            hidpi: scale != null || nativeLooks
+                ? false
+                : logical != null || d.hidpi,
+            looksLike: d.looksLike,
           ),
     ];
     emit(withDisplays);

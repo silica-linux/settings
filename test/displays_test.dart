@@ -32,6 +32,25 @@ OutputInfo panel({bool enabled = true}) => OutputInfo(
   primary: true,
 );
 
+const _looks = [
+  LookSize(2560, 1440),
+  LookSize(2240, 1260, scaled: true),
+  LookSize(1920, 1080, scaled: true),
+];
+
+OutputInfo hidpiPanel({LookSize? logical}) => OutputInfo(
+  connector: 'eDP-1',
+  identity: 'ACME Panel 1 ABC',
+  make: 'ACME',
+  model: 'Panel 1',
+  modes: const [_native, _fast, _full, _small],
+  current: _native,
+  primary: true,
+  logical: logical,
+  hidpi: logical != null,
+  looksLike: _looks,
+);
+
 FakeSystem daemonWith(List<OutputInfo> displays) =>
     FakeSystem(const SystemState(reachable: true))..displays = displays;
 
@@ -134,6 +153,78 @@ void main() {
       await tapKey(tester, 'keep display');
       await afterSheet(tester);
       expect(find.text('144 Hz'), findsOneWidget);
+    });
+
+    testWidgets('looks like: the native size is the Default', (tester) async {
+      await open(tester, daemonWith([hidpiPanel()]));
+      expect(find.byKey(const ValueKey('display looks like')), findsOneWidget);
+      expect(find.text('2560 × 1440 (Default)'), findsOneWidget);
+    });
+
+    testWidgets('no looks like row without the sizes', (tester) async {
+      await open(tester, daemonWith([panel()]));
+      expect(find.byKey(const ValueKey('display looks like')), findsNothing);
+    });
+
+    testWidgets('a scaled size is sent as logical and locks the scale', (
+      tester,
+    ) async {
+      final system = daemonWith([hidpiPanel()]);
+      await open(tester, system);
+      await choose(tester, 'display looks like', '1920 × 1080');
+      await settle(tester);
+      expect(system.calls, ['configureOutput eDP-1 logical 1920x1080']);
+      await tapKey(tester, 'keep display');
+      await afterSheet(tester);
+      expect(system.displays.single.logical?.size, '1920x1080');
+      expect(find.text('1920 × 1080'), findsWidgets);
+      // The scale waits while a scaled size is on.
+      await tester.tap(find.byKey(const ValueKey('display scale')));
+      await settle(tester);
+      expect(find.text('2×'), findsNothing);
+    });
+
+    testWidgets('the Default sends logical null', (tester) async {
+      final system = daemonWith([
+        hidpiPanel(logical: const LookSize(1920, 1080, scaled: true)),
+      ]);
+      await open(tester, system);
+      await choose(tester, 'display looks like', '2560 × 1440 (Default)');
+      await settle(tester);
+      expect(system.calls, ['configureOutput eDP-1 logical native']);
+      await tapKey(tester, 'keep display');
+      await afterSheet(tester);
+      expect(system.displays.single.logical, isNull);
+    });
+
+    testWidgets('Revert puts the previous scaled size back', (tester) async {
+      final system = daemonWith([
+        hidpiPanel(logical: const LookSize(2240, 1260, scaled: true)),
+      ]);
+      await open(tester, system);
+      await choose(tester, 'display looks like', '1920 × 1080');
+      await settle(tester);
+      await tapKey(tester, 'revert display');
+      await afterSheet(tester);
+      expect(
+        system.calls.last,
+        'configureOutput eDP-1 2560x1440@59.95 normal logical 2240x1260',
+      );
+      expect(system.displays.single.logical?.size, '2240x1260');
+    });
+
+    testWidgets('a fractional scale leaves the looks like row waiting', (
+      tester,
+    ) async {
+      final system = daemonWith([hidpiPanel()]);
+      await open(tester, system);
+      await choose(tester, 'display scale', '1.5×');
+      await settle(tester);
+      await tapKey(tester, 'keep display');
+      await afterSheet(tester);
+      await tester.tap(find.byKey(const ValueKey('display looks like')));
+      await settle(tester);
+      expect(find.text('1920 × 1080'), findsNothing);
     });
 
     testWidgets('a refusal says why and asks nothing', (tester) async {

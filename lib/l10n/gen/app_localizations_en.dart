@@ -1713,6 +1713,14 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get displaysLooksLike => 'Looks like';
+
+  @override
+  String displaysLooksDefault(String mode) {
+    return '$mode (Default)';
+  }
+
+  @override
   String displaysScaleValue(String scale) {
     return '$scale×';
   }

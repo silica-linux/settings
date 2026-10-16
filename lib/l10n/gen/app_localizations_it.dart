@@ -1717,6 +1717,14 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
+  String get displaysLooksLike => 'Aspetto';
+
+  @override
+  String displaysLooksDefault(String mode) {
+    return '$mode (Predefinita)';
+  }
+
+  @override
   String displaysScaleValue(String scale) {
     return '$scale×';
   }

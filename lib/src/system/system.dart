@@ -260,6 +260,8 @@ abstract class SystemBackend {
     OutputMode? mode,
     double? scale,
     String? transform,
+    LookSize? logical,
+    bool nativeLooks = false,
   });
 
   /// Any of the night light's settings (`SetNightLight`); the others stay. Null when the
@@ -483,6 +485,8 @@ class DaemonBackend implements SystemBackend {
     OutputMode? mode,
     double? scale,
     String? transform,
+    LookSize? logical,
+    bool nativeLooks = false,
   }) async {
     try {
       await _call(
@@ -499,6 +503,11 @@ class DaemonBackend implements SystemBackend {
               },
             'scale': ?scale,
             'transform': ?transform,
+            // A scaled size, or null for the native one (it excludes `scale`).
+            if (logical != null)
+              'logical': {'width': logical.width, 'height': logical.height}
+            else if (nativeLooks)
+              'logical': null,
           }),
         ],
       );
