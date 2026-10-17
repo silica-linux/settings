@@ -32,9 +32,9 @@ Settings writes exactly these keys. Code: `lib/src/system/config.dart` (the stor
 | `autohide` | bool | `false` | written |
 | `indicators` | bool | `true` | written |
 | `recents` | bool | `false` | written |
-| `tileSize` | integer, 16..128 (pt of the icon at rest) | `48` | not wired |
-| `magnifiedSize` | integer, `tileSize`..`floor(tileSize * 132 / 63)` (pt of the icon under the pointer) | `52` | not wired |
-| `launchAnimation` | `"bounce"` \| `"none"` | `"bounce"` | not wired |
+| `tileSize` | integer, 16..128 (pt of the icon at rest) | `48` | written |
+| `magnifiedSize` | integer, `tileSize`..`floor(tileSize * 132 / 63)` (pt of the icon under the pointer) | `52` | written |
+| `launchAnimation` | `"bounce"` \| `"none"` | `"bounce"` | written (the shell reads it live) |
 | `minimizeToApp` | bool (windows minimize into their app's icon) | `false` | not wired |
 
 Settings writes `tileSize` first and clamps `magnifiedSize` to the tile it just wrote; a
@@ -51,17 +51,17 @@ map linearly onto the integer range. `magnify: false` ignores `magnifiedSize`.
 | `batteryPercent` | bool (only meaningful with `battery`) | `false` | written |
 | `autohide` | `"never"` \| `"fullscreen"` \| `"always"` | `"fullscreen"` | not wired |
 | `background` | bool (the bar's translucent background) | `true` | not wired |
-| `recentItems` | integer, one of 0, 5, 10, 15, 20, 30, 50 (recent apps / documents / servers) | `10` | not wired |
-| `clock` | object, below | see below | not wired |
+| `recentItems` | integer, one of 0, 5, 10, 15, 20, 30, 50 (how many recent apps and documents the logo menu lists) | `10` | written |
+| `clock` | object, below | see below | written (the shell reads it live) |
 
 `clock` is written as a whole object (all keys but `hour24` always present):
 
 | Key | Type / values | Default |
 | --- | --- | --- |
-| `hour24` | bool; **absent** means follow the system language | absent |
+| `hour24` | bool; **absent** means 24 hours (the shell does not read the language's 12/24 preference yet) | absent |
 | `seconds` | bool | `false` |
 | `weekday` | bool | `true` |
-| `date` | `"auto"` (when there is room) \| `"always"` \| `"never"` | `"auto"` |
+| `date` | `"auto"` (when there is room: today as `always`) \| `"always"` \| `"never"` (the weekday alone stays when `weekday` is on) | `"auto"` |
 
 A value of `recentItems` off the list is read as `10`. A `clock` that is not an object, or a
 key of it with the wrong type, takes that key's default.
@@ -78,7 +78,8 @@ key of it with the wrong type, takes that key's default.
       "badges": true,
       "sound": true,
       "previews": "always",
-      "grouping": "automatic"
+      "grouping": "auto",
+      "showInCenter": true
     }
   }
 }
@@ -89,9 +90,10 @@ key of it with the wrong type, takes that key's default.
 | `apps.<id>.style` | `"banners"` \| `"alerts"` \| `"none"` | `"banners"` | written (the shell reads it) |
 | `apps.<id>.badges` | bool | `true` | not wired |
 | `apps.<id>.sound` | bool | `true` | not wired |
-| `apps.<id>.previews` | `"always"` \| `"unlocked"` \| `"never"` | the global `previews` | not wired |
-| `apps.<id>.grouping` | `"automatic"` \| `"byApp"` \| `"off"` | the global `grouping` | not wired |
-| `previews` (global) | `"always"` \| `"unlocked"` \| `"never"` | `"always"` | not wired |
+| `apps.<id>.previews` | `"always"` \| `"unlocked"` \| `"never"` | the global `previews` | written (the shell reads it; `unlocked` shows the text: there is no lock screen) |
+| `apps.<id>.grouping` | `"auto"` \| `"app"` \| `"off"` (the shell also takes `automatic` and `byApp`) | the global `grouping` | written (`off` lists each notification of the app in the Center; the others fold them into a stack) |
+| `apps.<id>.showInCenter` | bool | `true` | written (`false` keeps the app out of the Center) |
+| `previews` (global) | `"always"` \| `"unlocked"` \| `"never"` | `"always"` | written |
 | `grouping` (global) | `"automatic"` \| `"byApp"` \| `"off"` | `"automatic"` | not wired |
 
 The per-app keys are optional: Settings removes a per-app key (instead of writing a "default"
@@ -108,13 +110,11 @@ Exactly one of:
 { "image": "/absolute/path/to/picture.png" }
 ```
 
-plus the optional `fit` (not wired): `"fill"` \| `"fit"` \| `"stretch"` \| `"center"` \|
+plus the optional `fit`: `"fill"` \| `"fit"` \| `"stretch"` \| `"center"` \|
 `"tile"`, default `"fill"`. Choosing a new color or picture **replaces** the object (never
 both `color` and `image`) and keeps `fit`. The color is `#rrggbb`. Settings writes it on the
-spot; the shell **should watch the file** (folder watch, as above) and apply it without a new
-login. Today Settings says the change applies at the next login, because the shell reads the
-file only when the session starts; that note goes away when the watch lands. A missing or
-unreadable image falls back to the default color.
+spot; the shell watches the file (folder watch, as above) and repaints without a new login. The
+fit does not apply to a color. A missing or unreadable image falls back to the default color.
 
 ## Files Ossido and silica-daemon read
 

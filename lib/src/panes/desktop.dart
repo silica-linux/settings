@@ -2,7 +2,7 @@
 // is in displays.dart. Real: the menu bar's status items (menubar.json, watched by the shell),
 // the Dock's options (dock.json, watched by the shell: magnification, recent apps,
 // auto-hide, minimize effect, indicators, position), the default web browser (xdg-settings)
-// and the wallpaper (wallpaper.json, read by the shell when the session starts). The rest
+// and the wallpaper (wallpaper.json, watched by the shell: the choice and the fill mode). The rest
 // waits for Ossido and the shell: each group's footer names the issue.
 
 import 'dart:async';
@@ -91,6 +91,10 @@ class _MenuBarPaneState extends State<MenuBarPane> {
     final bluetooth = config.flag('menubar', 'bluetooth', fallback: false);
     final battery = config.flag('menubar', 'battery', fallback: true);
     final percent = config.flag('menubar', 'batteryPercent', fallback: false);
+    final recent = switch (config.read('menubar')['recentItems']) {
+      final int n => n,
+      _ => 10,
+    };
     void set(String key, Object value) =>
         setState(() => config.write('menubar', key, value));
     return SystemStateBuilder(
@@ -107,11 +111,19 @@ class _MenuBarPaneState extends State<MenuBarPane> {
                 onChanged: (_) {},
               ),
               SwitchRow(title: l.menuBarBackground, value: false),
+            ],
+          ),
+          SettingsGroup(
+            children: [
               PopUpRow<int>(
+                key: const ValueKey('menubar recent items'),
                 title: l.menuBarRecentItems,
-                items: const [PopUpItem(10, '10')],
-                value: 10,
-                onChanged: (_) {},
+                items: [
+                  for (final n in recentItemChoices)
+                    PopUpItem(n, n == 0 ? l.menuBarRecentNone : '$n'),
+                ],
+                value: recentItemChoices.contains(recent) ? recent : 10,
+                onChanged: (n) => setState(() => config.writeRecentItems(n)),
               ),
             ],
           ),
@@ -423,7 +435,18 @@ class _DesktopDockPaneState extends State<DesktopDockPane> {
               value: flag('autohide', false),
               onChanged: (v) => set('autohide', v),
             ),
-            Unavailable(child: SwitchRow(title: l.dockAnimate, value: true)),
+            SwitchRow(
+              key: const ValueKey('dock animate'),
+              title: l.dockAnimate,
+              value:
+                  config.text('dock', 'launchAnimation', fallback: '') !=
+                  'none',
+              onChanged: (v) => setState(
+                () => config.writeLaunchAnimation(
+                  v ? LaunchAnimation.bounce : LaunchAnimation.none,
+                ),
+              ),
+            ),
             SwitchRow(
               key: const ValueKey('dock indicators'),
               title: l.dockIndicators,
@@ -731,6 +754,11 @@ class _WallpaperPaneState extends State<WallpaperPane> {
         ...option.json,
       }),
     );
+    final fit =
+        WallpaperFit.values
+            .where((f) => f.name == config.read('wallpaper')['fit'])
+            .firstOrNull ??
+        WallpaperFit.fill;
     final pictures = _pictures ?? const [];
     return PanePage(
       children: [
@@ -751,12 +779,21 @@ class _WallpaperPaneState extends State<WallpaperPane> {
                 children: [
                   ValueRow(
                     title: _name(l, current),
-                    trailing: Unavailable(
-                      child: SettingsPopUp<int>(
-                        items: [PopUpItem(0, l.wallpaperFill)],
-                        value: 0,
-                        onChanged: (_) {},
-                      ),
+                    trailing: SettingsPopUp<WallpaperFit>(
+                      key: const ValueKey('wallpaper fit'),
+                      items: [
+                        PopUpItem(WallpaperFit.fill, l.wallpaperFill),
+                        PopUpItem(WallpaperFit.fit, l.wallpaperFit),
+                        PopUpItem(WallpaperFit.stretch, l.wallpaperStretch),
+                        PopUpItem(WallpaperFit.center, l.wallpaperCenter),
+                        PopUpItem(WallpaperFit.tile, l.wallpaperTile),
+                      ],
+                      value: fit,
+                      semanticLabel: l.wallpaperFill,
+                      // A colour or the generated gradient has nothing to fit.
+                      onChanged: current is ColorWallpaper
+                          ? null
+                          : (v) => setState(() => config.writeWallpaperFit(v)),
                     ),
                   ),
                   Unavailable(

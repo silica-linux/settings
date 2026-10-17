@@ -1298,12 +1298,6 @@ abstract class AppLocalizations {
   /// **'—'**
   String get hotCornerNone;
 
-  /// No description provided for @wallpaperRestartNote.
-  ///
-  /// In en, this message translates to:
-  /// **'The desktop reads the wallpaper when the session starts.'**
-  String get wallpaperRestartNote;
-
   /// No description provided for @wallpaperFill.
   ///
   /// In en, this message translates to:
@@ -2120,6 +2114,114 @@ abstract class AppLocalizations {
   /// **'The apps and the desktop follow this at once. Folder colours are not available yet.'**
   String get appearanceThemeNote;
 
+  /// No description provided for @wallpaperFit.
+  ///
+  /// In en, this message translates to:
+  /// **'Fit to screen'**
+  String get wallpaperFit;
+
+  /// No description provided for @wallpaperStretch.
+  ///
+  /// In en, this message translates to:
+  /// **'Stretch to fill screen'**
+  String get wallpaperStretch;
+
+  /// No description provided for @wallpaperCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Centre'**
+  String get wallpaperCenter;
+
+  /// No description provided for @wallpaperTile.
+  ///
+  /// In en, this message translates to:
+  /// **'Tile'**
+  String get wallpaperTile;
+
+  /// No description provided for @notificationsPreviewsAlways.
+  ///
+  /// In en, this message translates to:
+  /// **'Always'**
+  String get notificationsPreviewsAlways;
+
+  /// No description provided for @notificationsPreviewsNever.
+  ///
+  /// In en, this message translates to:
+  /// **'Never'**
+  String get notificationsPreviewsNever;
+
+  /// No description provided for @notificationsPreviewsDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get notificationsPreviewsDefault;
+
+  /// No description provided for @notificationsGroupByApp.
+  ///
+  /// In en, this message translates to:
+  /// **'By app'**
+  String get notificationsGroupByApp;
+
+  /// No description provided for @notificationsInCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Show in Notification Center'**
+  String get notificationsInCenter;
+
+  /// No description provided for @menuBarRecentNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get menuBarRecentNone;
+
+  /// No description provided for @dateTimeMenuBarClock.
+  ///
+  /// In en, this message translates to:
+  /// **'Menu bar clock'**
+  String get dateTimeMenuBarClock;
+
+  /// No description provided for @dateTimeSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'Show seconds'**
+  String get dateTimeSeconds;
+
+  /// No description provided for @dateTimeWeekday.
+  ///
+  /// In en, this message translates to:
+  /// **'Show the day of the week'**
+  String get dateTimeWeekday;
+
+  /// No description provided for @dateTimeDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Show the date'**
+  String get dateTimeDate;
+
+  /// No description provided for @dateTimeDateAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'When space allows'**
+  String get dateTimeDateAuto;
+
+  /// No description provided for @dateTimeDateAlways.
+  ///
+  /// In en, this message translates to:
+  /// **'Always'**
+  String get dateTimeDateAlways;
+
+  /// No description provided for @dateTimeDateNever.
+  ///
+  /// In en, this message translates to:
+  /// **'Never'**
+  String get dateTimeDateNever;
+
+  /// No description provided for @dateTimeClockHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The clock in the menu bar changes at once.'**
+  String get dateTimeClockHelp;
+
   /// No description provided for @appearanceGlassClear.
   ///
   /// In en, this message translates to:
@@ -2687,7 +2789,7 @@ abstract class AppLocalizations {
   /// No description provided for @wallpaperNote.
   ///
   /// In en, this message translates to:
-  /// **'The desktop shows a new wallpaper from the next login.'**
+  /// **'The desktop changes at once.'**
   String get wallpaperNote;
 
   /// No description provided for @wallpaperShowAll.

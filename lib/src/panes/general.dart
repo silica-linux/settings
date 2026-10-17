@@ -22,6 +22,7 @@ import '../model/panes.dart';
 import '../services.dart';
 import '../style.dart';
 import '../system/host.dart';
+import '../system/shell_config.dart';
 import '../system/tools.dart';
 import '../system/tools_host.dart';
 import '../ui/errors.dart';
@@ -756,6 +757,9 @@ class _DateTimePaneState extends State<DateTimePane> {
     final allowed = registered == true;
     final needsAgent = registered == false ? l.errorAuthentication : null;
     final clock = _clock ?? const ClockState();
+    final config = ServicesScope.of(context).config;
+    final style = ClockStyle.read(config.read('menubar'));
+    void setClock(ClockStyle next) => setState(() => config.writeClock(next));
     final zone = clock.timezone.isNotEmpty
         ? clock.timezone
         : HostInfoScope.of(context).timezone;
@@ -788,9 +792,42 @@ class _DateTimePaneState extends State<DateTimePane> {
               title: l.dateTimeNow,
               trailing: RowValue(now),
             ),
-            Unavailable(child: SwitchRow(title: l.dateTime24Hour, value: true)),
           ],
-          footer: l.notAvailableYet,
+        ),
+        SettingsGroup(
+          heading: l.dateTimeMenuBarClock,
+          footer: l.dateTimeClockHelp,
+          children: [
+            SwitchRow(
+              key: const ValueKey('clock 24 hour'),
+              title: l.dateTime24Hour,
+              value: style.hour24 ?? true,
+              onChanged: (v) => setClock(style.copyWith(hour24: v)),
+            ),
+            SwitchRow(
+              key: const ValueKey('clock seconds'),
+              title: l.dateTimeSeconds,
+              value: style.seconds,
+              onChanged: (v) => setClock(style.copyWith(seconds: v)),
+            ),
+            SwitchRow(
+              key: const ValueKey('clock weekday'),
+              title: l.dateTimeWeekday,
+              value: style.weekday,
+              onChanged: (v) => setClock(style.copyWith(weekday: v)),
+            ),
+            PopUpRow<ClockDate>(
+              key: const ValueKey('clock date'),
+              title: l.dateTimeDate,
+              items: [
+                PopUpItem(ClockDate.auto, l.dateTimeDateAuto),
+                PopUpItem(ClockDate.always, l.dateTimeDateAlways),
+                PopUpItem(ClockDate.never, l.dateTimeDateNever),
+              ],
+              value: style.date,
+              onChanged: (v) => setClock(style.copyWith(date: v)),
+            ),
+          ],
         ),
         SettingsGroup(
           footer: needsAgent,

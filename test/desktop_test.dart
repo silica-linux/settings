@@ -28,6 +28,18 @@ void main() {
       }
     });
 
+    testWidgets('Animate opening apps writes launchAnimation', (tester) async {
+      final h = await pumpSettings(tester, pane: PaneId.desktopDock);
+      await tester.ensureVisible(find.byKey(const ValueKey('dock animate')));
+      expect(h.config.text('dock', 'launchAnimation', fallback: ''), '');
+      await tester.tap(switchIn('dock animate'));
+      await tester.pump();
+      expect(h.config.text('dock', 'launchAnimation', fallback: ''), 'none');
+      await tester.tap(switchIn('dock animate'));
+      await tester.pump();
+      expect(h.config.text('dock', 'launchAnimation', fallback: ''), 'bounce');
+    });
+
     testWidgets('the Size slider writes tileSize while dragging', (
       tester,
     ) async {
@@ -161,6 +173,26 @@ void main() {
     await tester.pump();
     expect(h.config.flag('menubar', 'batteryPercent', fallback: false), isTrue);
   });
+
+  testWidgets('Menu Bar: the recent items count is written', (tester) async {
+    final h = await pumpSettings(tester, pane: PaneId.menuBar);
+    await choose(tester, 'menubar recent items', '20');
+    expect(h.config.read('menubar')['recentItems'], 20);
+    await choose(tester, 'menubar recent items', 'None');
+    expect(h.config.read('menubar')['recentItems'], 0);
+  });
+
+  testWidgets(
+    'Wallpaper: the fill mode is written and a new picture keeps it',
+    (tester) async {
+      final h = await pumpSettings(tester, pane: PaneId.wallpaper);
+      await choose(tester, 'wallpaper fit', 'Tile');
+      expect(h.config.read('wallpaper')['fit'], 'tile');
+      await tapKey(tester, 'wallpaper {color: #1f2a44}');
+      expect(h.config.read('wallpaper'), {'fit': 'tile', 'color': '#1f2a44'});
+      expect(find.textContaining('next login'), findsNothing);
+    },
+  );
 
   testWidgets(
     'Displays: without the compositor the machine\'s modes, read-only',

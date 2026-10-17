@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -623,10 +622,6 @@ class AppLocalizationsIt extends AppLocalizations {
   String get hotCornerNone => '—';
 
   @override
-  String get wallpaperRestartNote =>
-      'La scrivania legge lo sfondo all\'avvio della sessione.';
-
-  @override
   String get wallpaperFill => 'Riempi lo schermo';
 
   @override
@@ -1070,6 +1065,61 @@ class AppLocalizationsIt extends AppLocalizations {
       'Le app e il desktop lo seguono subito. I colori delle cartelle non sono ancora disponibili.';
 
   @override
+  String get wallpaperFit => 'Adatta allo schermo';
+
+  @override
+  String get wallpaperStretch => 'Estendi per riempire lo schermo';
+
+  @override
+  String get wallpaperCenter => 'Al centro';
+
+  @override
+  String get wallpaperTile => 'Affianca';
+
+  @override
+  String get notificationsPreviewsAlways => 'Sempre';
+
+  @override
+  String get notificationsPreviewsNever => 'Mai';
+
+  @override
+  String get notificationsPreviewsDefault => 'Predefinito';
+
+  @override
+  String get notificationsGroupByApp => 'Per app';
+
+  @override
+  String get notificationsInCenter => 'Mostra nel Centro notifiche';
+
+  @override
+  String get menuBarRecentNone => 'Nessuno';
+
+  @override
+  String get dateTimeMenuBarClock => 'Orologio nella barra dei menu';
+
+  @override
+  String get dateTimeSeconds => 'Mostra i secondi';
+
+  @override
+  String get dateTimeWeekday => 'Mostra il giorno della settimana';
+
+  @override
+  String get dateTimeDate => 'Mostra la data';
+
+  @override
+  String get dateTimeDateAuto => 'Se c\'è spazio';
+
+  @override
+  String get dateTimeDateAlways => 'Sempre';
+
+  @override
+  String get dateTimeDateNever => 'Mai';
+
+  @override
+  String get dateTimeClockHelp =>
+      'L\'orologio nella barra dei menu cambia subito.';
+
+  @override
   String get appearanceGlassClear => 'Più trasparente';
 
   @override
@@ -1376,8 +1426,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get wallpaperAllSpaces => 'Mostra su tutti gli spazi';
 
   @override
-  String get wallpaperNote =>
-      'La scrivania mostra il nuovo sfondo dal prossimo accesso.';
+  String get wallpaperNote => 'La scrivania cambia subito.';
 
   @override
   String wallpaperShowAll(int count) {

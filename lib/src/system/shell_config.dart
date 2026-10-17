@@ -4,7 +4,9 @@
 //
 // The keys marked "not wired" are written by these helpers as soon as the shell reads them
 // and the matching control is enabled (AGENTS.md › Never fake): until then the controls stay
-// disabled and Settings writes nothing for them.
+// disabled and Settings writes nothing for them. Wired today: the Dock's `launchAnimation`,
+// the menu bar's `clock` and `recentItems`, the notification previews, grouping and
+// `showInCenter`, the wallpaper `fit`.
 
 import 'config.dart';
 
@@ -30,20 +32,19 @@ abstract final class DockSizes {
       : tile;
 }
 
-/// How the Dock's icons appear when an app opens (dock.json `launchAnimation`; not wired).
+/// Whether the Dock's icon bounces while an app opens (dock.json `launchAnimation`).
 enum LaunchAnimation { bounce, none }
 
 /// When the menu bar hides (menubar.json `autohide`; not wired).
 enum MenuBarAutohide { never, fullscreen, always }
 
-/// Counts offered for the recent items (menubar.json `recentItems`; not wired).
+/// Counts offered for the recent items (menubar.json `recentItems`).
 const List<int> recentItemChoices = [0, 5, 10, 15, 20, 30, 50];
 
-/// When the clock shows the date (menubar.json `clock.date`; not wired).
+/// When the clock shows the date (menubar.json `clock.date`).
 enum ClockDate { auto, always, never }
 
-/// The menu bar clock (menubar.json `clock`; not wired). `hour24` absent follows the
-/// system language.
+/// The menu bar clock (menubar.json `clock`). `hour24` absent is 24 hours.
 class ClockStyle {
   const ClockStyle({
     this.hour24,
@@ -57,6 +58,33 @@ class ClockStyle {
   final bool weekday;
   final ClockDate date;
 
+  /// The clock in menubar.json; the defaults for what is missing or odd.
+  factory ClockStyle.read(Map<String, Object?> menubar) {
+    final json = menubar['clock'];
+    if (json is! Map) return const ClockStyle();
+    bool? flag(String key) => json[key] is bool ? json[key] as bool : null;
+    return ClockStyle(
+      hour24: flag('hour24'),
+      seconds: flag('seconds') ?? false,
+      weekday: flag('weekday') ?? true,
+      date:
+          ClockDate.values.where((d) => d.name == json['date']).firstOrNull ??
+          ClockDate.auto,
+    );
+  }
+
+  ClockStyle copyWith({
+    bool? hour24,
+    bool? seconds,
+    bool? weekday,
+    ClockDate? date,
+  }) => ClockStyle(
+    hour24: hour24 ?? this.hour24,
+    seconds: seconds ?? this.seconds,
+    weekday: weekday ?? this.weekday,
+    date: date ?? this.date,
+  );
+
   Map<String, Object?> toJson() => {
     'hour24': ?hour24,
     'seconds': seconds,
@@ -65,13 +93,19 @@ class ClockStyle {
   };
 }
 
-/// How a notification shows its text (notifications.json `previews`; not wired).
+/// How a notification shows its text (notifications.json `previews`).
 enum PreviewMode { always, unlocked, never }
 
-/// How notifications stack in the Center (notifications.json `grouping`; not wired).
+/// An app's previews: the default for all notifications, or its own.
+enum AppPreviewMode { byDefault, always, unlocked, never }
+
+/// An app's grouping in the Center (notifications.json `apps.<key>.grouping`).
+enum AppGrouping { auto, app, off }
+
+/// How notifications stack in the Center (notifications.json `grouping`).
 enum GroupingMode { automatic, byApp, off }
 
-/// How the image fills the screen (wallpaper.json `fit`; not wired).
+/// How the image fills the screen (wallpaper.json `fit`).
 enum WallpaperFit { fill, fit, stretch, center, tile }
 
 /// Writers of the keys that are not wired yet. Each writes one key and keeps the others.

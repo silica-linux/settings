@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -620,10 +619,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hotCornerNone => '—';
 
   @override
-  String get wallpaperRestartNote =>
-      'The desktop reads the wallpaper when the session starts.';
-
-  @override
   String get wallpaperFill => 'Fill screen';
 
   @override
@@ -1068,6 +1063,60 @@ class AppLocalizationsEn extends AppLocalizations {
       'The apps and the desktop follow this at once. Folder colours are not available yet.';
 
   @override
+  String get wallpaperFit => 'Fit to screen';
+
+  @override
+  String get wallpaperStretch => 'Stretch to fill screen';
+
+  @override
+  String get wallpaperCenter => 'Centre';
+
+  @override
+  String get wallpaperTile => 'Tile';
+
+  @override
+  String get notificationsPreviewsAlways => 'Always';
+
+  @override
+  String get notificationsPreviewsNever => 'Never';
+
+  @override
+  String get notificationsPreviewsDefault => 'Default';
+
+  @override
+  String get notificationsGroupByApp => 'By app';
+
+  @override
+  String get notificationsInCenter => 'Show in Notification Center';
+
+  @override
+  String get menuBarRecentNone => 'None';
+
+  @override
+  String get dateTimeMenuBarClock => 'Menu bar clock';
+
+  @override
+  String get dateTimeSeconds => 'Show seconds';
+
+  @override
+  String get dateTimeWeekday => 'Show the day of the week';
+
+  @override
+  String get dateTimeDate => 'Show the date';
+
+  @override
+  String get dateTimeDateAuto => 'When space allows';
+
+  @override
+  String get dateTimeDateAlways => 'Always';
+
+  @override
+  String get dateTimeDateNever => 'Never';
+
+  @override
+  String get dateTimeClockHelp => 'The clock in the menu bar changes at once.';
+
+  @override
   String get appearanceGlassClear => 'Clearer';
 
   @override
@@ -1374,8 +1423,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get wallpaperAllSpaces => 'Show on all spaces';
 
   @override
-  String get wallpaperNote =>
-      'The desktop shows a new wallpaper from the next login.';
+  String get wallpaperNote => 'The desktop changes at once.';
 
   @override
   String wallpaperShowAll(int count) {
