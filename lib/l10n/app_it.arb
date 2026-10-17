@@ -354,6 +354,8 @@
   "dateTimeDateAlways": "Sempre",
   "dateTimeDateNever": "Mai",
   "dateTimeClockHelp": "L'orologio nella barra dei menu cambia subito.",
+  "energyWakeForNetworkHelp": "Il computer si riattiva quando riceve un messaggio di rete. Ha effetto alla prossima connessione cablata.",
+  "energyWakeForNetworkNone": "Non c'è nessuna connessione cablata salvata.",
   "appearanceGlassClear": "Più trasparente",
   "appearanceGlassTinted": "Più colorato",
   "appearanceStyleDefault": "Predefinito",

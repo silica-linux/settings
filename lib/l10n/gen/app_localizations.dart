@@ -2222,6 +2222,18 @@ abstract class AppLocalizations {
   /// **'The clock in the menu bar changes at once.'**
   String get dateTimeClockHelp;
 
+  /// No description provided for @energyWakeForNetworkHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The computer wakes when a network message addresses it. It takes effect when the wired connection is next connected.'**
+  String get energyWakeForNetworkHelp;
+
+  /// No description provided for @energyWakeForNetworkNone.
+  ///
+  /// In en, this message translates to:
+  /// **'There is no saved wired connection.'**
+  String get energyWakeForNetworkNone;
+
   /// No description provided for @appearanceGlassClear.
   ///
   /// In en, this message translates to:

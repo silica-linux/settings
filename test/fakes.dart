@@ -279,6 +279,18 @@ class FakeTools implements SystemTools {
   @override
   Future<List<SavedConnection>> savedConnections() async => connections;
 
+  /// Wake on LAN of the saved Ethernet connections; null: there are none.
+  bool? wol;
+
+  @override
+  Future<bool?> wakeOnLan() async => wol;
+
+  @override
+  Future<ToolError?> setWakeOnLan(bool enabled) {
+    wol = enabled;
+    return _log('wol $enabled');
+  }
+
   @override
   Future<ToolError?> joinWifi(String ssid, {String? password}) =>
       _log('joinWifi $ssid ${password ?? '-'}');

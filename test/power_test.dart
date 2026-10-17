@@ -23,6 +23,30 @@ void main() {
         capacity: 91,
       );
 
+    testWidgets('Energy: wake for network access goes through NetworkManager', (
+      tester,
+    ) async {
+      final tools = FakeTools()
+        ..powerState = profiles.powerState
+        ..wol = false;
+      await pumpSettings(tester, pane: PaneId.energy, tools: tools);
+      await settle(tester);
+      await tester.tap(switchIn('wake for network'));
+      await settle(tester);
+      expect(tools.calls, contains('wol true'));
+      expect(tools.wol, isTrue);
+    });
+
+    testWidgets('Energy: without a wired connection the switch is disabled', (
+      tester,
+    ) async {
+      final tools = FakeTools()..powerState = profiles.powerState;
+      await pumpSettings(tester, pane: PaneId.energy, tools: tools);
+      await settle(tester);
+      expect(find.byKey(const ValueKey('wake for network')), findsNothing);
+      expect(find.text('There is no saved wired connection.'), findsOneWidget);
+    });
+
     testWidgets('Battery: level, time left, health, low power mode', (
       tester,
     ) async {

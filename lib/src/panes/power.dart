@@ -2,8 +2,9 @@
 // the charge (UPower through silica-daemon), the time left and the battery's health (UPower), the
 // power mode and Low Power Mode (power-profiles-daemon, when the system has it), and the idle
 // policy in power.json: when the display turns off, when the computer sleeps and whether it may
-// (Ossido counts the idle time; silica-daemon holds the inhibitor, #68). Waking for network
-// access, starting again after a power failure and optimized charging wait for their backends.
+// (Ossido counts the idle time; silica-daemon holds the inhibitor, #68), and Wake on LAN
+// (NetworkManager). Starting again after a power failure and optimized charging need firmware
+// or root services the image does not have.
 
 import 'package:flutter/widgets.dart';
 import 'package:silica_ui/silica_ui.dart';
@@ -38,9 +39,30 @@ mixin _PowerState<T extends StatefulWidget> on State<T> {
     }
   }
 
+  /// Wake on LAN of the saved Ethernet connections; null when there are none.
+  bool? wakeOnLan;
+
   Future<void> load() async {
-    final state = await ServicesScope.of(context).tools.power();
-    if (mounted) setState(() => power = state);
+    final tools = ServicesScope.of(context).tools;
+    final state = await tools.power();
+    final wake = await tools.wakeOnLan();
+    if (mounted) {
+      setState(() {
+        power = state;
+        wakeOnLan = wake;
+      });
+    }
+  }
+
+  Future<void> setWakeOnLan(bool on) async {
+    final result = await ServicesScope.of(context).tools.setWakeOnLan(on);
+    if (!mounted) return;
+    setState(
+      () => error = result == null
+          ? null
+          : errorText(AppLocalizations.of(context), result),
+    );
+    await load();
   }
 
   Future<void> setProfile(PowerProfile p) async {
@@ -168,10 +190,29 @@ class _EnergyPaneState extends State<EnergyPane> with _PowerState {
         if (error case final e?) ErrorLine(e),
         const SleepGroup(),
         SettingsGroup(
+          children: [
+            if (wakeOnLan != null)
+              SwitchRow(
+                key: const ValueKey('wake for network'),
+                title: l.energyWakeForNetwork,
+                subtitle: l.energyWakeForNetworkHelp,
+                value: wakeOnLan!,
+                onChanged: setWakeOnLan,
+              )
+            else
+              Unavailable(
+                child: SwitchRow(
+                  title: l.energyWakeForNetwork,
+                  subtitle: l.energyWakeForNetworkNone,
+                  value: false,
+                ),
+              ),
+          ],
+        ),
+        SettingsGroup(
           unavailable: true,
           issue: Issues.power,
           children: [
-            SwitchRow(title: l.energyWakeForNetwork, value: false),
             SwitchRow(title: l.energyRestartAfterPowerFailure, value: false),
           ],
         ),

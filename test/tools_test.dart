@@ -34,6 +34,22 @@ void main() {
     expect(aps.last.strength, 50);
   });
 
+  test('wake on LAN as nmcli prints it', () {
+    for (final on in ['magic', '64 (magic)', '0x40', 'all', '0x42']) {
+      expect(HostSystemTools.wakesOnMagic(on), isTrue, reason: on);
+    }
+    for (final off in [
+      'default',
+      '1 (default)',
+      'ignore',
+      '0x8000',
+      '',
+      'phy',
+    ]) {
+      expect(HostSystemTools.wakesOnMagic(off), isFalse, reason: off);
+    }
+  });
+
   test('devices, connections and details', () {
     final devices = HostSystemTools.parseDevices(
       'wlp2s0:wifi:connected:Home\nenp3s0:ethernet:unavailable:\nlo:loopback:connected (externally):lo\n',

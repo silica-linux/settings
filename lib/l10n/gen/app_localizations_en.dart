@@ -1117,6 +1117,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dateTimeClockHelp => 'The clock in the menu bar changes at once.';
 
   @override
+  String get energyWakeForNetworkHelp =>
+      'The computer wakes when a network message addresses it. It takes effect when the wired connection is next connected.';
+
+  @override
+  String get energyWakeForNetworkNone => 'There is no saved wired connection.';
+
+  @override
   String get appearanceGlassClear => 'Clearer';
 
   @override

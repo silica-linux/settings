@@ -1120,6 +1120,14 @@ class AppLocalizationsIt extends AppLocalizations {
       'L\'orologio nella barra dei menu cambia subito.';
 
   @override
+  String get energyWakeForNetworkHelp =>
+      'Il computer si riattiva quando riceve un messaggio di rete. Ha effetto alla prossima connessione cablata.';
+
+  @override
+  String get energyWakeForNetworkNone =>
+      'Non c\'è nessuna connessione cablata salvata.';
+
+  @override
   String get appearanceGlassClear => 'Più trasparente';
 
   @override

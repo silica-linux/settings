@@ -402,6 +402,8 @@
   "dateTimeDateAlways": "Always",
   "dateTimeDateNever": "Never",
   "dateTimeClockHelp": "The clock in the menu bar changes at once.",
+  "energyWakeForNetworkHelp": "The computer wakes when a network message addresses it. It takes effect when the wired connection is next connected.",
+  "energyWakeForNetworkNone": "There is no saved wired connection.",
   "appearanceGlassClear": "Clearer",
   "appearanceGlassTinted": "More tinted",
   "appearanceStyleDefault": "Default",

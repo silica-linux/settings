@@ -302,6 +302,15 @@ abstract class SystemTools {
   Future<ToolError?> setAutoconnect(String name, bool enabled);
   Future<ToolError?> setConnectionActive(String name, bool active);
 
+  /// Wake on LAN for the saved Ethernet connections (`802-3-ethernet.wake-on-lan`): true when
+  /// they all wake the computer on a magic packet; null without a saved Ethernet connection (or
+  /// NetworkManager).
+  Future<bool?> wakeOnLan();
+
+  /// Sets it on every saved Ethernet connection; the NIC takes it when the connection is next
+  /// activated.
+  Future<ToolError?> setWakeOnLan(bool enabled);
+
   // Audio.
   Future<AudioDevices> audioDevices();
   Future<ToolError?> setDefaultAudio(int id);

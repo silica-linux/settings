@@ -294,6 +294,58 @@ class HostSystemTools implements SystemTools {
   Future<ToolError?> setConnectionActive(String name, bool active) =>
       _change('nmcli', ['connection', active ? 'up' : 'down', 'id', name]);
 
+  static const String _wolField = '802-3-ethernet.wake-on-lan';
+
+  /// Whether the value `nmcli -g 802-3-ethernet.wake-on-lan` prints wakes on a magic packet
+  /// (`magic`, or a number with the magic bit 0x40, as `all` is).
+  static bool wakesOnMagic(String value) {
+    final text = value.trim().toLowerCase();
+    if (text.contains('magic') || text == 'all') return true;
+    final number = RegExp(r'^(0x[0-9a-f]+|\d+)').firstMatch(text)?.group(0);
+    final flags = number == null ? null : int.tryParse(number);
+    return flags != null && flags != 0x8000 && flags & 0x40 != 0;
+  }
+
+  Future<List<String>> _ethernetConnections() async => [
+    for (final c in await savedConnections())
+      if (c.type == '802-3-ethernet') c.name,
+  ];
+
+  @override
+  Future<bool?> wakeOnLan() async {
+    final names = await _ethernetConnections();
+    if (names.isEmpty) return null;
+    for (final name in names) {
+      final out = await _out('nmcli', [
+        '-g',
+        _wolField,
+        'connection',
+        'show',
+        'id',
+        name,
+      ]);
+      if (out == null) return null;
+      if (!wakesOnMagic(out)) return false;
+    }
+    return true;
+  }
+
+  @override
+  Future<ToolError?> setWakeOnLan(bool enabled) async {
+    for (final name in await _ethernetConnections()) {
+      final error = await _change('nmcli', [
+        'connection',
+        'modify',
+        'id',
+        name,
+        _wolField,
+        enabled ? 'magic' : 'default',
+      ]);
+      if (error != null) return error;
+    }
+    return null;
+  }
+
   // Audio --------------------------------------------------------------------------------
 
   /// The `Sinks:` and `Sources:` of the `Audio` section of `wpctl status`; `*` marks the
