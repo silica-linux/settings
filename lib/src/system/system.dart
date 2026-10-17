@@ -298,6 +298,11 @@ class DaemonBackend implements SystemBackend {
   StreamController<SystemState>? _controller;
   StreamSubscription<DBusSignal>? _signals;
 
+  /// The latest state on the shared stream, replayed to every later listener: the snapshot
+  /// is read once, when the first listener arrives, and a pane opened after it would
+  /// otherwise wait for the next `Changed` signal.
+  SystemState? _latest;
+
   Future<List<Object?>> _call(
     String method, {
     String signature = '',
@@ -325,13 +330,21 @@ class DaemonBackend implements SystemBackend {
   }
 
   @override
-  Stream<SystemState> get states {
+  Stream<SystemState> get states async* {
+    final latest = _latest;
+    if (latest != null) yield latest;
+    yield* _shared;
+  }
+
+  Stream<SystemState> get _shared {
     final existing = _controller;
     if (existing != null) return existing.stream;
     late final StreamController<SystemState> controller;
     controller = StreamController<SystemState>.broadcast(
       onListen: () async {
-        controller.add(await state());
+        final snapshot = await state();
+        _latest = snapshot;
+        controller.add(snapshot);
         _signals = _bus
             .signals(
               sender: systemName,
@@ -342,7 +355,11 @@ class DaemonBackend implements SystemBackend {
             .listen(
               (signal) {
                 final first = signal.args.isEmpty ? null : signal.args.first;
-                if (first is Map) controller.add(SystemState.fromDict(first));
+                if (first is Map) {
+                  final changed = SystemState.fromDict(first);
+                  _latest = changed;
+                  controller.add(changed);
+                }
               },
               onError: (Object _) {
                 // No signals outside Silica: the snapshot read at the start stays.
@@ -353,6 +370,7 @@ class DaemonBackend implements SystemBackend {
         await _signals?.cancel();
         _signals = null;
         _controller = null;
+        _latest = null;
       },
     );
     _controller = controller;
