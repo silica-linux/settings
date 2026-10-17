@@ -12,12 +12,12 @@ abstract final class SettingsMetrics {
   /// The shortest window that still shows the toolbar and a few rows (provisional).
   static const double minHeight = 400;
 
-  /// Sidebar width 260, its trailing 1 pt separator inside it: the content starts at x 261
-  /// (kit `Apps/Settings/*`: sidebar surface 260, separator at x 260).
-  static const double sidebarWidth = 260;
+  /// Sidebar width 240, its trailing 1 pt separator inside it at x 239: the content starts at
+  /// x 240, the standard Amalfi sidebar of Mustache and Mail (components.md, readability pass).
+  static const double sidebarWidth = 240;
 
-  /// The search field: 240 × 28 at (10, 60) (kit `Search`, Fields/Search Field/Regular).
-  static const double searchWidth = 240;
+  /// The search field: 220 × 28 at (10, 60) (10 from both edges of the sidebar).
+  static const double searchWidth = 220;
   static const double searchHeight = 28;
   static const double searchTop = 60;
   static const double searchLeft = 10;
@@ -30,24 +30,24 @@ abstract final class SettingsMetrics {
   /// The first pane row starts 156 below the window's top (kit `Sidebar list`).
   static const double paneListTop = 156;
 
-  /// Sidebar rows (kit `Sidebar Row/*`): 32 tall on a pitch of 32, the selection capsule
-  /// 240 wide (10 from both edges), radius 8; the 20 pt tile at x 8 inside the row (radius 5,
-  /// glyph 12), the label at x 36. Blocks are 12 apart on top of the pitch.
+  /// Sidebar rows: 32 tall on a pitch of 32, the soft selection capsule 6 from both edges,
+  /// radius 8; the 24 pt tile at x 10 of the sidebar (glyph 16, y 4 in the row), the label at
+  /// x 44. Blocks are 12 apart on top of the pitch.
   static const double rowPitch = 32;
-  static const double rowInset = 10;
+  static const double rowInset = 6;
   static const double selectionRadius = 8;
-  static const double rowIconLeft = 8;
-  static const double rowIconGap = 8;
+  static const double rowIconLeft = 4;
+  static const double rowIconGap = 10;
   static const double groupGap = 12;
 
-  /// The icon tile of a sidebar row: 20, radius 5.
-  static const double iconSize = 20;
-  static const double iconRadius = 5;
+  /// The icon tile of a sidebar row: 24, radius 6 (glyph 16).
+  static const double iconSize = 24;
+  static const double iconRadius = 6;
 
-  /// The back / forward capsule: two 32 pt segments (the Nav piece) at x 268 (kit
-  /// `Back and forward`).
-  static const double navX = 268;
-  static const double navSegment = 32;
+  /// The back / forward capsule: two 36 pt segments (the Nav piece) at x 248, 8 after the
+  /// sidebar's divider.
+  static const double navX = 248;
+  static const double navSegment = 36;
 
   /// Grouped lists (kit `Apps/Settings/Row/*`): inset 20 from the content's sides, 12 between
   /// groups; navigation rows 52, value rows 40, text rows 52, check rows 36.

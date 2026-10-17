@@ -1,6 +1,6 @@
-// The Settings window (kit `Apps/Settings/*`): the 260 pt sidebar on the left with its 1 pt
-// edge at x 260, the content on the right under a 52 pt toolbar with the back / forward
-// capsule at x 268 and the title of the current pane at x 348.
+// The Settings window (kit `Apps/Settings/*`): the 240 pt sidebar on the left with its 1 pt
+// divider at x 239, the content on the right under a 52 pt toolbar with the back / forward
+// capsule at x 248 and the title of the current pane after it.
 // Switching panes replaces the content in one frame, with no transition (ST-NAV-05).
 
 import 'package:flutter/widgets.dart';
@@ -81,7 +81,7 @@ class _SettingsWindowState extends State<SettingsWindow> {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  // The content starts at x 260; the group inset is measured from there.
+                  // The content starts at x 240; the group inset is measured from there.
                   Positioned(
                     left: SettingsMetrics.sidebarWidth,
                     right: 0,
@@ -107,16 +107,31 @@ class _SettingsWindowState extends State<SettingsWindow> {
                       searchFocus: _searchFocus,
                     ),
                   ),
-                  // The sidebar's 1 pt edge, full height (kit `Separator` at x 260).
+                  // The sidebar section of the toolbar: a blur strip over the sidebar, which
+                  // scrolls under it (the window buttons, drawn by Ossido, sit on it).
                   Positioned(
-                    left: SettingsMetrics.sidebarWidth,
+                    left: 0,
+                    top: 0,
+                    width: SettingsMetrics.sidebarWidth,
+                    height: toolbarHeight,
+                    child: const WindowDragArea(
+                      child: AmalfiToolbar.sidebarSection(
+                        key: ValueKey('sidebar bar'),
+                        surface: AmalfiToolbarSurface.blur,
+                        children: [],
+                      ),
+                    ),
+                  ),
+                  // The sidebar's one 1 pt divider, full height, at x 239.
+                  Positioned(
+                    left: SettingsMetrics.sidebarWidth - 1,
                     top: 0,
                     bottom: 0,
                     width: 1,
                     child: ColoredBox(color: colors.separator),
                   ),
                   Positioned(
-                    left: SettingsMetrics.sidebarWidth + 1,
+                    left: SettingsMetrics.sidebarWidth,
                     right: 0,
                     top: 0,
                     height: toolbarHeight,
@@ -149,7 +164,7 @@ class _Toolbar extends StatelessWidget {
     final colors = AmalfiTheme.of(context).colors;
     final active = WindowActiveScope.of(context);
     // The bar is transparent over the sidebar (the window buttons, drawn by Ossido, sit on
-    // its surface): the nav capsule at x 268, the title at x 348 (kit `Back and forward`,
+    // its surface): the nav capsule at x 248, the title after it (kit `Back and forward`,
     // `Title`).
     return WindowDragArea(
       child: AmalfiToolbar(

@@ -1,6 +1,6 @@
 // The sidebar (ST-NAV-02, ST-NAV-03): the search field at the top, the account cell under it,
-// then the panes in blocks with their coloured icons; the selected row is an accent capsule
-// as tall as the row pitch with white semibold text (gray in an inactive window). Typing
+// then the panes in blocks with their coloured icons; the selected row is a soft accent capsule
+// as tall as the row pitch with semibold text (gray in an inactive window). Typing
 // replaces the list with two-line results (setting, then the path to it); Esc clears the
 // query and brings the panes back. The sidebar icon size of Appearance scales the rows.
 
@@ -27,13 +27,13 @@ class SidebarRowSize {
   final double text;
 
   static SidebarRowSize of(SidebarIconSize size) => switch (size) {
-    SidebarIconSize.small => const SidebarRowSize(26, 16, 11),
+    SidebarIconSize.small => const SidebarRowSize(28, 20, 13),
     SidebarIconSize.medium => const SidebarRowSize(
       SettingsMetrics.rowPitch,
       SettingsMetrics.iconSize,
-      13,
+      14,
     ),
-    SidebarIconSize.large => const SidebarRowSize(38, 24, 15),
+    SidebarIconSize.large => const SidebarRowSize(40, 28, 15),
   };
 }
 
@@ -242,15 +242,15 @@ class _PaneList extends StatelessWidget {
   }
 }
 
-/// The selection fill: the measured blue with the default accent, the accent's fill with
-/// another one, gray in an inactive window.
+/// The soft selection fill: the accent's soft tint (the theme's with the default accent, the
+/// accent's fill at 16 % with another one), gray in an inactive window.
 Color sidebarSelection(BuildContext context, {required bool active}) {
   final colors = SettingsColors.of(context);
   if (!active) return colors.inactiveSelection;
   final accent = ServicesScope.of(context).accent.value;
   return accent == Accent.multicolour || accent == Accent.blue
-      ? colors.selection
-      : accent.fill(dark: colors.dark);
+      ? AmalfiTheme.of(context).colors.accentAmalfiSoft
+      : accent.fill(dark: colors.dark).withValues(alpha: 0.16);
 }
 
 class _SidebarRow extends StatelessWidget {
@@ -281,10 +281,8 @@ class _SidebarRow extends StatelessWidget {
       ServicesScope.of(context).sidebarIconSize.value,
     );
     final fill = selected ? sidebarSelection(context, active: active) : null;
-    final white = selected && active;
-    final theme = AmalfiTheme.of(context).colors;
-    final textColor = white ? theme.textOnAccent : colors.text;
-    final secondaryColor = white ? theme.textOnAccent : colors.secondary;
+    final textColor = colors.text;
+    final secondaryColor = colors.secondary;
     final two = subtitle != null;
     return Semantics(
       button: true,
@@ -318,7 +316,11 @@ class _SidebarRow extends StatelessWidget {
                   children: [
                     _highlighted(
                       title,
-                      settingsText(size.text, textColor),
+                      settingsText(
+                        size.text,
+                        textColor,
+                        weight: selected ? FontWeight.w600 : null,
+                      ),
                       highlight,
                     ),
                     if (subtitle case final subtitle?)

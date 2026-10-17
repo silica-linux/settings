@@ -39,11 +39,11 @@ void main() {
     tester,
   ) async {
     await pumpSettings(tester);
-    // The search field: 240 × 28 at (10, 60) (kit `Search`).
+    // The search field: 220 × 28 at (10, 60).
     final search = find.byKey(const ValueKey('sidebar search'));
     expect(tester.getTopLeft(search), const Offset(10, 60));
-    expect(tester.getSize(search), const Size(240, 28));
-    // The rows start at 156; the row spans the sidebar, the capsule is 240 wide at x 10.
+    expect(tester.getSize(search), const Size(220, 28));
+    // The rows start at 156; the row spans the sidebar, the capsule is 228 wide at x 6.
     final wifi = find.byKey(const ValueKey('pane wifi'));
     expect(tester.getTopLeft(wifi).dy, SettingsMetrics.paneListTop);
     expect(tester.getSize(wifi).width, SettingsMetrics.sidebarWidth);
@@ -53,32 +53,35 @@ void main() {
           matching: find.byType(DecoratedBox),
         )
         .first;
-    expect(tester.getSize(capsule), const Size(240, 32));
-    expect(tester.getTopLeft(capsule).dx, 10);
-    // The back / forward capsule at (268, 10), 64 × 32; the title at x 348.
+    expect(tester.getSize(capsule), const Size(228, 32));
+    expect(tester.getTopLeft(capsule).dx, 6);
+    // The back / forward capsule at (248, 8), 73 × 36; the title 12 after it.
     final nav = find.byKey(const ValueKey('nav'));
-    expect(tester.getTopLeft(nav), const Offset(268, 10));
-    expect(tester.getSize(nav).height, 32);
-    expect(tester.getTopLeft(find.byKey(const ValueKey('title'))).dx, 348);
-    // The window's content starts at x 260; the sidebar's edge is the 1 pt line there.
-    expect(SettingsMetrics.sidebarWidth, 260);
+    expect(tester.getTopLeft(nav), const Offset(248, 8));
+    expect(tester.getSize(nav).height, 36);
+    expect(
+      tester.getTopLeft(find.byKey(const ValueKey('title'))).dx,
+      248 + 73 + 12,
+    );
+    // The window's content starts at x 240; the divider is the 1 pt line at x 239.
+    expect(SettingsMetrics.sidebarWidth, 240);
   });
 
   testWidgets('the sidebar rows and the account cell match the kit masters', (
     tester,
   ) async {
     await pumpSettings(tester);
-    // `Sidebar Row/Rest`: the 20 pt tile at x 8 of the row (the row at x 10), the label at
-    // x 36; `Sidebar Rows`: the blocks 12 apart on top of the 32 pt pitch.
+    // The 24 pt tile at x 10 (y 4 in the row), the label at x 44; the blocks 12 apart on
+    // top of the 32 pt pitch.
     final row = find.byKey(const ValueKey('pane wifi'));
     final tile = find.descendant(of: row, matching: find.byType(IconTile));
-    expect(tester.getTopLeft(tile), const Offset(10 + 8, 156 + 6));
-    expect(tester.getSize(tile), const Size(20, 20));
+    expect(tester.getTopLeft(tile), const Offset(10, 156 + 4));
+    expect(tester.getSize(tile), const Size(24, 24));
     expect(
       tester
           .getTopLeft(find.descendant(of: row, matching: find.text('Wi-Fi')))
           .dx,
-      10 + 36,
+      44,
     );
     final general = tester.getTopLeft(
       find.byKey(const ValueKey('pane general')),
@@ -96,8 +99,8 @@ void main() {
   ) async {
     await pumpSettings(tester, pane: PaneId.general);
     final about = find.byKey(const ValueKey('general about'));
-    expect(tester.getSize(about), const Size(532, 52));
-    expect(tester.getTopLeft(about).dx, 280);
+    expect(tester.getSize(about), const Size(552, 52));
+    expect(tester.getTopLeft(about).dx, 260);
     // The header under the toolbar: the 64 pt tile 16 below it, the first group at y 240.
     expect(tester.getTopLeft(about).dy, 240);
   });
@@ -109,12 +112,12 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('pane wifi')));
     await tester.pump();
     expect(title(tester), 'Wi-Fi');
-    // The capsule's two 32 pt segments: back at x 268, forward at x 301.
-    await tester.tapAt(const Offset(268 + 16, 26));
+    // The capsule's two 36 pt segments: back at x 248, forward at x 285.
+    await tester.tapAt(const Offset(248 + 18, 26));
     await tester.pump();
     expect(title(tester), 'Appearance');
     expect(h.navigation.canGoForward, isTrue);
-    await tester.tapAt(const Offset(268 + 48, 26));
+    await tester.tapAt(const Offset(248 + 54, 26));
     await tester.pump();
     expect(title(tester), 'Wi-Fi');
   });
