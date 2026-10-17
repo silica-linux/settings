@@ -272,6 +272,10 @@ abstract class SystemBackend {
     String? to,
   });
 
+  /// Tells the daemon the Appearance choices apps follow live (`SetLook`: strings, a number for
+  /// `glass`). Settings keeps them in theme.json too, so a missing daemon is not an error.
+  Future<void> setLook(Map<String, Object> values);
+
   /// "Play interface sound effects" (`dev.frascella.Silica.Sound1`); null when the daemon
   /// has no sound service.
   Future<bool?> uiSoundsEnabled();
@@ -555,6 +559,17 @@ class DaemonBackend implements SystemBackend {
       return e.message ?? e.code;
     } on MissingPluginException {
       return 'no silica-daemon';
+    }
+  }
+
+  @override
+  Future<void> setLook(Map<String, Object> values) async {
+    try {
+      await _call('SetLook', signature: 'a{sv}', args: [values]);
+    } on PlatformException {
+      // A refused value or no daemon: theme.json has it and the daemon reads it at its start.
+    } on MissingPluginException {
+      // Outside Silica.
     }
   }
 

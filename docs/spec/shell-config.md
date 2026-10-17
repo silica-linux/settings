@@ -192,8 +192,29 @@ from the name (`work`, `work-2`…). `allowedApps` holds the keys of notificatio
 Settings writes `modes` only; silica-daemon writes `active` (`System1.SetFocus`) and reports
 the active mode in its state. Letting the allowed apps through is the shell's to do.
 
+## theme.json (Appearance)
+
+Settings' own persistence of the look; nobody else needs to read it. Settings applies it in its
+window at once and tells silica-daemon (`System1.SetLook`), which keeps it for the session and
+reads this file at its start. Apps and the shell read it **typed from the daemon's state**
+(`look.*`, silica_ui `SilicaSystemLook`), not from the file; the Settings portal publishes
+`accent-color`. Ossido watches the file for `glass` only.
+
+| Key | Values | Default | Applied by |
+| --- | --- | --- | --- |
+| `accent` | `multicolour`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow`, `green`, `graphite` | `multicolour` | silica_ui controls, portal `accent-color` |
+| `highlight` | `automatic` or an accent name | `automatic` | silica_ui selected text |
+| `sidebarIconSize` | `small`, `medium`, `large` | `medium` | silica_ui sidebars |
+| `scrollBars` | `automatic`, `whenScrolling`, `always` | `automatic` | silica_ui scroll bars (`always`: legacy bar with its track) |
+| `scrollClick` | `page`, `spot` | `page` | silica_ui scroll bar track click |
+| `iconStyle` | `default`, `dark`, `clear`, `tinted` | `default` | silica_ui `SilicaIcon` without a style of its own (the Dock) |
+| `glass` | number 0 (clearer) to 1 (more tinted) | `0.5` | Ossido (tint strength of the glass) |
+
+Not wired (controls disabled): `folderColour` (the daemon accepts it; the composed folder icons
+do not take it yet) and `windowTint`.
+
 ## Other files (for completeness)
 
-`theme.json` (`accent`, `highlight`, `sidebarIconSize`, `scrollBars`), `lockscreen.json` and `settings.json` (`lastPane`, Settings'
+`lockscreen.json` and `settings.json` (`lastPane`, Settings'
 own: the pane the window reopens on) are described in their panes' specs; the shell does not
 need `settings.json`.

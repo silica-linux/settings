@@ -2105,8 +2105,56 @@ abstract class AppLocalizations {
   /// No description provided for @appearanceOtherApps.
   ///
   /// In en, this message translates to:
-  /// **'Settings uses this at once; the other apps follow once they read it.'**
+  /// **'The apps and the desktop follow this at once.'**
   String get appearanceOtherApps;
+
+  /// No description provided for @appearanceNoTintYet.
+  ///
+  /// In en, this message translates to:
+  /// **'Tinting windows with the wallpaper colour is not available yet.'**
+  String get appearanceNoTintYet;
+
+  /// No description provided for @appearanceThemeNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The apps and the desktop follow this at once. Folder colours are not available yet.'**
+  String get appearanceThemeNote;
+
+  /// No description provided for @appearanceGlassClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clearer'**
+  String get appearanceGlassClear;
+
+  /// No description provided for @appearanceGlassTinted.
+  ///
+  /// In en, this message translates to:
+  /// **'More tinted'**
+  String get appearanceGlassTinted;
+
+  /// No description provided for @appearanceStyleDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get appearanceStyleDefault;
+
+  /// No description provided for @appearanceStyleDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get appearanceStyleDark;
+
+  /// No description provided for @appearanceStyleClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get appearanceStyleClear;
+
+  /// No description provided for @appearanceStyleTinted.
+  ///
+  /// In en, this message translates to:
+  /// **'Tinted'**
+  String get appearanceStyleTinted;
 
   /// No description provided for @appearanceSmall.
   ///

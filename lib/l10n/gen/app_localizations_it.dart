@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1058,8 +1059,33 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get appearanceOtherApps =>
-      'Impostazioni lo usa subito; le altre app lo seguiranno quando lo leggeranno.';
+  String get appearanceOtherApps => 'Le app e il desktop lo seguono subito.';
+
+  @override
+  String get appearanceNoTintYet =>
+      'Colorare le finestre con lo sfondo non è ancora disponibile.';
+
+  @override
+  String get appearanceThemeNote =>
+      'Le app e il desktop lo seguono subito. I colori delle cartelle non sono ancora disponibili.';
+
+  @override
+  String get appearanceGlassClear => 'Più trasparente';
+
+  @override
+  String get appearanceGlassTinted => 'Più colorato';
+
+  @override
+  String get appearanceStyleDefault => 'Predefinito';
+
+  @override
+  String get appearanceStyleDark => 'Scuro';
+
+  @override
+  String get appearanceStyleClear => 'Chiaro';
+
+  @override
+  String get appearanceStyleTinted => 'Colorato';
 
   @override
   String get appearanceSmall => 'Piccole';

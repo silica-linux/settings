@@ -382,7 +382,15 @@
       }
     }
   },
-  "appearanceOtherApps": "Settings uses this at once; the other apps follow once they read it.",
+  "appearanceOtherApps": "The apps and the desktop follow this at once.",
+  "appearanceNoTintYet": "Tinting windows with the wallpaper colour is not available yet.",
+  "appearanceThemeNote": "The apps and the desktop follow this at once. Folder colours are not available yet.",
+  "appearanceGlassClear": "Clearer",
+  "appearanceGlassTinted": "More tinted",
+  "appearanceStyleDefault": "Default",
+  "appearanceStyleDark": "Dark",
+  "appearanceStyleClear": "Clear",
+  "appearanceStyleTinted": "Tinted",
   "appearanceSmall": "Small",
   "appearanceLarge": "Large",
   "appearanceScrollWhenScrolling": "While scrolling",

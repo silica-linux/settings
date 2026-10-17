@@ -97,7 +97,70 @@ void main() {
       await tester.pump();
       expect(h.services.scrollBars.value, ScrollBarsMode.always);
       expect(h.config.text('theme', 'scrollBars', fallback: ''), 'always');
-      expect(find.byType(SilicaScrollbar), findsWidgets);
+      expect(find.byType(AmalfiScrollbar), findsWidgets);
+      expect(SilicaSystemLook.current.scrollBars, SystemScrollBars.always);
+      expect(
+        h.system.calls.last,
+        'setLook {scrollBars: always}',
+        reason: 'the daemon keeps it for the other apps',
+      );
+    });
+
+    testWidgets('the look reaches the other apps: daemon, file and scope', (
+      tester,
+    ) async {
+      final h = await pumpSettings(tester, height: 1400);
+      await tapKey(tester, 'accent purple');
+      expect(h.system.calls.last, 'setLook {accent: purple}');
+      expect(SilicaSystemLook.current.accent, SilicaAccent.purple);
+      await tester.tap(find.text('Jump to the spot that\'s clicked'));
+      await tester.pump();
+      expect(h.config.text('theme', 'scrollClick', fallback: ''), 'spot');
+      expect(h.system.calls.last, 'setLook {scrollClick: spot}');
+      expect(SilicaSystemLook.current.scrollClick, SystemScrollClick.spot);
+      await choose(tester, 'highlight', 'Pink');
+      expect(h.config.text('theme', 'highlight', fallback: ''), 'pink');
+      expect(SilicaSystemLook.current.highlight, SilicaAccent.pink);
+      await choose(tester, 'icon style', 'Tinted');
+      expect(h.config.text('theme', 'iconStyle', fallback: ''), 'tinted');
+      expect(h.system.calls.last, 'setLook {iconStyle: tinted}');
+      expect(SilicaSystemLook.current.iconStyle, SystemIconStyle.tinted);
+    });
+
+    testWidgets('the glass slider keeps the level for Ossido and the apps', (
+      tester,
+    ) async {
+      final h = await pumpSettings(tester, height: 1000);
+      expect(h.services.glass.value, 0.5);
+      final slider = tester.getRect(
+        find.descendant(
+          of: find.byKey(const ValueKey('glass')),
+          matching: find.byType(AmalfiSlider),
+        ),
+      );
+      await tester.tapAt(Offset(slider.right - 2, slider.center.dy));
+      await tester.pump();
+      expect(h.services.glass.value, greaterThan(0.9));
+      expect(
+        h.config.read('theme')['glass'],
+        h.services.glass.value,
+        reason: 'theme.json glass is what Ossido reads',
+      );
+      expect(h.system.calls.last, 'setLook {glass: 1.0}');
+    });
+
+    testWidgets('the folder colour and the window tint stay disabled', (
+      tester,
+    ) async {
+      await pumpSettings(tester, height: 1400);
+      expect(
+        find.textContaining('Folder colours are not available yet'),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining('Tinting windows with the wallpaper colour'),
+        findsOneWidget,
+      );
     });
   });
 }

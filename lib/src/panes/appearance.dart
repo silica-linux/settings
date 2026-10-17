@@ -2,16 +2,15 @@
 // swatches 36 pt apart, highlight colour, icon style, folder colour) and the window options.
 // Light, dark and automatic go through silica-daemon (SetAppearanceMode: automatic follows the
 // sun, the daemon turns dark on at sunset; Ossido, the shell, the apps and the portal follow).
-// The accent, the sidebar icon size and the scroll bars are saved in theme.json and applied by
-// this window at once; other apps follow once silica_ui reads the file (#59).
-// The highlight colour, icon styles, glass and window tint wait for their backends (#60).
+// The look is saved in theme.json and told to silica-daemon (SetLook): this window, the other
+// apps (silica_ui's SystemLookScope), the shell and the compositor (the glass) follow live
+// (#59, #80). The folder colour and the window tint wait for their backends (#60).
 
 import 'package:flutter/widgets.dart';
 import 'package:silica_ui/silica_ui.dart';
 
 import '../../l10n/gen/app_localizations.dart';
 import '../accent.dart';
-import '../model/issues.dart';
 import '../services.dart';
 import '../style.dart';
 import '../ui/grouped.dart';
@@ -67,13 +66,19 @@ class AppearancePane extends StatelessWidget {
               ),
               SettingsGroup(
                 heading: l.appearanceGlass,
-                unavailable: true,
-                issue: Issues.appearanceExtras,
-                children: [SliderRow(title: l.appearanceGlass, value: 0.5)],
+                children: [
+                  SliderRow(
+                    key: const ValueKey('glass'),
+                    title: l.appearanceGlass,
+                    value: services.glass.value,
+                    labels: [l.appearanceGlassClear, l.appearanceGlassTinted],
+                    onChanged: services.setGlass,
+                  ),
+                ],
               ),
               SettingsGroup(
                 heading: l.appearanceTheme,
-                footer: l.appearanceOtherApps,
+                footer: l.appearanceThemeNote,
                 children: [
                   ValueRow(
                     title: l.appearanceAccent,
@@ -83,19 +88,42 @@ class AppearancePane extends StatelessWidget {
                       onChanged: services.setAccent,
                     ),
                   ),
-                  Unavailable(
-                    child: PopUpRow<HighlightColor>(
-                      title: l.appearanceHighlight,
-                      items: [
+                  PopUpRow<IconStyle>(
+                    key: const ValueKey('icon style'),
+                    title: l.appearanceIconStyle,
+                    items: [
+                      PopUpItem(IconStyle.standard, l.appearanceStyleDefault),
+                      PopUpItem(IconStyle.dark, l.appearanceStyleDark),
+                      PopUpItem(IconStyle.clear, l.appearanceStyleClear),
+                      PopUpItem(IconStyle.tinted, l.appearanceStyleTinted),
+                    ],
+                    value: services.iconStyle.value,
+                    onChanged: services.setIconStyle,
+                  ),
+                  PopUpRow<HighlightColor>(
+                    key: const ValueKey('highlight'),
+                    title: l.appearanceHighlight,
+                    items: [
+                      PopUpItem(
+                        HighlightColor.automatic,
+                        l.appearanceAutomaticChoice,
+                      ),
+                      for (final accent in Accent.values.skip(1))
                         PopUpItem(
-                          HighlightColor.automatic,
-                          l.appearanceAutomaticChoice,
+                          HighlightColor.values.byName(accent.name),
+                          _AccentPicker.name(l, accent),
                         ),
-                      ],
-                      value: HighlightColor.automatic,
-                      onChanged: (_) {},
-                      leading: const _Swatch(gradient: true),
-                    ),
+                    ],
+                    value: services.highlight.value,
+                    onChanged: services.setHighlight,
+                    leading:
+                        services.highlight.value == HighlightColor.automatic
+                        ? const _Swatch(gradient: true)
+                        : _Swatch(
+                            color: Accent.parse(
+                              services.highlight.value.name,
+                            ).plain(dark: SettingsColors.of(context).dark),
+                          ),
                   ),
                   Unavailable(
                     child: PopUpRow<int>(
@@ -110,7 +138,7 @@ class AppearancePane extends StatelessWidget {
               ),
               SettingsGroup(
                 heading: l.appearanceWindows,
-                footer: l.notAvailableYet,
+                footer: l.appearanceNoTintYet,
                 children: [
                   PopUpRow<SidebarIconSize>(
                     key: const ValueKey('sidebar icon size'),
@@ -150,18 +178,19 @@ class AppearancePane extends StatelessWidget {
               ),
               SettingsGroup(
                 heading: l.appearanceScrollClick,
-                unavailable: true,
-                issue: Issues.appearanceExtras,
+                footer: l.appearanceOtherApps,
                 children: [
                   RadioRow(
+                    key: const ValueKey('scroll click page'),
                     label: l.appearanceScrollNextPage,
-                    selected: true,
-                    onSelected: () {},
+                    selected: services.scrollClick.value == ScrollClick.page,
+                    onSelected: () => services.setScrollClick(ScrollClick.page),
                   ),
                   RadioRow(
+                    key: const ValueKey('scroll click spot'),
                     label: l.appearanceScrollSpot,
-                    selected: false,
-                    onSelected: () {},
+                    selected: services.scrollClick.value == ScrollClick.spot,
+                    onSelected: () => services.setScrollClick(ScrollClick.spot),
                   ),
                 ],
               ),

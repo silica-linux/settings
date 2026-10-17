@@ -5,6 +5,7 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
+import 'package:silica_ui/silica_ui.dart';
 
 import 'accent.dart';
 import 'startup.dart';
@@ -31,6 +32,22 @@ enum HighlightColor {
   yellow,
   green,
   graphite,
+}
+
+/// What a click in the scroll bar's track does (Appearance › Windows).
+enum ScrollClick { page, spot }
+
+/// The style of icons and widgets (Appearance › Theme); `standard` is Default.
+enum IconStyle {
+  standard('default'),
+  dark('dark'),
+  clear('clear'),
+  tinted('tinted');
+
+  const IconStyle(this.wire);
+
+  /// The value in theme.json.
+  final String wire;
 }
 
 T _named<T extends Enum>(List<T> values, String name, T fallback) =>
@@ -67,7 +84,28 @@ class Services {
            config.text('theme', 'scrollBars', fallback: ''),
            ScrollBarsMode.automatic,
          ),
-       );
+       ),
+       scrollClick = ValueNotifier(
+         _named(
+           ScrollClick.values,
+           config.text('theme', 'scrollClick', fallback: ''),
+           ScrollClick.page,
+         ),
+       ),
+       iconStyle = ValueNotifier(
+         IconStyle.values
+                 .where(
+                   (v) =>
+                       v.wire ==
+                       config.text('theme', 'iconStyle', fallback: ''),
+                 )
+                 .firstOrNull ??
+             IconStyle.standard,
+       ),
+       glass = ValueNotifier(_glassLevel(config.read('theme')['glass'])) {
+    // This window and the apps that start now draw with the saved look at once.
+    SilicaSystemLook.apply(systemLook);
+  }
 
   final SystemBackend system;
   final ConfigStore config;
@@ -117,28 +155,83 @@ class Services {
   /// When scroll bars show (theme.json `scrollBars`).
   final ValueNotifier<ScrollBarsMode> scrollBars;
 
+  /// What a click in the scroll bar's track does (theme.json `scrollClick`).
+  final ValueNotifier<ScrollClick> scrollClick;
+
+  /// The style of icons and widgets (theme.json `iconStyle`).
+  final ValueNotifier<IconStyle> iconStyle;
+
+  /// How tinted the glass is, 0 clear to 1 tinted (theme.json `glass`; Ossido draws it).
+  final ValueNotifier<double> glass;
+
+  static double _glassLevel(Object? value) =>
+      value is num && value.isFinite ? value.toDouble().clamp(0.0, 1.0) : 0.5;
+
   /// Everything the window's look depends on.
-  Listenable get look =>
-      Listenable.merge([accent, highlight, sidebarIconSize, scrollBars]);
+  Listenable get look => Listenable.merge([
+    accent,
+    highlight,
+    sidebarIconSize,
+    scrollBars,
+    scrollClick,
+    iconStyle,
+    glass,
+  ]);
+
+  /// The look as silica_ui draws it: set in this window at once, kept by silica-daemon for
+  /// the other apps and the shell (`SetLook`), which follow live.
+  SystemLook get systemLook => SystemLook(
+    accent:
+        SystemLook.parseAccent(accent.value.name) ?? SilicaAccent.multicolor,
+    highlight: SystemLook.parseAccent(highlight.value.name),
+    sidebarIconSize: SystemSidebarIconSize.parse(sidebarIconSize.value.name),
+    scrollBars: SystemScrollBars.parse(scrollBars.value.name),
+    scrollClick: SystemScrollClick.parse(scrollClick.value.name),
+    iconStyle: SystemIconStyle.parse(iconStyle.value.wire),
+    glass: glass.value,
+  );
+
+  void _saveLook(String key, Object value) {
+    config.write('theme', key, value);
+    SilicaSystemLook.apply(systemLook);
+    unawaited(system.setLook({key: value}));
+  }
 
   void setAccent(Accent value) {
     accent.value = value;
-    config.write('theme', 'accent', value.name);
+    _saveLook('accent', value.name);
   }
 
   void setHighlight(HighlightColor value) {
     highlight.value = value;
-    config.write('theme', 'highlight', value.name);
+    _saveLook('highlight', value.name);
   }
 
   void setSidebarIconSize(SidebarIconSize value) {
     sidebarIconSize.value = value;
-    config.write('theme', 'sidebarIconSize', value.name);
+    _saveLook('sidebarIconSize', value.name);
   }
 
   void setScrollBars(ScrollBarsMode value) {
     scrollBars.value = value;
-    config.write('theme', 'scrollBars', value.name);
+    _saveLook('scrollBars', value.name);
+  }
+
+  void setScrollClick(ScrollClick value) {
+    scrollClick.value = value;
+    _saveLook('scrollClick', value.name);
+  }
+
+  void setIconStyle(IconStyle value) {
+    iconStyle.value = value;
+    _saveLook('iconStyle', value.wire);
+  }
+
+  void setGlass(double value) {
+    final level = _glassLevel(value);
+    if (level == glass.value) return;
+    glass.value = level;
+    _saveLook('glass', level);
   }
 }
 

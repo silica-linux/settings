@@ -115,15 +115,13 @@ class _Scopes extends StatelessWidget {
         active: WindowActiveScope.of(context),
         child: ControlAccent(
           color: services.accent.value.fill(dark: dark),
-          // Appearance › show scroll bars: always keeps the track; automatically and while
-          // scrolling show it over the content as the pointer scrolls.
-          child: ScrollConfiguration(
-            behavior: SilicaScrollBehavior(
-              style: services.scrollBars.value == ScrollBarsMode.always
-                  ? ScrollerStyle.legacy
-                  : ScrollerStyle.overlay,
+          // The look chosen here follows live (silica_ui's SystemLookScope): scroll bars
+          // (always keeps the track), the click in the track, highlight, icon style.
+          child: SystemLookScope(
+            child: ScrollConfiguration(
+              behavior: const SilicaScrollBehavior(),
+              child: child,
             ),
-            child: child,
           ),
         ),
       ),

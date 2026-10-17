@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1056,7 +1057,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appearanceOtherApps =>
-      'Settings uses this at once; the other apps follow once they read it.';
+      'The apps and the desktop follow this at once.';
+
+  @override
+  String get appearanceNoTintYet =>
+      'Tinting windows with the wallpaper colour is not available yet.';
+
+  @override
+  String get appearanceThemeNote =>
+      'The apps and the desktop follow this at once. Folder colours are not available yet.';
+
+  @override
+  String get appearanceGlassClear => 'Clearer';
+
+  @override
+  String get appearanceGlassTinted => 'More tinted';
+
+  @override
+  String get appearanceStyleDefault => 'Default';
+
+  @override
+  String get appearanceStyleDark => 'Dark';
+
+  @override
+  String get appearanceStyleClear => 'Clear';
+
+  @override
+  String get appearanceStyleTinted => 'Tinted';
 
   @override
   String get appearanceSmall => 'Small';

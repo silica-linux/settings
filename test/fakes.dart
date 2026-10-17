@@ -42,6 +42,10 @@ class FakeSystem implements SystemBackend {
   Future<SystemState> state() async => current;
 
   @override
+  Future<void> setLook(Map<String, Object> values) async =>
+      calls.add('setLook $values');
+
+  @override
   Future<void> setAppearanceMode(String mode) async =>
       calls.add('setAppearanceMode $mode');
 
