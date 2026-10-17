@@ -92,51 +92,61 @@ class _SettingsSidebarState extends State<SettingsSidebar> {
     Navigation navigation,
     bool searching,
   ) {
-    // One scrolling list under the glass title bar (the window drops it on top): everything,
-    // the search field and the account row included, scrolls beneath the blur strip.
+    // The fixed glass block (title bar + search field, one blur strip) sits over a list that
+    // scrolls beneath it; at rest the first row starts right below the block.
     return ColoredBox(
       color: colors.sidebar,
-      child: ListView(
-        key: const ValueKey('sidebar list'),
-        padding: const EdgeInsets.only(
-          top: SettingsMetrics.searchTop,
-          bottom: 12,
-        ),
+      child: Stack(
         children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: const EdgeInsets.only(left: SettingsMetrics.searchLeft),
-              child: SidebarSearchField(
-                key: const ValueKey('sidebar search'),
-                controller: _query,
-                focusNode: _focus,
-                placeholder: l.searchPlaceholder,
-                clearLabel: l.searchClear,
-                onChanged: (text) => navigation.query = text,
-                onCancel: _clear,
+          Positioned.fill(
+            child: ListView(
+              key: const ValueKey('sidebar list'),
+              padding: const EdgeInsets.only(
+                top: SettingsMetrics.glassBlockHeight,
+                bottom: 12,
+              ),
+              children: [
+                if (searching)
+                  _Results(navigation: navigation, groups: widget.groups)
+                else ...[
+                  _AccountCell(onTap: () => navigation.openPane(PaneId.users)),
+                  const SizedBox(
+                    height:
+                        SettingsMetrics.paneListTop -
+                        SettingsMetrics.accountTop -
+                        SettingsMetrics.accountHeight,
+                  ),
+                  _PaneList(navigation: navigation, groups: widget.groups),
+                ],
+              ],
+            ),
+          ),
+          Positioned(
+            left: 0,
+            top: 0,
+            right: 0,
+            height: SettingsMetrics.glassBlockHeight,
+            child: WindowDragArea(
+              child: AmalfiToolbar.sidebarSection(
+                key: const ValueKey('sidebar bar'),
+                surface: AmalfiToolbarSurface.blur,
+                children: const [],
               ),
             ),
           ),
-          if (searching) ...[
-            const SizedBox(height: 10),
-            _Results(navigation: navigation, groups: widget.groups),
-          ] else ...[
-            const SizedBox(
-              height:
-                  SettingsMetrics.accountTop -
-                  SettingsMetrics.searchTop -
-                  SettingsMetrics.searchHeight,
+          Positioned(
+            left: SettingsMetrics.searchLeft,
+            top: SettingsMetrics.searchTop,
+            child: SidebarSearchField(
+              key: const ValueKey('sidebar search'),
+              controller: _query,
+              focusNode: _focus,
+              placeholder: l.searchPlaceholder,
+              clearLabel: l.searchClear,
+              onChanged: (text) => navigation.query = text,
+              onCancel: _clear,
             ),
-            _AccountCell(onTap: () => navigation.openPane(PaneId.users)),
-            const SizedBox(
-              height:
-                  SettingsMetrics.paneListTop -
-                  SettingsMetrics.accountTop -
-                  SettingsMetrics.accountHeight,
-            ),
-            _PaneList(navigation: navigation, groups: widget.groups),
-          ],
+          ),
         ],
       ),
     );
@@ -164,8 +174,12 @@ class _AccountCell extends StatelessWidget {
         onTap: onTap,
         child: SizedBox(
           height: SettingsMetrics.accountHeight,
+          // The same margins as the entries: the capsule inset, the content at the row's offsets.
           child: Padding(
-            padding: const EdgeInsets.only(left: 12, right: 12),
+            padding: const EdgeInsets.only(
+              left: SettingsMetrics.rowInset + SettingsMetrics.rowIconLeft,
+              right: SettingsMetrics.rowInset + 8,
+            ),
             child: Row(
               children: [
                 Container(

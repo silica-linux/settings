@@ -92,7 +92,8 @@ void main() {
     final cell = find.byKey(const ValueKey('account cell'));
     expect(tester.getTopLeft(cell).dy, 100);
     expect(tester.getSize(cell).height, 36);
-    expect(tester.getTopLeft(find.text('Local account')).dx, 60);
+    // The avatar and the name follow the rows' offsets (capsule inset 12, content at 10).
+    expect(tester.getTopLeft(find.text('Local account')).dx, 12 + 10 + 36 + 12);
   });
 
   testWidgets(
@@ -111,24 +112,41 @@ void main() {
     },
   );
 
-  testWidgets('the sidebar scrolls under the glass title bar (all content)', (
+  testWidgets('the glass block (title bar + search) stays fixed while the list '
+      'scrolls under it', (tester) async {
+    await pumpSettings(tester);
+    final list = find.byKey(const ValueKey('sidebar list'));
+    final search = find.byKey(const ValueKey('sidebar search'));
+    final bar = find.byKey(const ValueKey('sidebar bar'));
+    // The list spans the whole sidebar; the block is the title bar and the search field.
+    expect(tester.getTopLeft(list), Offset.zero);
+    expect(tester.getTopLeft(bar), Offset.zero);
+    expect(tester.getSize(bar).height, SettingsMetrics.glassBlockHeight);
+    expect(tester.getTopLeft(search).dy, 60);
+    final cell = find.byKey(const ValueKey('account cell'));
+    expect(tester.getTopLeft(cell).dy, SettingsMetrics.glassBlockHeight);
+    await tester.drag(list, const Offset(0, -80));
+    await tester.pump();
+    // The search field did not move; the account row passed under the block.
+    expect(tester.getTopLeft(search).dy, 60);
+    expect(
+      tester.getTopLeft(cell).dy,
+      lessThan(SettingsMetrics.glassBlockHeight),
+    );
+    expect(tester.getTopLeft(cell).dy, lessThan(60));
+  });
+
+  testWidgets('the account row has the same insets as the entries', (
     tester,
   ) async {
     await pumpSettings(tester);
-    final list = find.byKey(const ValueKey('sidebar list'));
-    // The list spans the whole sidebar, from y 0, under the 52 pt bar.
-    expect(tester.getTopLeft(list), Offset.zero);
-    expect(tester.getSize(list).height, greaterThan(52));
-    final cell = find.byKey(const ValueKey('account cell'));
-    expect(tester.getTopLeft(cell).dy, 100);
-    await tester.drag(list, const Offset(0, -80));
-    await tester.pump();
-    // The account row and the search field moved up under the bar.
-    expect(tester.getTopLeft(cell).dy, lessThan(52));
-    expect(
-      tester.getTopLeft(find.byKey(const ValueKey('sidebar search'))).dy,
-      lessThan(60),
+    final row = find.byKey(const ValueKey('pane wifi'));
+    final tile = find.descendant(of: row, matching: find.byType(IconTile));
+    final avatar = find.descendant(
+      of: find.byKey(const ValueKey('account cell')),
+      matching: find.byType(Container),
     );
+    expect(tester.getTopLeft(avatar.first).dx, tester.getTopLeft(tile).dx);
   });
 
   testWidgets('the measured grouped list: inset 20, rows 52 (kit General)', (

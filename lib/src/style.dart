@@ -22,6 +22,10 @@ abstract final class SettingsMetrics {
   static const double searchTop = 60;
   static const double searchLeft = AmalfiSidebarMetrics.padding;
 
+  /// The fixed glass block of the sidebar: the title bar and the search field under it; the
+  /// account row and the panes scroll beneath it, and rest right below it.
+  static const double glassBlockHeight = accountTop;
+
   /// The account cell: avatar 36 at (12, 100), name at x 60 (kit `Account avatar`).
   static const double accountTop = 100;
   static const double accountHeight = 36;

@@ -107,21 +107,6 @@ class _SettingsWindowState extends State<SettingsWindow> {
                       searchFocus: _searchFocus,
                     ),
                   ),
-                  // The sidebar section of the toolbar: a blur strip over the sidebar, which
-                  // scrolls under it (the window buttons, drawn by Ossido, sit on it).
-                  Positioned(
-                    left: 0,
-                    top: 0,
-                    width: SettingsMetrics.sidebarWidth,
-                    height: toolbarHeight,
-                    child: const WindowDragArea(
-                      child: AmalfiToolbar.sidebarSection(
-                        key: ValueKey('sidebar bar'),
-                        surface: AmalfiToolbarSurface.blur,
-                        children: [],
-                      ),
-                    ),
-                  ),
                   Positioned(
                     left: SettingsMetrics.sidebarWidth,
                     right: 0,
