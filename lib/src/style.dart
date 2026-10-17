@@ -12,8 +12,8 @@ abstract final class SettingsMetrics {
   /// The shortest window that still shows the toolbar and a few rows (provisional).
   static const double minHeight = 400;
 
-  /// Sidebar width 240, its trailing 1 pt separator inside it at x 239: the content starts at
-  /// x 240, the standard Amalfi sidebar of Mustache and Mail (components.md, readability pass).
+  /// Sidebar width 240, no divider (the tone step Surface/Sidebar to Surface/Window): the content
+  /// starts at x 240, the standard Amalfi sidebar of Mustache and Mail (components.md, readability pass).
   static const double sidebarWidth = 240;
 
   /// The search field: 216 × 28 at (12, 60), the standard sidebar padding on both sides.
@@ -45,7 +45,7 @@ abstract final class SettingsMetrics {
   static const double iconRadius = 6;
 
   /// The back / forward capsule: two 36 pt segments (the Nav piece) at x 248, 8 after the
-  /// sidebar's divider.
+  /// sidebar's edge.
   static const double navX = 248;
   static const double navSegment = 36;
 

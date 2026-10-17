@@ -1,5 +1,5 @@
-// The Settings window (kit `Apps/Settings/*`): the 240 pt sidebar on the left with its 1 pt
-// divider at x 239, the content on the right under a 52 pt toolbar with the back / forward
+// The Settings window (kit `Apps/Settings/*`): the 240 pt sidebar on the left, no divider
+// (the tone step Surface/Sidebar to Surface/Window), the content on the right under a 52 pt toolbar with the back / forward
 // capsule at x 248 and the title of the current pane after it.
 // Switching panes replaces the content in one frame, with no transition (ST-NAV-05).
 
@@ -121,14 +121,6 @@ class _SettingsWindowState extends State<SettingsWindow> {
                         children: [],
                       ),
                     ),
-                  ),
-                  // The sidebar's one 1 pt divider, full height, at x 239.
-                  Positioned(
-                    left: SettingsMetrics.sidebarWidth - 1,
-                    top: 0,
-                    bottom: 0,
-                    width: 1,
-                    child: ColoredBox(color: colors.separator),
                   ),
                   Positioned(
                     left: SettingsMetrics.sidebarWidth,

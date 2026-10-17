@@ -64,7 +64,7 @@ void main() {
       tester.getTopLeft(find.byKey(const ValueKey('title'))).dx,
       248 + 73 + 4 + 12,
     );
-    // The window's content starts at x 240; the divider is the 1 pt line at x 239.
+    // The window's content starts at x 240; there is no divider.
     expect(SettingsMetrics.sidebarWidth, 240);
   });
 
