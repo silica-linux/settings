@@ -92,16 +92,17 @@ class _SettingsSidebarState extends State<SettingsSidebar> {
     Navigation navigation,
     bool searching,
   ) {
+    // One scrolling list under the glass title bar (the window drops it on top): everything,
+    // the search field and the account row included, scrolls beneath the blur strip.
     return ColoredBox(
       color: colors.sidebar,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: ListView(
+        key: const ValueKey('sidebar list'),
+        padding: const EdgeInsets.only(
+          top: SettingsMetrics.searchTop,
+          bottom: 12,
+        ),
         children: [
-          // The band of the window buttons (drawn by Ossido) is the window's drag area.
-          const SizedBox(
-            height: SettingsMetrics.searchTop,
-            child: WindowDragArea(child: SizedBox.expand()),
-          ),
           Align(
             alignment: Alignment.centerLeft,
             child: Padding(
@@ -119,9 +120,7 @@ class _SettingsSidebarState extends State<SettingsSidebar> {
           ),
           if (searching) ...[
             const SizedBox(height: 10),
-            Expanded(
-              child: _Results(navigation: navigation, groups: widget.groups),
-            ),
+            _Results(navigation: navigation, groups: widget.groups),
           ] else ...[
             const SizedBox(
               height:
@@ -136,9 +135,7 @@ class _SettingsSidebarState extends State<SettingsSidebar> {
                   SettingsMetrics.accountTop -
                   SettingsMetrics.accountHeight,
             ),
-            Expanded(
-              child: _PaneList(navigation: navigation, groups: widget.groups),
-            ),
+            _PaneList(navigation: navigation, groups: widget.groups),
           ],
         ],
       ),
@@ -223,8 +220,7 @@ class _PaneList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    return ListView(
-      padding: const EdgeInsets.only(bottom: 12),
+    return Column(
       children: [
         for (final (i, group) in groups.indexed) ...[
           if (i > 0) const SizedBox(height: SettingsMetrics.groupGap),
@@ -393,7 +389,7 @@ class _Results extends StatelessWidget {
         ),
       );
     }
-    return ListView(
+    return Column(
       children: [
         for (final entry in results)
           _SidebarRow(

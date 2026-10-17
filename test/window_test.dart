@@ -5,6 +5,7 @@ import 'package:silica_settings/src/model/panes.dart';
 import 'package:silica_settings/src/style.dart';
 import 'package:silica_settings/src/system/system.dart';
 import 'package:silica_settings/src/ui/symbol.dart';
+import 'package:silica_ui/silica_ui.dart';
 
 import 'fakes.dart';
 
@@ -39,11 +40,11 @@ void main() {
     tester,
   ) async {
     await pumpSettings(tester);
-    // The search field: 220 × 28 at (10, 60).
+    // The search field: 216 × 28 at (12, 60) (kit `Search`).
     final search = find.byKey(const ValueKey('sidebar search'));
-    expect(tester.getTopLeft(search), const Offset(10, 60));
-    expect(tester.getSize(search), const Size(220, 28));
-    // The rows start at 156; the row spans the sidebar, the capsule is 228 wide at x 6.
+    expect(tester.getTopLeft(search), const Offset(12, 60));
+    expect(tester.getSize(search), const Size(216, 28));
+    // The rows start at 156; the row spans the sidebar, the capsule is 216 wide at x 12 (kit `Sidebar Row`).
     final wifi = find.byKey(const ValueKey('pane wifi'));
     expect(tester.getTopLeft(wifi).dy, SettingsMetrics.paneListTop);
     expect(tester.getSize(wifi).width, SettingsMetrics.sidebarWidth);
@@ -53,8 +54,8 @@ void main() {
           matching: find.byType(DecoratedBox),
         )
         .first;
-    expect(tester.getSize(capsule), const Size(228, 32));
-    expect(tester.getTopLeft(capsule).dx, 6);
+    expect(tester.getSize(capsule), const Size(216, 32));
+    expect(tester.getTopLeft(capsule).dx, 12);
     // The back / forward capsule at (248, 8), 73 × 36; the title 12 after it.
     final nav = find.byKey(const ValueKey('nav'));
     expect(tester.getTopLeft(nav), const Offset(248, 8));
@@ -71,17 +72,17 @@ void main() {
     tester,
   ) async {
     await pumpSettings(tester);
-    // The 24 pt tile at x 10 (y 4 in the row), the label at x 44; the blocks 12 apart on
+    // The row at x 12, 216 wide; the 24 pt tile at x 10 of it (y 4), the label at x 44; the blocks 12 apart on
     // top of the 32 pt pitch.
     final row = find.byKey(const ValueKey('pane wifi'));
     final tile = find.descendant(of: row, matching: find.byType(IconTile));
-    expect(tester.getTopLeft(tile), const Offset(10, 156 + 4));
+    expect(tester.getTopLeft(tile), const Offset(12 + 10, 156 + 4));
     expect(tester.getSize(tile), const Size(24, 24));
     expect(
       tester
           .getTopLeft(find.descendant(of: row, matching: find.text('Wi-Fi')))
           .dx,
-      44,
+      12 + 44,
     );
     final general = tester.getTopLeft(
       find.byKey(const ValueKey('pane general')),
@@ -92,6 +93,42 @@ void main() {
     expect(tester.getTopLeft(cell).dy, 100);
     expect(tester.getSize(cell).height, 36);
     expect(tester.getTopLeft(find.text('Local account')).dx, 60);
+  });
+
+  testWidgets(
+    'the sidebar metrics are silica_ui\'s standard sidebar (kit Mustache)',
+    (tester) async {
+      expect(SettingsMetrics.rowInset, AmalfiSidebarMetrics.padding);
+      expect(SettingsMetrics.searchLeft, AmalfiSidebarMetrics.padding);
+      expect(SettingsMetrics.rowPitch, AmalfiSidebarMetrics.rowHeight);
+      expect(SettingsMetrics.selectionRadius, AmalfiSidebarMetrics.radius);
+      expect(
+        SettingsMetrics.sidebarWidth - 2 * SettingsMetrics.rowInset,
+        SettingsMetrics.searchWidth,
+      );
+      // Kit `Sidebar Row/Selected`: capsule 216 × 32 at the row, tile 24 at (10, 4).
+      expect(SettingsMetrics.rowIconLeft, 10);
+    },
+  );
+
+  testWidgets('the sidebar scrolls under the glass title bar (all content)', (
+    tester,
+  ) async {
+    await pumpSettings(tester);
+    final list = find.byKey(const ValueKey('sidebar list'));
+    // The list spans the whole sidebar, from y 0, under the 52 pt bar.
+    expect(tester.getTopLeft(list), Offset.zero);
+    expect(tester.getSize(list).height, greaterThan(52));
+    final cell = find.byKey(const ValueKey('account cell'));
+    expect(tester.getTopLeft(cell).dy, 100);
+    await tester.drag(list, const Offset(0, -80));
+    await tester.pump();
+    // The account row and the search field moved up under the bar.
+    expect(tester.getTopLeft(cell).dy, lessThan(52));
+    expect(
+      tester.getTopLeft(find.byKey(const ValueKey('sidebar search'))).dy,
+      lessThan(60),
+    );
   });
 
   testWidgets('the measured grouped list: inset 20, rows 52 (kit General)', (

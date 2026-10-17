@@ -16,11 +16,11 @@ abstract final class SettingsMetrics {
   /// x 240, the standard Amalfi sidebar of Mustache and Mail (components.md, readability pass).
   static const double sidebarWidth = 240;
 
-  /// The search field: 220 × 28 at (10, 60) (10 from both edges of the sidebar).
-  static const double searchWidth = 220;
+  /// The search field: 216 × 28 at (12, 60), the standard sidebar padding on both sides.
+  static const double searchWidth = 216;
   static const double searchHeight = 28;
   static const double searchTop = 60;
-  static const double searchLeft = 10;
+  static const double searchLeft = AmalfiSidebarMetrics.padding;
 
   /// The account cell: avatar 36 at (12, 100), name at x 60 (kit `Account avatar`).
   static const double accountTop = 100;
@@ -30,13 +30,13 @@ abstract final class SettingsMetrics {
   /// The first pane row starts 156 below the window's top (kit `Sidebar list`).
   static const double paneListTop = 156;
 
-  /// Sidebar rows: 32 tall on a pitch of 32, the soft selection capsule 6 from both edges,
+  /// Sidebar rows: 32 tall on a pitch of 32, the soft selection capsule 12 from both edges (216 wide, silica_ui's sidebar metrics),
   /// radius 8; the 24 pt tile at x 10 of the sidebar (glyph 16, y 4 in the row), the label at
   /// x 44. Blocks are 12 apart on top of the pitch.
-  static const double rowPitch = 32;
-  static const double rowInset = 6;
-  static const double selectionRadius = 8;
-  static const double rowIconLeft = 4;
+  static const double rowPitch = AmalfiSidebarMetrics.rowHeight;
+  static const double rowInset = AmalfiSidebarMetrics.padding;
+  static const double selectionRadius = AmalfiSidebarMetrics.radius;
+  static const double rowIconLeft = 10;
   static const double rowIconGap = 10;
   static const double groupGap = 12;
 
