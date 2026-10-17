@@ -247,6 +247,40 @@ void main() {
     expect(style(), 'alerts');
   });
 
+  testWidgets('Notifications: previews, Notification Center and grouping', (
+    tester,
+  ) async {
+    final tools = FakeTools()
+      ..apps = const [NotifyingApp(key: 'firefox', name: 'Firefox')];
+    final h = await pumpSettings(
+      tester,
+      pane: PaneId.notifications,
+      tools: tools,
+      height: 1000,
+    );
+    await settle(tester);
+    await choose(tester, 'previews', 'Never');
+    expect(h.config.read('notifications')['previews'], 'never');
+    await tapKey(tester, 'app firefox');
+    Map<Object?, Object?> app() =>
+        (h.config.read('notifications')['apps'] as Map)['firefox'] as Map;
+    await tester.tap(switchIn('show in center'));
+    await tester.pump();
+    expect(app()['showInCenter'], false);
+    await choose(tester, 'app previews', 'Always');
+    expect(app()['previews'], 'always');
+    await choose(tester, 'app grouping', 'Off');
+    expect(app()['grouping'], 'off');
+    // Back to the defaults: the keys go away.
+    await tester.tap(switchIn('show in center'));
+    await tester.pump();
+    await choose(tester, 'app previews', 'Default');
+    await choose(tester, 'app grouping', 'Automatic');
+    expect(app().containsKey('showInCenter'), isFalse);
+    expect(app().containsKey('previews'), isFalse);
+    expect(app().containsKey('grouping'), isFalse);
+  });
+
   testWidgets('Focus: Do Not Disturb goes through the daemon', (tester) async {
     final h = await pumpSettings(tester, pane: PaneId.focus);
     await tester.tap(switchIn('dnd switch'));

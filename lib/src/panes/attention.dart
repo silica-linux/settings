@@ -19,6 +19,7 @@ import '../services.dart';
 import '../style.dart';
 import '../system/config.dart';
 import '../system/settings_files.dart';
+import '../system/shell_config.dart';
 import '../system/tools.dart';
 import '../ui/errors.dart';
 import '../ui/grouped.dart';
@@ -35,6 +36,18 @@ BannerStyle bannerStyleOf(ConfigStore config, String key) {
   return BannerStyle.values.where((s) => s.name == style).firstOrNull ??
       BannerStyle.banners;
 }
+
+/// A key of an app in notifications.json, or null.
+Object? appValue(ConfigStore config, String key, String field) {
+  final apps = config.read('notifications')['apps'];
+  final app = apps is Map ? apps[key] : null;
+  return app is Map ? app[field] : null;
+}
+
+/// The previews saved for all apps; always by default, as in the shell.
+PreviewMode previewModeOf(Object? name) =>
+    PreviewMode.values.where((m) => m.name == name).firstOrNull ??
+    PreviewMode.always;
 
 /// Saves [style] for [key], keeping the other apps and the app's other keys.
 void saveBannerStyle(ConfigStore config, String key, BannerStyle style) {
@@ -144,15 +157,25 @@ class _NotificationsPaneState extends State<NotificationsPane> {
         SettingsGroup(
           heading: l.notificationsCenter,
           description: l.notificationsCenterHelp,
+          children: [
+            PopUpRow<PreviewMode>(
+              key: const ValueKey('previews'),
+              title: l.notificationsPreviews,
+              items: [
+                PopUpItem(PreviewMode.always, l.notificationsPreviewsAlways),
+                PopUpItem(PreviewMode.unlocked, l.notificationsWhenUnlocked),
+                PopUpItem(PreviewMode.never, l.notificationsPreviewsNever),
+              ],
+              value: previewModeOf(config.read('notifications')['previews']),
+              onChanged: (v) =>
+                  setState(() => config.writeNotificationDefaults(previews: v)),
+            ),
+          ],
+        ),
+        SettingsGroup(
           unavailable: true,
           issue: Issues.notifications,
           children: [
-            PopUpRow<int>(
-              title: l.notificationsPreviews,
-              items: [PopUpItem(0, l.notificationsWhenUnlocked)],
-              value: 0,
-              onChanged: (_) {},
-            ),
             ValueRow(title: l.notificationsShowWhen),
             SwitchRow(
               title: l.notificationsWhenSleeping,
@@ -266,23 +289,83 @@ class _NotificationAppPaneState extends State<NotificationAppPane> {
           ],
         ),
         SettingsGroup(
+          children: [
+            SwitchRow(
+              key: const ValueKey('show in center'),
+              title: l.notificationsInCenter,
+              value: appValue(config, key, 'showInCenter') != false,
+              onChanged: style == BannerStyle.none
+                  ? null
+                  : (v) => setState(
+                      () => config.writeAppNotification(
+                        key,
+                        'showInCenter',
+                        v ? null : false,
+                      ),
+                    ),
+            ),
+            PopUpRow<AppPreviewMode>(
+              key: const ValueKey('app previews'),
+              title: l.notificationsPreviews,
+              items: [
+                PopUpItem(
+                  AppPreviewMode.byDefault,
+                  l.notificationsPreviewsDefault,
+                ),
+                PopUpItem(AppPreviewMode.always, l.notificationsPreviewsAlways),
+                PopUpItem(AppPreviewMode.unlocked, l.notificationsWhenUnlocked),
+                PopUpItem(AppPreviewMode.never, l.notificationsPreviewsNever),
+              ],
+              value:
+                  AppPreviewMode.values
+                      .where(
+                        (m) =>
+                            m != AppPreviewMode.byDefault &&
+                            m.name == appValue(config, key, 'previews'),
+                      )
+                      .firstOrNull ??
+                  AppPreviewMode.byDefault,
+              onChanged: style == BannerStyle.none
+                  ? null
+                  : (v) => setState(
+                      () => config.writeAppNotification(
+                        key,
+                        'previews',
+                        v == AppPreviewMode.byDefault ? null : v.name,
+                      ),
+                    ),
+            ),
+            PopUpRow<AppGrouping>(
+              key: const ValueKey('app grouping'),
+              title: l.notificationsGrouping,
+              items: [
+                PopUpItem(AppGrouping.auto, l.appearanceAutomaticChoice),
+                PopUpItem(AppGrouping.app, l.notificationsGroupByApp),
+                PopUpItem(AppGrouping.off, l.notificationsStyleOff),
+              ],
+              value:
+                  AppGrouping.values
+                      .where((g) => g.name == appValue(config, key, 'grouping'))
+                      .firstOrNull ??
+                  AppGrouping.auto,
+              onChanged: style == BannerStyle.none
+                  ? null
+                  : (v) => setState(
+                      () => config.writeAppNotification(
+                        key,
+                        'grouping',
+                        v == AppGrouping.auto ? null : v.name,
+                      ),
+                    ),
+            ),
+          ],
+        ),
+        SettingsGroup(
           unavailable: true,
           issue: Issues.notifications,
           children: [
             SwitchRow(title: l.notificationsBadges, value: true),
             SwitchRow(title: l.notificationsSound, value: true),
-            PopUpRow<int>(
-              title: l.notificationsPreviews,
-              items: [PopUpItem(0, l.appearanceDefaultChoice)],
-              value: 0,
-              onChanged: (_) {},
-            ),
-            PopUpRow<int>(
-              title: l.notificationsGrouping,
-              items: [PopUpItem(0, l.appearanceAutomaticChoice)],
-              value: 0,
-              onChanged: (_) {},
-            ),
           ],
         ),
       ],
