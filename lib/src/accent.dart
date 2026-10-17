@@ -35,11 +35,12 @@ enum Accent {
     Color(0xFFFF5257),
     Color(0xFFFF565B),
   ),
+  // `Palette/Arancia` (silica-ui#97), not Limone and not the measured reference orange.
   orange(
-    Color(0xFFF7821B),
-    Color(0xFFF17E1B),
-    Color(0xFFF7821B),
-    Color(0xFFF78622),
+    Color(0xFFF98A17),
+    Color(0xFFF98A17),
+    Color(0xFFFF9F40),
+    Color(0xFFFF9F40),
   ),
   yellow(
     Color(0xFFFFC727),
