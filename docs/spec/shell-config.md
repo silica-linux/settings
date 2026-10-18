@@ -89,7 +89,7 @@ key of it with the wrong type, takes that key's default.
 | --- | --- | --- | --- |
 | `apps.<id>.style` | `"banners"` \| `"alerts"` \| `"none"` | `"banners"` | written (the shell reads it) |
 | `apps.<id>.badges` | bool | `true` | not wired |
-| `apps.<id>.sound` | bool | `true` | not wired |
+| `apps.<id>.sound` | bool | `true` | written (the shell plays the chosen alert sound with a banner; `false` mutes the app) |
 | `apps.<id>.previews` | `"always"` \| `"unlocked"` \| `"never"` | the global `previews` | written (the shell reads it; `unlocked` shows the text: there is no lock screen) |
 | `apps.<id>.grouping` | `"auto"` \| `"app"` \| `"off"` (the shell also takes `automatic` and `byApp`) | the global `grouping` | written (`off` lists each notification of the app in the Center; the others fold them into a stack) |
 | `apps.<id>.showInCenter` | bool | `true` | written (`false` keeps the app out of the Center) |

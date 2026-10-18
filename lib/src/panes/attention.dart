@@ -304,6 +304,20 @@ class _NotificationAppPaneState extends State<NotificationAppPane> {
                       ),
                     ),
             ),
+            SwitchRow(
+              key: const ValueKey('app sound'),
+              title: l.notificationsSound,
+              value: appValue(config, key, 'sound') != false,
+              onChanged: style == BannerStyle.none
+                  ? null
+                  : (v) => setState(
+                      () => config.writeAppNotification(
+                        key,
+                        'sound',
+                        v ? null : false,
+                      ),
+                    ),
+            ),
             PopUpRow<AppPreviewMode>(
               key: const ValueKey('app previews'),
               title: l.notificationsPreviews,
@@ -363,10 +377,7 @@ class _NotificationAppPaneState extends State<NotificationAppPane> {
         SettingsGroup(
           unavailable: true,
           issue: Issues.notifications,
-          children: [
-            SwitchRow(title: l.notificationsBadges, value: true),
-            SwitchRow(title: l.notificationsSound, value: true),
-          ],
+          children: [SwitchRow(title: l.notificationsBadges, value: true)],
         ),
       ],
     );

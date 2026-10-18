@@ -267,6 +267,12 @@ void main() {
     await tester.tap(switchIn('show in center'));
     await tester.pump();
     expect(app()['showInCenter'], false);
+    await tester.tap(switchIn('app sound'));
+    await tester.pump();
+    expect(app()['sound'], false);
+    await tester.tap(switchIn('app sound'));
+    await tester.pump();
+    expect(app().containsKey('sound'), isFalse);
     await choose(tester, 'app previews', 'Always');
     expect(app()['previews'], 'always');
     await choose(tester, 'app grouping', 'Off');
