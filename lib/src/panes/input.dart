@@ -200,7 +200,7 @@ Future<void> showInputSources(
   required Map<String, String> names,
 }) {
   final l = AppLocalizations.of(context);
-  return showWindowSheet<void>(
+  return showAmalfiSheet<void>(
     context,
     semanticLabel: l.keyboardInputSources,
     builder: (context, sheet) =>
@@ -394,7 +394,7 @@ List<(String, List<SystemShortcut>)> systemShortcuts(AppLocalizations l) => [
 Future<void> showShortcuts(BuildContext context) {
   final l = AppLocalizations.of(context);
   final categories = systemShortcuts(l);
-  return showWindowSheet<void>(
+  return showAmalfiSheet<void>(
     context,
     semanticLabel: l.keyboardShortcutsButton,
     builder: (context, sheet) =>

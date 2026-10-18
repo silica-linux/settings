@@ -104,10 +104,11 @@ class _DisplaysPaneState extends State<DisplaysPane> {
       return;
     }
     setState(() => _busy = false);
-    final keep = await showWindowSheet<bool>(
+    final keep = await showAmalfiSheet<bool>(
       context,
       semanticLabel: l.displaysKeepTitle,
       cancelOnEscape: false,
+      surface: false,
       builder: (context, sheet) => _KeepSheet(close: sheet.close),
     );
     if (keep == true) return;
@@ -476,51 +477,37 @@ class _KeepSheetState extends State<_KeepSheet> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final colors = SettingsColors.of(context);
-    return SizedBox(
-      width: 400,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              l.displaysKeepTitle,
-              style: settingsText(13, colors.text, weight: FontWeight.w600),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              l.displaysKeepBody(_left),
-              key: const ValueKey('keep countdown'),
-              style: settingsText(13, colors.secondary, height: 1.3),
-            ),
-            const SizedBox(height: 18),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                AmalfiPushButton(
-                  key: const ValueKey('revert display'),
-                  label: l.displaysRevert,
-                  onPressed: () => widget.close(false),
-                ),
-                const SizedBox(width: 8),
-                AmalfiPushButton(
-                  key: const ValueKey('keep display'),
-                  label: l.displaysKeep,
-                  variant: AmalfiPushButtonVariant.primary,
-                  onPressed: () => widget.close(true),
-                ),
-              ],
-            ),
-          ],
+    return AmalfiDialog(
+      title: l.displaysKeepTitle,
+      layout: AmalfiDialogLayout.generic,
+      children: [
+        Text(
+          l.displaysKeepBody(_left),
+          key: const ValueKey('keep countdown'),
+          style: settingsText(13, colors.secondary, height: 1.3),
         ),
+      ],
+      footer: AmalfiDialogFooter(
+        actions: [
+          AmalfiPushButton(
+            key: const ValueKey('revert display'),
+            label: l.displaysRevert,
+            onPressed: () => widget.close(false),
+          ),
+          AmalfiPushButton(
+            key: const ValueKey('keep display'),
+            label: l.displaysKeep,
+            variant: AmalfiPushButtonVariant.primary,
+            onPressed: () => widget.close(true),
+          ),
+        ],
       ),
     );
   }
 }
 
 /// Night light (SH-NS-01): on or off, the schedule, its times and the colour temperature.
-Future<void> showNightLight(BuildContext context) => showWindowSheet<void>(
+Future<void> showNightLight(BuildContext context) => showAmalfiSheet<void>(
   context,
   semanticLabel: AppLocalizations.of(context).displaysNightLight,
   builder: (context, sheet) => _NightLightSheet(close: sheet.close),

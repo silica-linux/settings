@@ -567,7 +567,7 @@ Future<String?> showChoiceSheet(
   required List<String> values,
   required String current,
   String Function(String)? label,
-}) => showWindowSheet<String>(
+}) => showAmalfiSheet<String>(
   context,
   semanticLabel: title,
   builder: (context, sheet) => _ChoiceSheet(

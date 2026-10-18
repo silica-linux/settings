@@ -533,7 +533,7 @@ class _DesktopDockPaneState extends State<DesktopDockPane> {
 /// desktop preview, Done. Ossido has no hot corners yet: the pop-ups are shown disabled.
 Future<void> showHotCorners(BuildContext context) {
   final l = AppLocalizations.of(context);
-  return showWindowSheet<void>(
+  return showAmalfiSheet<void>(
     context,
     semanticLabel: l.dockHotCorners,
     builder: (context, sheet) {

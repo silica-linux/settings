@@ -60,7 +60,7 @@ class _FocusPaneState extends State<FocusPane> {
   Future<void> _edit(FocusMode? mode, String active) async {
     final services = ServicesScope.of(context);
     final modes = services.config.focusModes;
-    final result = await showWindowSheet<_Edit>(
+    final result = await showAmalfiSheet<_Edit>(
       context,
       semanticLabel: mode == null
           ? AppLocalizations.of(context).focusNewTitle

@@ -456,7 +456,7 @@ Future<void> showJoinSheet(
   required SystemTools tools,
 }) {
   final l = AppLocalizations.of(context);
-  return showWindowSheet<void>(
+  return showAmalfiSheet<void>(
     context,
     semanticLabel: ssid == null ? l.wifiOther : l.wifiJoinTitle(ssid),
     builder: (context, sheet) =>
@@ -612,7 +612,7 @@ Future<void> showWifiDetails(
   BuildContext context, {
   required String ssid,
   required SystemTools tools,
-}) => showWindowSheet<void>(
+}) => showAmalfiSheet<void>(
   context,
   semanticLabel: ssid,
   builder: (context, sheet) =>
@@ -1184,7 +1184,7 @@ Future<void> showServiceDetails(
   BuildContext context, {
   required NetworkDevice device,
   required SystemTools tools,
-}) => showWindowSheet<void>(
+}) => showAmalfiSheet<void>(
   context,
   semanticLabel: device.name,
   builder: (context, sheet) =>
