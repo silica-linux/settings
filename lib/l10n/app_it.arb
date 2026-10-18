@@ -356,6 +356,8 @@
   "dateTimeClockHelp": "L'orologio nella barra dei menu cambia subito.",
   "energyWakeForNetworkHelp": "Il computer si riattiva quando riceve un messaggio di rete. Ha effetto alla prossima connessione cablata.",
   "energyWakeForNetworkNone": "Non c'è nessuna connessione cablata salvata.",
+  "keyboardNavigationHelp": "Premi Tab per spostarti tra tutti i controlli di una finestra.",
+  "mouseDoubleClickHelp": "Vale subito per le app e per il desktop.",
   "appearanceGlassClear": "Più trasparente",
   "appearanceGlassTinted": "Più colorato",
   "appearanceStyleDefault": "Predefinito",

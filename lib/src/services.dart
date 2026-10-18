@@ -102,6 +102,12 @@ class Services {
                  .firstOrNull ??
              IconStyle.standard,
        ),
+       keyboardNavigation = ValueNotifier(
+         config.read('theme')['keyboardNavigation'] == true,
+       ),
+       doubleClickMs = ValueNotifier(
+         _doubleClick(config.read('theme')['doubleClickMs']),
+       ),
        glass = ValueNotifier(_glassLevel(config.read('theme')['glass'])) {
     // This window and the apps that start now draw with the saved look at once.
     SilicaSystemLook.apply(systemLook);
@@ -164,6 +170,20 @@ class Services {
   /// How tinted the glass is, 0 clear to 1 tinted (theme.json `glass`; Ossido draws it).
   final ValueNotifier<double> glass;
 
+  /// Tab reaches every control (theme.json `keyboardNavigation`).
+  final ValueNotifier<bool> keyboardNavigation;
+
+  /// The longest time between the two clicks of a double click, in ms (theme.json
+  /// `doubleClickMs`, 150-1000).
+  final ValueNotifier<int> doubleClickMs;
+
+  static const int doubleClickSlowest = 1000;
+  static const int doubleClickFastest = 150;
+
+  static int _doubleClick(Object? value) => value is num && value.isFinite
+      ? value.round().clamp(doubleClickFastest, doubleClickSlowest)
+      : 300;
+
   static double _glassLevel(Object? value) =>
       value is num && value.isFinite ? value.toDouble().clamp(0.0, 1.0) : 0.5;
 
@@ -176,6 +196,8 @@ class Services {
     scrollClick,
     iconStyle,
     glass,
+    keyboardNavigation,
+    doubleClickMs,
   ]);
 
   /// The look as silica_ui draws it: set in this window at once, kept by silica-daemon for
@@ -189,6 +211,8 @@ class Services {
     scrollClick: SystemScrollClick.parse(scrollClick.value.name),
     iconStyle: SystemIconStyle.parse(iconStyle.value.wire),
     glass: glass.value,
+    keyboardNavigation: keyboardNavigation.value,
+    doubleClickMs: doubleClickMs.value,
   );
 
   void _saveLook(String key, Object value) {
@@ -225,6 +249,18 @@ class Services {
   void setIconStyle(IconStyle value) {
     iconStyle.value = value;
     _saveLook('iconStyle', value.wire);
+  }
+
+  void setKeyboardNavigation(bool value) {
+    keyboardNavigation.value = value;
+    _saveLook('keyboardNavigation', value);
+  }
+
+  void setDoubleClickMs(int value) {
+    final ms = _doubleClick(value);
+    if (ms == doubleClickMs.value) return;
+    doubleClickMs.value = ms;
+    _saveLook('doubleClickMs', ms);
   }
 
   void setGlass(double value) {

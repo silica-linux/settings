@@ -1124,6 +1124,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get energyWakeForNetworkNone => 'There is no saved wired connection.';
 
   @override
+  String get keyboardNavigationHelp =>
+      'Press Tab to move between all the controls of a window.';
+
+  @override
+  String get mouseDoubleClickHelp =>
+      'Applies to the apps and the desktop at once.';
+
+  @override
   String get appearanceGlassClear => 'Clearer';
 
   @override

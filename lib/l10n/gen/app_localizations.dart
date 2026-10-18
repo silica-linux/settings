@@ -2234,6 +2234,18 @@ abstract class AppLocalizations {
   /// **'There is no saved wired connection.'**
   String get energyWakeForNetworkNone;
 
+  /// No description provided for @keyboardNavigationHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Press Tab to move between all the controls of a window.'**
+  String get keyboardNavigationHelp;
+
+  /// No description provided for @mouseDoubleClickHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Applies to the apps and the desktop at once.'**
+  String get mouseDoubleClickHelp;
+
   /// No description provided for @appearanceGlassClear.
   ///
   /// In en, this message translates to:

@@ -404,6 +404,8 @@
   "dateTimeClockHelp": "The clock in the menu bar changes at once.",
   "energyWakeForNetworkHelp": "The computer wakes when a network message addresses it. It takes effect when the wired connection is next connected.",
   "energyWakeForNetworkNone": "There is no saved wired connection.",
+  "keyboardNavigationHelp": "Press Tab to move between all the controls of a window.",
+  "mouseDoubleClickHelp": "Applies to the apps and the desktop at once.",
   "appearanceGlassClear": "Clearer",
   "appearanceGlassTinted": "More tinted",
   "appearanceStyleDefault": "Default",

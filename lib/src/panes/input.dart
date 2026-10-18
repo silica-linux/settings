@@ -140,8 +140,13 @@ class _KeyboardPaneState extends State<KeyboardPane> {
                 onChanged: (_) {},
               ),
             ),
-            Unavailable(
-              child: SwitchRow(title: l.keyboardNavigation, value: false),
+            SwitchRow(
+              key: const ValueKey('keyboard navigation'),
+              title: l.keyboardNavigation,
+              subtitle: l.keyboardNavigationHelp,
+              value: services.keyboardNavigation.value,
+              onChanged: (on) =>
+                  setState(() => services.setKeyboardNavigation(on)),
             ),
           ],
         ),
@@ -592,7 +597,8 @@ class _MousePaneState extends State<MousePane> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final config = ServicesScope.of(context).config;
+    final services = ServicesScope.of(context);
+    final config = services.config;
     void changed() => setState(() {});
     final secondary = MouseSecondary.values
         .where(
@@ -632,13 +638,25 @@ class _MousePaneState extends State<MousePane> {
           ],
         ),
         SettingsGroup(
-          unavailable: true,
-          issue: Issues.pointer,
+          footer: l.mouseDoubleClickHelp,
           children: [
             SliderRow(
+              key: const ValueKey('double click speed'),
               title: l.mouseDoubleClickSpeed,
-              value: 0.5,
+              // Slow on the left (the longest time between the clicks), fast on the right.
+              value:
+                  (Services.doubleClickSlowest - services.doubleClickMs.value) /
+                  (Services.doubleClickSlowest - Services.doubleClickFastest),
               labels: [l.keyboardSlow, l.keyboardFast],
+              onChanged: (v) => setState(
+                () => services.setDoubleClickMs(
+                  (Services.doubleClickSlowest -
+                          v.clamp(0.0, 1.0) *
+                              (Services.doubleClickSlowest -
+                                  Services.doubleClickFastest))
+                      .round(),
+                ),
+              ),
             ),
           ],
         ),

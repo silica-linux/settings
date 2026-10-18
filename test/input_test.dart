@@ -58,6 +58,17 @@ void main() {
       });
     });
 
+    testWidgets('keyboard navigation goes to theme.json and the daemon', (
+      tester,
+    ) async {
+      final h = await pumpSettings(tester, pane: PaneId.keyboard, height: 1000);
+      await tester.tap(switchIn('keyboard navigation'));
+      await tester.pump();
+      expect(h.config.read('theme')['keyboardNavigation'], true);
+      expect(h.system.calls.last, 'setLook {keyboardNavigation: true}');
+      expect(SilicaSystemLook.current.keyboardNavigation, isTrue);
+    });
+
     testWidgets('input sources: add a layout and a variant, remove, at most 4', (
       tester,
     ) async {
@@ -167,10 +178,32 @@ void main() {
       await tester.pump();
       final input = h.config.read('input')['mouse'] as Map;
       expect(input['scrollSpeed'], 0.1);
-      // The double-click speed has no reader yet.
+      expect(find.textContaining('Not available yet in Silica'), findsNothing);
+    });
+
+    testWidgets('the double-click speed is a time shared with the apps', (
+      tester,
+    ) async {
+      final h = await pumpSettings(tester, pane: PaneId.mouse, height: 1000);
+      final slider = tester.getRect(
+        find.descendant(
+          of: find.byKey(const ValueKey('double click speed')),
+          matching: find.byType(AmalfiSlider),
+        ),
+      );
+      // The right end is the fastest, 150 ms.
+      await tester.tapAt(Offset(slider.right - 1, slider.center.dy));
+      await tester.pump();
       expect(
-        find.textContaining('Not available yet in Silica'),
-        findsOneWidget,
+        h.config.read('theme')['doubleClickMs'],
+        inInclusiveRange(150, 170),
+      );
+      expect(SilicaSystemLook.current.doubleClickMs, lessThan(171));
+      await tester.tapAt(Offset(slider.left + 1, slider.center.dy));
+      await tester.pump();
+      expect(
+        h.config.read('theme')['doubleClickMs'],
+        inInclusiveRange(950, 1000),
       );
     });
 

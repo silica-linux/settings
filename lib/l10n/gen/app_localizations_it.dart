@@ -1128,6 +1128,13 @@ class AppLocalizationsIt extends AppLocalizations {
       'Non c\'è nessuna connessione cablata salvata.';
 
   @override
+  String get keyboardNavigationHelp =>
+      'Premi Tab per spostarti tra tutti i controlli di una finestra.';
+
+  @override
+  String get mouseDoubleClickHelp => 'Vale subito per le app e per il desktop.';
+
+  @override
   String get appearanceGlassClear => 'Più trasparente';
 
   @override
