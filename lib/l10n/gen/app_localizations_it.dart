@@ -1155,6 +1155,31 @@ class AppLocalizationsIt extends AppLocalizations {
       'Finestre e menu si muovono meno: la scrivania salta le animazioni e le app fanno lo stesso.';
 
   @override
+  String get hotCornerPanorama => 'Panorama';
+
+  @override
+  String get hotCornerAppWindows => 'Finestre dell\'app';
+
+  @override
+  String get hotCornerDesktop => 'Mostra scrivania';
+
+  @override
+  String get hotCornerNotifications => 'Centro notifiche';
+
+  @override
+  String get hotCornerLauncher => 'Launcher';
+
+  @override
+  String get hotCornerControlCenter => 'Centro di controllo';
+
+  @override
+  String get hotCornerSearch => 'Cerca';
+
+  @override
+  String get hotCornersHelp =>
+      'Porta il puntatore nell\'angolo dello schermo per eseguire l\'azione.';
+
+  @override
   String get appearanceGlassClear => 'Più trasparente';
 
   @override

@@ -145,6 +145,25 @@ void main() {
       expect(h.tools.calls, contains('browser chromium.desktop'));
     });
 
+    testWidgets('a hot corner action is written to hotcorners.json', (
+      tester,
+    ) async {
+      final h = await pumpSettings(
+        tester,
+        pane: PaneId.desktopDock,
+        height: 1300,
+      );
+      await tapKey(tester, 'hot corners');
+      await choose(tester, 'hot corner topLeft', 'Panorama');
+      await choose(tester, 'hot corner bottomRight', 'Show desktop');
+      expect(h.config.read('hotcorners'), {
+        'topLeft': 'panorama',
+        'bottomRight': 'desktop',
+      });
+      await choose(tester, 'hot corner topLeft', '—');
+      expect(h.config.read('hotcorners'), {'bottomRight': 'desktop'});
+    });
+
     testWidgets('the hot corners sheet opens and closes', (tester) async {
       await pumpSettings(tester, pane: PaneId.desktopDock, height: 1300);
       await tapKey(tester, 'hot corners');

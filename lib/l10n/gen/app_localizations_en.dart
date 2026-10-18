@@ -1152,6 +1152,31 @@ class AppLocalizationsEn extends AppLocalizations {
       'Windows and menus move less: the desktop skips its animations and apps are told to do the same.';
 
   @override
+  String get hotCornerPanorama => 'Panorama';
+
+  @override
+  String get hotCornerAppWindows => 'Application windows';
+
+  @override
+  String get hotCornerDesktop => 'Show desktop';
+
+  @override
+  String get hotCornerNotifications => 'Notification Center';
+
+  @override
+  String get hotCornerLauncher => 'Launcher';
+
+  @override
+  String get hotCornerControlCenter => 'Control Center';
+
+  @override
+  String get hotCornerSearch => 'Search';
+
+  @override
+  String get hotCornersHelp =>
+      'Move the pointer into the corner of the screen to run the action.';
+
+  @override
   String get appearanceGlassClear => 'Clearer';
 
   @override

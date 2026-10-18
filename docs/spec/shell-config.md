@@ -151,6 +151,17 @@ logarithmic slider with 1 in the middle; `mouse.secondaryClick` is `right` \| `l
 other device's object and `doubleClickMs`, which no control writes yet. The Trackpad pane is in
 the sidebar only while silica-daemon's `State()` has `input.touchpad`.
 
+### hotcorners.json
+
+```json
+{ "topLeft": "panorama", "bottomRight": "desktop" }
+```
+
+Read by Ossido (`docs/control.md`). One key per corner (`topLeft`, `topRight`, `bottomLeft`,
+`bottomRight`); the action is `panorama`, `appWindows`, `desktop`, `notifications`, `launcher`,
+`controlCenter` or `search`; "none" removes the key. The reference's quick note, screen saver,
+display sleep, lock screen and the modifier variants are not offered (no such command yet).
+
 ### sound.json
 
 ```json

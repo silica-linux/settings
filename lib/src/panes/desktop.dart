@@ -529,84 +529,134 @@ class _DesktopDockPaneState extends State<DesktopDockPane> {
   }
 }
 
+/// What a hot corner does (hotcorners.json, read by Ossido).
+enum HotCorner {
+  none,
+  panorama,
+  appWindows,
+  desktop,
+  notifications,
+  launcher,
+  controlCenter,
+  search,
+}
+
+/// The four corners, with the hotcorners.json key of each.
+enum CornerPlace { topLeft, topRight, bottomLeft, bottomRight }
+
+/// The action of [place] in hotcorners.json; none when missing or unknown.
+HotCorner hotCornerOf(ConfigStore config, CornerPlace place) =>
+    HotCorner.values
+        .where((c) => c.name == config.read('hotcorners')[place.name])
+        .firstOrNull ??
+    HotCorner.none;
+
 /// The hot corners sheet (ST-DSK-04): 711 × 193, four 269 × 24 pop-ups around a 100 × 69
-/// desktop preview, Done. Ossido has no hot corners yet: the pop-ups are shown disabled.
+/// desktop preview, Done. Ossido runs the chosen action when the pointer reaches the corner.
 Future<void> showHotCorners(BuildContext context) {
   final l = AppLocalizations.of(context);
+  final config = ServicesScope.of(context).config;
+  String label(HotCorner c) => switch (c) {
+    HotCorner.none => l.hotCornerNone,
+    HotCorner.panorama => l.hotCornerPanorama,
+    HotCorner.appWindows => l.hotCornerAppWindows,
+    HotCorner.desktop => l.hotCornerDesktop,
+    HotCorner.notifications => l.hotCornerNotifications,
+    HotCorner.launcher => l.hotCornerLauncher,
+    HotCorner.controlCenter => l.hotCornerControlCenter,
+    HotCorner.search => l.hotCornerSearch,
+  };
   return showAmalfiSheet<void>(
     context,
     semanticLabel: l.dockHotCorners,
     builder: (context, sheet) {
       final colors = SettingsColors.of(context);
-      Widget corner() => IgnorePointer(
-        child: Opacity(
-          opacity: 0.5,
-          child: SizedBox(
+      return StatefulBuilder(
+        builder: (context, setState) {
+          Widget corner(CornerPlace place) => SizedBox(
             width: 269,
             height: 24,
-            child: PopUpButton<int>(
-              items: [PopUpItem(0, l.hotCornerNone)],
-              value: 0,
-              onChanged: null,
+            child: AmalfiPopUpButton<HotCorner>(
+              key: ValueKey('hot corner ${place.name}'),
+              items: [
+                for (final c in HotCorner.values)
+                  AmalfiPopUpItem<HotCorner>(value: c, label: label(c)),
+              ],
+              value: hotCornerOf(config, place),
+              size: AmalfiControlSize.small,
               width: 269,
-            ),
-          ),
-        ),
-      );
-      return SizedBox(
-        width: 711,
-        height: 193,
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [corner(), corner()],
-                    ),
-                    Expanded(
-                      child: Center(
-                        child: Container(
-                          width: 100,
-                          height: 69,
-                          decoration: BoxDecoration(
-                            color: colors.group,
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: colors.separator),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [corner(), corner()],
-                    ),
-                  ],
+              semanticLabel: place.name,
+              onChanged: (c) => setState(
+                () => config.write(
+                  'hotcorners',
+                  place.name,
+                  c == HotCorner.none ? null : c.name,
                 ),
               ),
-              const SizedBox(height: 12),
-              Row(
+            ),
+          );
+          return SizedBox(
+            width: 711,
+            height: 193,
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
                 children: [
                   Expanded(
-                    child: Text(
-                      l.notAvailableYet,
-                      style: settingsText(11, colors.secondary),
+                    child: Row(
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            corner(CornerPlace.topLeft),
+                            corner(CornerPlace.bottomLeft),
+                          ],
+                        ),
+                        Expanded(
+                          child: Center(
+                            child: Container(
+                              width: 100,
+                              height: 69,
+                              decoration: BoxDecoration(
+                                color: colors.group,
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: colors.separator),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            corner(CornerPlace.topRight),
+                            corner(CornerPlace.bottomRight),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  AmalfiPushButton(
-                    key: const ValueKey('hot corners done'),
-                    label: l.done,
-                    variant: AmalfiPushButtonVariant.primary,
-                    onPressed: sheet.close,
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          l.hotCornersHelp,
+                          style: settingsText(11, colors.secondary),
+                        ),
+                      ),
+                      AmalfiPushButton(
+                        key: const ValueKey('hot corners done'),
+                        label: l.done,
+                        variant: AmalfiPushButtonVariant.primary,
+                        onPressed: sheet.close,
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       );
     },
   );

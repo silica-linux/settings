@@ -2282,6 +2282,54 @@ abstract class AppLocalizations {
   /// **'Windows and menus move less: the desktop skips its animations and apps are told to do the same.'**
   String get accessibilityReduceMotionHelp;
 
+  /// No description provided for @hotCornerPanorama.
+  ///
+  /// In en, this message translates to:
+  /// **'Panorama'**
+  String get hotCornerPanorama;
+
+  /// No description provided for @hotCornerAppWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'Application windows'**
+  String get hotCornerAppWindows;
+
+  /// No description provided for @hotCornerDesktop.
+  ///
+  /// In en, this message translates to:
+  /// **'Show desktop'**
+  String get hotCornerDesktop;
+
+  /// No description provided for @hotCornerNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Center'**
+  String get hotCornerNotifications;
+
+  /// No description provided for @hotCornerLauncher.
+  ///
+  /// In en, this message translates to:
+  /// **'Launcher'**
+  String get hotCornerLauncher;
+
+  /// No description provided for @hotCornerControlCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Control Center'**
+  String get hotCornerControlCenter;
+
+  /// No description provided for @hotCornerSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get hotCornerSearch;
+
+  /// No description provided for @hotCornersHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Move the pointer into the corner of the screen to run the action.'**
+  String get hotCornersHelp;
+
   /// No description provided for @appearanceGlassClear.
   ///
   /// In en, this message translates to:
