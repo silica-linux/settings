@@ -32,7 +32,7 @@ Widget paneBody(
     PaneId.energy => const EnergyPane(),
     PaneId.battery => const BatteryPane(),
     PaneId.general => GeneralPane(open: open),
-    PaneId.accessibility => const AccessibilityPane(),
+    PaneId.accessibility => AccessibilityPane(open: open),
     PaneId.appearance => const AppearancePane(),
     PaneId.menuBar => const MenuBarPane(),
     PaneId.displays => const DisplaysPane(),

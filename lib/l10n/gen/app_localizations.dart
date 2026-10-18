@@ -2246,6 +2246,42 @@ abstract class AppLocalizations {
   /// **'Applies to the apps and the desktop at once.'**
   String get mouseDoubleClickHelp;
 
+  /// No description provided for @accessibilityMoreVision.
+  ///
+  /// In en, this message translates to:
+  /// **'More vision options'**
+  String get accessibilityMoreVision;
+
+  /// No description provided for @accessibilityReduceTransparency.
+  ///
+  /// In en, this message translates to:
+  /// **'Reduce transparency'**
+  String get accessibilityReduceTransparency;
+
+  /// No description provided for @accessibilityReduceTransparencyHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Windows, menus and the Dock are drawn without see-through glass.'**
+  String get accessibilityReduceTransparencyHelp;
+
+  /// No description provided for @accessibilityIncreaseContrast.
+  ///
+  /// In en, this message translates to:
+  /// **'Increase contrast'**
+  String get accessibilityIncreaseContrast;
+
+  /// No description provided for @accessibilityReduceMotion.
+  ///
+  /// In en, this message translates to:
+  /// **'Reduce motion'**
+  String get accessibilityReduceMotion;
+
+  /// No description provided for @accessibilityReduceMotionHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Windows and menus move less: the desktop skips its animations and apps are told to do the same.'**
+  String get accessibilityReduceMotionHelp;
+
   /// No description provided for @appearanceGlassClear.
   ///
   /// In en, this message translates to:

@@ -45,6 +45,8 @@ String subTitle(AppLocalizations l, SubPaneId sub) => switch (sub) {
   SubPaneId.languageRegion => l.subLanguageRegion,
   SubPaneId.backups => l.subBackups,
   SubPaneId.transferReset => l.subTransferReset,
+  SubPaneId.accessibilityDisplay => l.accessibilityDisplay,
+  SubPaneId.accessibilityMotion => l.accessibilityMotion,
   SubPaneId.notificationApp => l.paneNotifications,
 };
 
@@ -77,8 +79,30 @@ List<SearchEntry> searchIndex(AppLocalizations l, Iterable<PaneId> panes) {
   final all = [
     for (final pane in shown) at(paneTitle(l, pane), pane),
     for (final sub in SubPaneId.values)
-      if (sub != SubPaneId.notificationApp)
+      if (sub != SubPaneId.notificationApp &&
+          sub != SubPaneId.accessibilityDisplay &&
+          sub != SubPaneId.accessibilityMotion)
         at(subTitle(l, sub), PaneId.general, sub),
+    at(
+      l.accessibilityDisplay,
+      PaneId.accessibility,
+      SubPaneId.accessibilityDisplay,
+    ),
+    at(
+      l.accessibilityMotion,
+      PaneId.accessibility,
+      SubPaneId.accessibilityMotion,
+    ),
+    at(
+      l.accessibilityReduceTransparency,
+      PaneId.accessibility,
+      SubPaneId.accessibilityDisplay,
+    ),
+    at(
+      l.accessibilityReduceMotion,
+      PaneId.accessibility,
+      SubPaneId.accessibilityMotion,
+    ),
     at(l.wifiKnownNetworks, PaneId.wifi),
     at(l.wifiOtherNetworks, PaneId.wifi),
     at(l.bluetoothMyDevices, PaneId.bluetooth),

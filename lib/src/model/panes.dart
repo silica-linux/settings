@@ -94,6 +94,10 @@ enum SubPaneId {
   backups,
   transferReset,
 
+  /// Accessibility › Display and › Motion.
+  accessibilityDisplay,
+  accessibilityMotion,
+
   /// Notifications › one app ([Location.detail] is its key and name).
   notificationApp,
 }

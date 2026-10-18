@@ -1132,6 +1132,26 @@ class AppLocalizationsEn extends AppLocalizations {
       'Applies to the apps and the desktop at once.';
 
   @override
+  String get accessibilityMoreVision => 'More vision options';
+
+  @override
+  String get accessibilityReduceTransparency => 'Reduce transparency';
+
+  @override
+  String get accessibilityReduceTransparencyHelp =>
+      'Windows, menus and the Dock are drawn without see-through glass.';
+
+  @override
+  String get accessibilityIncreaseContrast => 'Increase contrast';
+
+  @override
+  String get accessibilityReduceMotion => 'Reduce motion';
+
+  @override
+  String get accessibilityReduceMotionHelp =>
+      'Windows and menus move less: the desktop skips its animations and apps are told to do the same.';
+
+  @override
   String get appearanceGlassClear => 'Clearer';
 
   @override

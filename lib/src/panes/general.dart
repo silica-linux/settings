@@ -29,6 +29,7 @@ import '../ui/errors.dart';
 import '../ui/grouped.dart';
 import '../ui/popup.dart';
 import '../ui/symbol.dart';
+import 'security.dart' show AccessibilityDisplayPane, AccessibilityMotionPane;
 
 /// Bytes in decimal units, as storage is sold ("512 GB").
 String formatBytes(int bytes) {
@@ -117,6 +118,8 @@ Widget generalSubPane(SubPaneId sub) => switch (sub) {
   SubPaneId.dateTime => const DateTimePane(),
   SubPaneId.languageRegion => const LanguagePane(),
   SubPaneId.softwareUpdate => const _SoftwareUpdatePane(),
+  SubPaneId.accessibilityDisplay => const AccessibilityDisplayPane(),
+  SubPaneId.accessibilityMotion => const AccessibilityMotionPane(),
   SubPaneId.startupDisk ||
   SubPaneId.loginItems ||
   SubPaneId.backups ||

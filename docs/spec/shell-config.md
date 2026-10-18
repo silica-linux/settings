@@ -198,7 +198,7 @@ Settings' own persistence of the look; nobody else needs to read it. Settings ap
 window at once and tells silica-daemon (`System1.SetLook`), which keeps it for the session and
 reads this file at its start. Apps and the shell read it **typed from the daemon's state**
 (`look.*`, silica_ui `SilicaSystemLook`), not from the file; the Settings portal publishes
-`accent-color`. Ossido watches the file for `glass` only.
+`accent-color`. Ossido watches the file for `glass`, `reduceTransparency` and `reduceMotion`.
 
 | Key | Values | Default | Applied by |
 | --- | --- | --- | --- |
@@ -209,6 +209,10 @@ reads this file at its start. Apps and the shell read it **typed from the daemon
 | `scrollClick` | `page`, `spot` | `page` | silica_ui scroll bar track click |
 | `iconStyle` | `default`, `dark`, `clear`, `tinted` | `default` | silica_ui `SilicaIcon` without a style of its own (the Dock) |
 | `glass` | number 0 (clearer) to 1 (more tinted) | `0.5` | Ossido (tint strength of the glass) |
+| `keyboardNavigation` | bool | `false` | silica_ui: Tab reaches every Amalfi control (off: text fields and lists only) |
+| `doubleClickMs` | integer 150–1000 | `300` | silica_ui: the longest time between the two clicks of a double click |
+| `reduceTransparency` | bool | `false` | Ossido (opaque glass) and silica_ui (opaque Flutter glass) |
+| `reduceMotion` | bool | `false` | Ossido (its own animations are skipped) and silica_ui (`MediaQuery.disableAnimations`) |
 
 Not wired (controls disabled): `folderColour` (the daemon accepts it; the composed folder icons
 do not take it yet) and `windowTint`.

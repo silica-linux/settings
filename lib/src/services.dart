@@ -108,6 +108,12 @@ class Services {
        doubleClickMs = ValueNotifier(
          _doubleClick(config.read('theme')['doubleClickMs']),
        ),
+       reduceTransparency = ValueNotifier(
+         config.read('theme')['reduceTransparency'] == true,
+       ),
+       reduceMotion = ValueNotifier(
+         config.read('theme')['reduceMotion'] == true,
+       ),
        glass = ValueNotifier(_glassLevel(config.read('theme')['glass'])) {
     // This window and the apps that start now draw with the saved look at once.
     SilicaSystemLook.apply(systemLook);
@@ -177,6 +183,12 @@ class Services {
   /// `doubleClickMs`, 150-1000).
   final ValueNotifier<int> doubleClickMs;
 
+  /// Glass drawn opaque (theme.json `reduceTransparency`; Ossido reads it too).
+  final ValueNotifier<bool> reduceTransparency;
+
+  /// Animations skipped (theme.json `reduceMotion`; Ossido reads it too).
+  final ValueNotifier<bool> reduceMotion;
+
   static const int doubleClickSlowest = 1000;
   static const int doubleClickFastest = 150;
 
@@ -198,6 +210,8 @@ class Services {
     glass,
     keyboardNavigation,
     doubleClickMs,
+    reduceTransparency,
+    reduceMotion,
   ]);
 
   /// The look as silica_ui draws it: set in this window at once, kept by silica-daemon for
@@ -213,6 +227,8 @@ class Services {
     glass: glass.value,
     keyboardNavigation: keyboardNavigation.value,
     doubleClickMs: doubleClickMs.value,
+    reduceTransparency: reduceTransparency.value,
+    reduceMotion: reduceMotion.value,
   );
 
   void _saveLook(String key, Object value) {
@@ -254,6 +270,16 @@ class Services {
   void setKeyboardNavigation(bool value) {
     keyboardNavigation.value = value;
     _saveLook('keyboardNavigation', value);
+  }
+
+  void setReduceTransparency(bool value) {
+    reduceTransparency.value = value;
+    _saveLook('reduceTransparency', value);
+  }
+
+  void setReduceMotion(bool value) {
+    reduceMotion.value = value;
+    _saveLook('reduceMotion', value);
   }
 
   void setDoubleClickMs(int value) {

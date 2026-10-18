@@ -288,7 +288,10 @@ class InternetAccountsPane extends StatelessWidget {
 }
 
 class AccessibilityPane extends StatelessWidget {
-  const AccessibilityPane({super.key});
+  const AccessibilityPane({super.key, required this.open});
+
+  /// Opens a sub-pane (Display, Motion).
+  final void Function(SubPaneId sub, [String detail]) open;
 
   @override
   Widget build(BuildContext context) {
@@ -311,12 +314,29 @@ class AccessibilityPane extends StatelessWidget {
           title: l.paneAccessibility,
           description: l.accessibilityDescription,
         ),
-        group(l.accessibilityVision, [
+        SettingsGroup(
+          heading: l.accessibilityVision,
+          children: [
+            NavRow(
+              key: const ValueKey('accessibility display'),
+              title: l.accessibilityDisplay,
+              symbol: 'display',
+              tint: blue,
+              onTap: () => open(SubPaneId.accessibilityDisplay),
+            ),
+            NavRow(
+              key: const ValueKey('accessibility motion'),
+              title: l.accessibilityMotion,
+              symbol: 'circle-dot',
+              tint: blue,
+              onTap: () => open(SubPaneId.accessibilityMotion),
+            ),
+          ],
+        ),
+        group(l.accessibilityMoreVision, [
           (l.accessibilityScreenReader, 'speaker'),
           (l.accessibilityZoom, 'search'),
           (l.accessibilityLargerText, 'text-size'),
-          (l.accessibilityDisplay, 'display'),
-          (l.accessibilityMotion, 'circle-dot'),
           (l.accessibilitySpokenContent, 'speaker'),
         ]),
         group(l.accessibilityPhysical, [
@@ -328,6 +348,80 @@ class AccessibilityPane extends StatelessWidget {
           (l.accessibilityAudio, 'speaker'),
           (l.accessibilityCaptions, 'captions'),
         ]),
+      ],
+    );
+  }
+}
+
+/// Accessibility › Display: Reduce Transparency draws the glass opaque (Ossido and silica_ui);
+/// Increase Contrast waits for a high-contrast palette.
+class AccessibilityDisplayPane extends StatefulWidget {
+  const AccessibilityDisplayPane({super.key});
+
+  @override
+  State<AccessibilityDisplayPane> createState() =>
+      _AccessibilityDisplayPaneState();
+}
+
+class _AccessibilityDisplayPaneState extends State<AccessibilityDisplayPane> {
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final services = ServicesScope.of(context);
+    return PanePage(
+      children: [
+        SettingsGroup(
+          footer: l.accessibilityReduceTransparencyHelp,
+          children: [
+            SwitchRow(
+              key: const ValueKey('reduce transparency'),
+              title: l.accessibilityReduceTransparency,
+              value: services.reduceTransparency.value,
+              onChanged: (on) =>
+                  setState(() => services.setReduceTransparency(on)),
+            ),
+          ],
+        ),
+        SettingsGroup(
+          unavailable: true,
+          issue: Issues.accessibility,
+          children: [
+            SwitchRow(title: l.accessibilityIncreaseContrast, value: false),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+/// Accessibility › Motion: Reduce Motion skips Ossido's own animations and tells the apps
+/// (`MediaQuery.disableAnimations`).
+class AccessibilityMotionPane extends StatefulWidget {
+  const AccessibilityMotionPane({super.key});
+
+  @override
+  State<AccessibilityMotionPane> createState() =>
+      _AccessibilityMotionPaneState();
+}
+
+class _AccessibilityMotionPaneState extends State<AccessibilityMotionPane> {
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final services = ServicesScope.of(context);
+    return PanePage(
+      children: [
+        SettingsGroup(
+          footer: l.accessibilityReduceMotionHelp,
+          children: [
+            SwitchRow(
+              key: const ValueKey('reduce motion'),
+              title: l.accessibilityReduceMotion,
+              value: services.reduceMotion.value,
+              onChanged: (on) => setState(() => services.setReduceMotion(on)),
+            ),
+          ],
+        ),
       ],
     );
   }

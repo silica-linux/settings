@@ -285,6 +285,30 @@ void main() {
     });
   });
 
+  testWidgets('Accessibility: Reduce transparency and Reduce motion', (
+    tester,
+  ) async {
+    final h = await pumpSettings(tester, pane: PaneId.accessibility);
+    await tapKey(tester, 'accessibility display');
+    expect(h.navigation.location.sub, SubPaneId.accessibilityDisplay);
+    await tester.tap(switchIn('reduce transparency'));
+    await tester.pump();
+    expect(h.config.read('theme')['reduceTransparency'], true);
+    expect(h.system.calls.last, 'setLook {reduceTransparency: true}');
+    expect(SilicaSystemLook.current.reduceTransparency, isTrue);
+    h.navigation.openPane(PaneId.accessibility);
+    await tester.pump();
+    await tapKey(tester, 'accessibility motion');
+    expect(h.navigation.location.sub, SubPaneId.accessibilityMotion);
+    await tester.tap(switchIn('reduce motion'));
+    await tester.pump();
+    expect(h.config.read('theme')['reduceMotion'], true);
+    expect(SilicaSystemLook.current.reduceMotion, isTrue);
+    await tester.tap(switchIn('reduce motion'));
+    await tester.pump();
+    expect(h.config.read('theme')['reduceMotion'], false);
+  });
+
   testWidgets('Users & Groups lists the accounts', (tester) async {
     final tools = FakeTools()
       ..accounts = const [

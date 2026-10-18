@@ -1135,6 +1135,26 @@ class AppLocalizationsIt extends AppLocalizations {
   String get mouseDoubleClickHelp => 'Vale subito per le app e per il desktop.';
 
   @override
+  String get accessibilityMoreVision => 'Altre opzioni per la vista';
+
+  @override
+  String get accessibilityReduceTransparency => 'Riduci trasparenza';
+
+  @override
+  String get accessibilityReduceTransparencyHelp =>
+      'Finestre, menu e Dock sono disegnati senza vetro trasparente.';
+
+  @override
+  String get accessibilityIncreaseContrast => 'Aumenta contrasto';
+
+  @override
+  String get accessibilityReduceMotion => 'Riduci movimento';
+
+  @override
+  String get accessibilityReduceMotionHelp =>
+      'Finestre e menu si muovono meno: la scrivania salta le animazioni e le app fanno lo stesso.';
+
+  @override
   String get appearanceGlassClear => 'Più trasparente';
 
   @override
